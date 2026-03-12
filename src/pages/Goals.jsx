@@ -1,5 +1,6 @@
 import {useState,useEffect} from 'react';
 import {supabase} from '../supabaseClient';
+import GoalCard from '../components/GoalCard'; 
 
 export default function Goals({user}){
     
@@ -10,7 +11,7 @@ export default function Goals({user}){
 
     //for tasks
     const [tasks,setTasks]=useState([]);
-    const [taskTitle,setTaskTitle]=useState("");
+    const [taskInputs,setTaskInputs]=useState("");
 
     
 
@@ -69,11 +70,15 @@ export default function Goals({user}){
     }
 
     async function addTask(goalId){
+        const title=taskInputs[goalId];
+        if(!title){
+            return;
+        }
         const {error} =await supabase
         .from("tasks")
         .insert([
             {
-                title: taskTitle,
+                title,
                 goal_id: goalId,
                 completed: false,
                 user_id: user.id
@@ -81,7 +86,10 @@ export default function Goals({user}){
         ]);
 
         if(!error){
-            setTaskTitle("");
+            setTaskInputs({
+                ...taskInputs,
+                [goalId]:""
+            });
             fetchTasks();
         }
     }
@@ -108,25 +116,14 @@ export default function Goals({user}){
 
         <ul>
             {goals.map(goal => (
-                <li key={goal.id} style={{marginBottom:"20px"}}>
-                    <b>{goal.title}</b> — {goal.description}
-                    <div style={{marginTop:"10px"}}>
-                        <input
-                        placeholder="Task title"
-                        value={taskTitle}
-                        onChange={(e)=>setTaskTitle(e.target.value)}
-                        />
-                        <button onClick={()=>addTask(goal.id)}>Add Task</button>
-                    </div>
-                    <ul>
-                        {tasks.filter(task=>taskTitle.goil_id ==goal.id)
-                        .map(task => (
-                            <li key={task.id}>
-                                {task.completed ? "✅" : "⬜"} {task.title}
-                            </li>
-                        ))}
-                    </ul>
-                </li>
+                <GoalCard
+                key={goal.id}
+                goal={goal}
+                tasks={tasks}
+                taskInputs={taskInputs}
+                setTaskInputs={setTaskInputs}
+                addTask={addTask}
+                />
             ))}
         </ul>
 
