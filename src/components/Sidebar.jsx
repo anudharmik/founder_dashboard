@@ -1,7 +1,12 @@
 import {Link} from 'react-router-dom';
-
+import {supabase} from '../supabaseClient';
 export default function Sidebar(){
+
+    async function logout(){
+        await supabase.auth.signOut();
+    }
     return(
+
         <div
           style={{
             width:"200px",
@@ -19,6 +24,7 @@ export default function Sidebar(){
                 <Link to="/projects" style={{color:"white"}}>Projects</Link>
                 <Link to="/analytics" style={{color:"white"}}>Analytics</Link>
             </nav>
+            <button onClick={logout} style={{marginTop:"20px"}}>Logout</button>
         </div>
     )
 }
