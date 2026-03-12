@@ -5,7 +5,11 @@ export default function TaskList({tasks,goalId}){
     return (
         <ul>
             {filteredTasks.map((task)=>(
-                <TaskItem key={task.id} task={task} />
+                <TaskItem 
+                key={task.id} 
+                task={task} 
+                toggleTask={toggleTask} 
+                />
             ))}
         </ul>
     );

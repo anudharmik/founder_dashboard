@@ -85,6 +85,17 @@ export default function Goals({user}){
             }
         ]);
 
+        async function toggleTask(taskId,completed){
+            const{error}=await supabase
+            .from("tasks")
+            .update({completed:!completed})
+            .eq("id",id);
+
+            if(!error){
+                fetchTasks();
+            }
+        }
+
         if(!error){
             setTaskInputs({
                 ...taskInputs,
