@@ -8,10 +8,15 @@ export default function Goals({user}){
     const[title,setTitle]=useState("");
     const[description,setDescription]=useState("");
 
+    //for tasks
+    const [tasks,setTasks]=useState([]);
+    const [taskTitle,setTaskTitle]=useState("");
+
     
 
     useEffect(()=>{
         fetchGoals();
+        fetchTasks();
     },[]);
 
     
@@ -25,6 +30,18 @@ export default function Goals({user}){
             setgoals(data);
         }
     }
+
+    async function fetchTasks(){
+        const {data,error}= await supabase
+        .from("tasks")
+        .select("*")
+        .order("created_at", {ascending:false});
+
+        if(!error){
+            setTasks(data);
+        }
+    }
+
         
     async function handleSubmit(e){
         e.preventDefault();
@@ -51,6 +68,23 @@ export default function Goals({user}){
         }
     }
 
+    async function addTask(goalId){
+        const {error} =await supabase
+        .from("tasks")
+        .insert([
+            {
+                title: taskTitle,
+                goal_id: goalId,
+                completed: false,
+                user_id: user.id
+            }
+        ]);
+
+        if(!error){
+            setTaskTitle("");
+            fetchTasks();
+        }
+    }
 
     return (
     <div>
@@ -74,8 +108,24 @@ export default function Goals({user}){
 
         <ul>
             {goals.map(goal => (
-                <li key={goal.id}>
+                <li key={goal.id} style={{marginBottom:"20px"}}>
                     <b>{goal.title}</b> — {goal.description}
+                    <div style={{marginTop:"10px"}}>
+                        <input
+                        placeholder="Task title"
+                        value={taskTitle}
+                        onChange={(e)=>setTaskTitle(e.target.value)}
+                        />
+                        <button onClick={()=>addTask(goal.id)}>Add Task</button>
+                    </div>
+                    <ul>
+                        {tasks.filter(task=>taskTitle.goil_id ==goal.id)
+                        .map(task => (
+                            <li key={task.id}>
+                                {task.completed ? "✅" : "⬜"} {task.title}
+                            </li>
+                        ))}
+                    </ul>
                 </li>
             ))}
         </ul>
