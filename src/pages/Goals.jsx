@@ -9,7 +9,6 @@ export default function Goals({user}){
     const[title,setTitle]=useState("");
     const[description,setDescription]=useState("");
 
-    //for tasks
     const [tasks,setTasks]=useState([]);
     const [taskInputs,setTaskInputs]=useState("");
 
@@ -112,6 +111,40 @@ export default function Goals({user}){
             }
     }
 
+    async function deleteTask(taskId){
+        const {error}=await supabase
+        .from("tasks")
+        .delete()
+        .eq("id",taskId);
+
+        if(!error){
+            setTasks(prev=>prev.filter(task=> task.id!==taskId));
+        }
+    }
+
+    async function deleteGoal(goalId){
+        console.log("Deleting goal with ID:", goalId); // Debugging log
+        const {error:taskError}= await supabase
+        .from("tasks")
+        .delete()
+        .eq("goal_id",goalId);
+        if(taskError){
+            console.error("Error deleting tasks for goal:", taskError);
+        }
+
+        const {error:goalError}=await supabase
+        .from("goals")
+        .delete()
+        .eq("id",goalId);
+        if(goalError){
+            console.error("Error deleting goal:", goalError);
+        }
+        if(!goalError){
+            fetchGoals();
+            fetchTasks();
+        }
+    }
+
     return (
     <div>
         <h1>Goals</h1>
@@ -142,6 +175,8 @@ export default function Goals({user}){
                 setTaskInputs={setTaskInputs}
                 addTask={addTask}
                 toggleTask={toggleTask}
+                deleteTask={deleteTask}
+                deleteGoal={deleteGoal}
                 />
             ))}
         </ul>

@@ -1,6 +1,6 @@
 import TaskItem from "./TaskItem";
 
-export default function TaskList({tasks,goalId,toggleTask}){
+export default function TaskList({tasks,goalId,toggleTask,deleteTask}){
     const filteredTasks=tasks.filter(task=>task.goal_id===goalId);
     return (
         <ul>
@@ -9,8 +9,11 @@ export default function TaskList({tasks,goalId,toggleTask}){
                 key={task.id} 
                 task={task} 
                 toggleTask={toggleTask} 
+                deleteTask={deleteTask}
                 />
             ))}
+            
+
         </ul>
     );
 }
