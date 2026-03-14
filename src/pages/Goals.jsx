@@ -85,16 +85,6 @@ export default function Goals({user}){
             }
         ]);
 
-        async function toggleTask(taskId,completed){
-            const{error}=await supabase
-            .from("tasks")
-            .update({completed:!completed})
-            .eq("id",id);
-
-            if(!error){
-                fetchTasks();
-            }
-        }
 
         if(!error){
             setTaskInputs({
@@ -103,6 +93,23 @@ export default function Goals({user}){
             });
             fetchTasks();
         }
+    }
+
+    async function toggleTask(taskId,completed){
+        setTasks(prevTasks=>
+            prevTasks.map(task =>
+                task.id===taskId? {...task,completed:!completed}:task
+            )
+        );
+
+        const{error}=await supabase
+            .from("tasks")
+            .update({completed:!completed})
+            .eq("id",taskId);
+
+            if(error){
+                fetchTasks();
+            }
     }
 
     return (
@@ -134,6 +141,7 @@ export default function Goals({user}){
                 taskInputs={taskInputs}
                 setTaskInputs={setTaskInputs}
                 addTask={addTask}
+                toggleTask={toggleTask}
                 />
             ))}
         </ul>

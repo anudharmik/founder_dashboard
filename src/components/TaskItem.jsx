@@ -1,4 +1,4 @@
-export default function TaskItem({task}){
+export default function TaskItem({task,toggleTask}){
     return (
         <li
         style={{cursor:"pointer"}}
