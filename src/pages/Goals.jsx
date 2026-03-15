@@ -2,45 +2,38 @@ import {useState,useEffect} from 'react';
 import {supabase} from '../supabaseClient';
 import GoalCard from '../components/GoalCard'; 
 
-export default function Goals({user}){
+export default function Goals({user,goals,tasks,fetchGoals,fetchTasks}){
     
     
-    const[goals,setgoals]=useState([]);
+    
     const[title,setTitle]=useState("");
     const[description,setDescription]=useState("");
 
-    const [tasks,setTasks]=useState([]);
     const [taskInputs,setTaskInputs]=useState("");
 
     
-
-    useEffect(()=>{
-        fetchGoals();
-        fetchTasks();
-    },[]);
-
     
-    async function fetchGoals(){
-        const {data,error}=await supabase
-        .from("goals")
-        .select("*")
-        .order("created_at",{ascending:false});
+    // async function fetchGoals(){
+    //     const {data,error}=await supabase
+    //     .from("goals")
+    //     .select("*")
+    //     .order("created_at",{ascending:false});
 
-        if(!error){
-            setgoals(data);
-        }
-    }
+    //     if(!error){
+    //         setgoals(data);
+    //     }
+    // }
 
-    async function fetchTasks(){
-        const {data,error}= await supabase
-        .from("tasks")
-        .select("*")
-        .order("created_at", {ascending:false});
+    // async function fetchTasks(){
+    //     const {data,error}= await supabase
+    //     .from("tasks")
+    //     .select("*")
+    //     .order("created_at", {ascending:false});
 
-        if(!error){
-            setTasks(data);
-        }
-    }
+    //     if(!error){
+    //         setTasks(data);
+    //     }
+    // }
 
         
     async function handleSubmit(e){
@@ -83,8 +76,6 @@ export default function Goals({user}){
                 user_id: user.id
             }
         ]);
-
-
         if(!error){
             setTaskInputs({
                 ...taskInputs,

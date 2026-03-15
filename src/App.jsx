@@ -12,12 +12,14 @@ import Analytics from "./pages/Analytics";
 
 export default function App() {
   const[user,setUser]=useState(null);
+  const[goals,setGoals]=useState([]);
+  const[tasks,setTasks]=useState([]);
 
   useEffect(()=>{
       getUser();
-      
+      fetchGoals();
+      fetchTasks();
   },[]);
-
 
   useEffect(() => {
   supabase.auth.getUser().then(({ data }) => {
@@ -29,15 +31,33 @@ export default function App() {
     }
   );
 
-  return () => {
-    listener.subscription.unsubscribe();
-  };
-}, []);
+    return () => {
+      listener.subscription.unsubscribe();
+    };
+    }, []);
 
   async function getUser(){
           const {data}=await supabase.auth.getUser();
           setUser(data.user);
       }
+
+  async function fetchGoals(){
+    const{data}=await supabase
+    .from("goals")
+    .select("*")
+    .order("created_at",{ascending:false});
+
+    setGoals(data || []);
+  }
+
+  async function fetchTasks(){
+    const {data}=await supabase
+    .from("tasks")
+    .select("*")
+    .order("created_at",{ascending:false});
+
+    setTasks(data || []);
+  }
   
   if(!user){
     return <Login />
@@ -47,8 +67,8 @@ export default function App() {
     <BrowserRouter>
     <Layout>
       <Routes>
-        <Route path="/" element={<Dashboard user={user}/>} />
-        <Route path="/goals" element={<Goals user={user} />} />
+        <Route path="/" element={<Dashboard user={user} goals={goals} tasks={tasks}/>} />
+        <Route path="/goals" element={<Goals user={user} goals={goals} tasks={tasks} fetchGoals={fetchGoals} fetchTasks={fetchTasks}/>} />
         <Route path="/tasks" element={<Tasks user={user}/>} />
         <Route path="/projects" element={<Projects user={user}/>} />
         <Route path="/analytics" element={<Analytics user={user}/>} />
