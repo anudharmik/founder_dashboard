@@ -11,7 +11,7 @@ export default function Sidebar(){
           style={{
             width:"200px",
             height :"100vh",
-            background :"#111",
+            background :"#0f0d47",
             color :"white",
             padding:"20px"
           }}

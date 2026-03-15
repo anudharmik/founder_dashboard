@@ -2,7 +2,7 @@ import {useState,useEffect} from 'react';
 import {supabase} from '../supabaseClient';
 import GoalCard from '../components/GoalCard'; 
 
-export default function Goals({user,goals,tasks,fetchGoals,fetchTasks}){
+export default function Goals({user,goals,tasks,setTasks,fetchGoals,fetchTasks}){
     
     
     

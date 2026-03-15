@@ -1,4 +1,5 @@
 import StatCard from "../components/StatCard";
+import TaskChart from "../components/TaskChart";
 
 export default function Dashboard({goals,tasks}){
     const totalGoals=goals.length;
@@ -7,6 +8,7 @@ export default function Dashboard({goals,tasks}){
         task=>task.completed
     ).length;
 
+    const remainingTasks=totalTasks-completedTasks;
     const completionRate=
         totalTasks===0?0:Math.round((completedTasks/totalTasks)*100);
     return (
@@ -24,6 +26,7 @@ export default function Dashboard({goals,tasks}){
             <StatCard title="Total Tasks" value={totalTasks} />
             <StatCard title="Completed Tasks" value={completedTasks} />
             <StatCard title="Completion Rate" value={`${completionRate}%`} />
+            <TaskChart completed={completedTasks} remaining={remainingTasks}/>
 
         </div>
         </div>

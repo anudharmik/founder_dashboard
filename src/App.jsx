@@ -68,7 +68,7 @@ export default function App() {
     <Layout>
       <Routes>
         <Route path="/" element={<Dashboard user={user} goals={goals} tasks={tasks}/>} />
-        <Route path="/goals" element={<Goals user={user} goals={goals} tasks={tasks} fetchGoals={fetchGoals} fetchTasks={fetchTasks}/>} />
+        <Route path="/goals" element={<Goals user={user} goals={goals} tasks={tasks} setTasks={setTasks} fetchGoals={fetchGoals} fetchTasks={fetchTasks} />} />
         <Route path="/tasks" element={<Tasks user={user}/>} />
         <Route path="/projects" element={<Projects user={user}/>} />
         <Route path="/analytics" element={<Analytics user={user}/>} />
