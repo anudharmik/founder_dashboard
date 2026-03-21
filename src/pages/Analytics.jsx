@@ -1,5 +1,32 @@
-export default function Analytics(){
+import {useState} from "react";
+import GoalChart from "../components/GoalChart";
+
+export default function Analytics({goals,tasks}){
+    const [selectedGoal,setSelectedGoal]=useState("");
+
+    const filteredTasks=tasks.filter(
+        task=>task.goal_id===selectedGoal
+    );
+
     return (
+        <>
         <h1>Analytics</h1>
+        {!selectedGoal && <p>Please select a goal</p>}
+        {selectedGoal && (
+            <GoalChart tasks={filteredTasks}/>
+        )}
+        <select
+            value={selectedGoal}
+            onChange={(e)=>setSelectedGoal(e.target.value)}
+        >
+            <option value="">Select Goal</option>
+            {goals.map(goal => (
+                <option key={goal.id} value={goal.id}>
+                {goal.title}
+                </option>
+            ))}
+        </select>
+        
+        </>
     )
 }
