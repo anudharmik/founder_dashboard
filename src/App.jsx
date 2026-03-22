@@ -58,6 +58,23 @@ export default function App() {
 
     setTasks(data || []);
   }
+
+  async function toggleTask(taskId,completed){
+    setTasks(prevTasks=>
+      prevTasks.map(task =>
+           task.id===taskId? {...task,completed:!completed}:task
+        )
+      );
+
+      const{error}=await supabase
+          .from("tasks")
+          .update({completed:!completed})
+          .eq("id",taskId);
+
+          if(error){
+              fetchTasks();
+          }
+    }
   
   if(!user){
     return <Login />
@@ -68,8 +85,8 @@ export default function App() {
     <Layout>
       <Routes>
         <Route path="/" element={<Dashboard user={user} goals={goals} tasks={tasks}/>} />
-        <Route path="/goals" element={<Goals user={user} goals={goals} tasks={tasks} setTasks={setTasks} fetchGoals={fetchGoals} fetchTasks={fetchTasks} />} />
-        <Route path="/tasks" element={<Tasks user={user}/>} />
+        <Route path="/goals" element={<Goals user={user} goals={goals} tasks={tasks} setTasks={setTasks} fetchGoals={fetchGoals} fetchTasks={fetchTasks} toggleTask={toggleTask}/>} />
+        <Route path="/tasks" element={<Tasks user={user} tasks={tasks} goals={goals} toggleTask={toggleTask}/>} />
         <Route path="/projects" element={<Projects user={user}/>} />
         <Route path="/analytics" element={<Analytics user={user} goals={goals} tasks={tasks}/>} />
       </Routes>

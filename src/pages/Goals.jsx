@@ -2,7 +2,7 @@ import {useState,useEffect} from 'react';
 import {supabase} from '../supabaseClient';
 import GoalCard from '../components/GoalCard'; 
 
-export default function Goals({user,goals,tasks,setTasks,fetchGoals,fetchTasks}){
+export default function Goals({user,goals,tasks,setTasks,fetchGoals,fetchTasks,toggleTask}){
     
     
     
@@ -85,22 +85,7 @@ export default function Goals({user,goals,tasks,setTasks,fetchGoals,fetchTasks})
         }
     }
 
-    async function toggleTask(taskId,completed){
-        setTasks(prevTasks=>
-            prevTasks.map(task =>
-                task.id===taskId? {...task,completed:!completed}:task
-            )
-        );
 
-        const{error}=await supabase
-            .from("tasks")
-            .update({completed:!completed})
-            .eq("id",taskId);
-
-            if(error){
-                fetchTasks();
-            }
-    }
 
     async function deleteTask(taskId){
         const {error}=await supabase
