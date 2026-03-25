@@ -10,7 +10,7 @@ export default function Goals({user,goals,tasks,setTasks,fetchGoals,fetchTasks,t
     const[description,setDescription]=useState("");
 
     const [taskInputs,setTaskInputs]=useState("");
-
+    const [deadlineInputs,setDeadlineInputs]=useState({});
     
     
     // async function fetchGoals(){
@@ -63,6 +63,8 @@ export default function Goals({user,goals,tasks,setTasks,fetchGoals,fetchTasks,t
 
     async function addTask(goalId){
         const title=taskInputs[goalId];
+        const deadline=deadlineInputs[goalId];
+
         if(!title){
             return;
         }
@@ -73,7 +75,8 @@ export default function Goals({user,goals,tasks,setTasks,fetchGoals,fetchTasks,t
                 title,
                 goal_id: goalId,
                 completed: false,
-                user_id: user.id
+                user_id: user.id,
+                deadline:deadline || null
             }
         ]);
         if(!error){
@@ -153,6 +156,8 @@ export default function Goals({user,goals,tasks,setTasks,fetchGoals,fetchTasks,t
                 toggleTask={toggleTask}
                 deleteTask={deleteTask}
                 deleteGoal={deleteGoal}
+                deadlineInputs={deadlineInputs}
+                setDeadlineInputs={setDeadlineInputs}
                 />
             ))}
         </ul>

@@ -1,8 +1,7 @@
 import TaskList from "./TaskList";
 
 
-
-export default function GoalCard({goal,tasks,taskInputs,setTaskInputs,addTask,toggleTask,deleteTask,deleteGoal}){
+export default function GoalCard({goal,tasks,taskInputs,setTaskInputs,addTask,toggleTask,deleteTask,deleteGoal,deadlineInputs,setDeadlineInputs}){
     const goalTasks = tasks.filter(
     task => task.goal_id === goal.id
     );
@@ -16,6 +15,8 @@ export default function GoalCard({goal,tasks,taskInputs,setTaskInputs,addTask,to
         ? 0
         : Math.round(
             (completedTasks.length / goalTasks.length) * 100);
+
+    
 
     return (
         <div style={{marginBottom :"30px"}}>
@@ -42,6 +43,7 @@ export default function GoalCard({goal,tasks,taskInputs,setTaskInputs,addTask,to
                 <p>{progress}% complete</p>
 
             <input 
+            style={{marginRight:"20px"}}
             placeholder="New task"
             value = {taskInputs[goal.id] || ""}
             onChange={(e)=>
@@ -51,6 +53,20 @@ export default function GoalCard({goal,tasks,taskInputs,setTaskInputs,addTask,to
                 })
             }
             />
+
+            <h4>Deadline for the task: <input
+              style={{marginRight:"20px"}}
+              type="date"
+              value={deadlineInputs[goal.id] || ""}
+              onChange={(e)=>
+                setDeadlineInputs({
+                    ...deadlineInputs,
+                    [goal.id]:e.target.value
+                })
+              }
+            /></h4>
+            
+
             <button onClick={()=>addTask(goal.id)}>Add Task</button>
             <TaskList tasks={tasks} goalId={goal.id} toggleTask={toggleTask} deleteTask={deleteTask}/>
             <br/>
