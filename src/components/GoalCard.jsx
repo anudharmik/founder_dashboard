@@ -1,5 +1,5 @@
 import TaskList from "./TaskList";
-
+import "../App.css";
 
 export default function GoalCard({goal,tasks,taskInputs,setTaskInputs,addTask,toggleTask,deleteTask,deleteGoal,deadlineInputs,setDeadlineInputs}){
     const goalTasks = tasks.filter(
@@ -40,8 +40,9 @@ export default function GoalCard({goal,tasks,taskInputs,setTaskInputs,addTask,to
                 />
             </div>
 
-                <p>{progress}% complete</p>
+            <p>{progress}% complete</p>
 
+            <div style={{marginBottom:"20px"}} className="container">
             <input 
             style={{marginRight:"20px"}}
             placeholder="New task"
@@ -65,9 +66,10 @@ export default function GoalCard({goal,tasks,taskInputs,setTaskInputs,addTask,to
                 })
               }
             /></h4>
-            
 
             <button onClick={()=>addTask(goal.id)}>Add Task</button>
+            </div>
+
             <TaskList tasks={tasks} goalId={goal.id} toggleTask={toggleTask} deleteTask={deleteTask}/>
             <br/>
 

@@ -1,0 +1,22 @@
+.container {
+  display: flex; 
+  align-items: center; 
+  gap: 0; 
+  margin: 10px; 
+}
+
+
+.container h4,
+.container input,
+.container button {
+  margin: 0; 
+  padding: 8px; 
+}
+
+.container h4 {
+  margin-right: 10px; 
+}
+
+.container input {
+  margin-right: 10px; 
+}
