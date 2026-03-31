@@ -1,7 +1,7 @@
 import TaskList from "./TaskList";
 import "../App.css";
 
-export default function GoalCard({goal,tasks,taskInputs,setTaskInputs,addTask,toggleTask,deleteTask,deleteGoal,deadlineInputs,setDeadlineInputs}){
+export default function GoalCard({goal,tasks,taskInputs,setTaskInputs,addTask,toggleTask,deleteTask,deleteGoal,deadlineInputs,setDeadlineInputs,updateTask}){
     const goalTasks = tasks.filter(
     task => task.goal_id === goal.id
     );
@@ -70,7 +70,7 @@ export default function GoalCard({goal,tasks,taskInputs,setTaskInputs,addTask,to
             <button onClick={()=>addTask(goal.id)}>Add Task</button>
             </div>
 
-            <TaskList tasks={tasks} goalId={goal.id} toggleTask={toggleTask} deleteTask={deleteTask}/>
+            <TaskList tasks={tasks} goalId={goal.id} toggleTask={toggleTask} deleteTask={deleteTask} updateTask={updateTask}/>
             <br/>
 
             <button
