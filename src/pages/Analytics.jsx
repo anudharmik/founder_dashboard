@@ -1,5 +1,6 @@
 import {useState} from "react";
 import GoalChart from "../components/GoalChart";
+import GoalProgressChart from "../components/GoalProgressChart"
 
 export default function Analytics({goals,tasks}){
     const [selectedGoal,setSelectedGoal]=useState("");
@@ -26,6 +27,9 @@ export default function Analytics({goals,tasks}){
                 </option>
             ))}
         </select>
+
+        <h2 style={{ marginTop: "40px" }}>All Goals Progress</h2>
+        <GoalProgressChart goals={goals} tasks={tasks} />
         
         </>
     )
