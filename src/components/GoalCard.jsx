@@ -1,7 +1,11 @@
 import TaskList from "./TaskList";
 import "../App.css";
+import {useState} from "react";
 
-export default function GoalCard({goal,tasks,taskInputs,setTaskInputs,addTask,toggleTask,deleteTask,deleteGoal,deadlineInputs,setDeadlineInputs,updateTask}){
+export default function GoalCard({goal,tasks,taskInputs,setTaskInputs,addTask,toggleTask,deleteTask,deleteGoal,deadlineInputs,setDeadlineInputs,updateTask,updateGoal}){
+    const [isEditingGoal,setIsEditingGoal]=useState(false);
+    const [editedGoalTitle,setEditedGoalTitle]=useState(goal.title);
+    const [editedGoalDescription,setEditedGoalDescription]=useState(goal.description);
     const goalTasks = tasks.filter(
     task => task.goal_id === goal.id
     );
@@ -16,12 +20,38 @@ export default function GoalCard({goal,tasks,taskInputs,setTaskInputs,addTask,to
         : Math.round(
             (completedTasks.length / goalTasks.length) * 100);
 
-    
+    async function handleSaveGoal(){
+        await updateGoal(goal.id,editedGoalTitle,editedGoalDescription);
+        setIsEditingGoal(false);
+    }
 
     return (
         <div style={{marginBottom :"30px"}}>
-            <h3>{goal.title}</h3>
-            <p>{goal.description}</p>
+            {isEditingGoal?(
+                <>
+                <input
+                value={editedGoalTitle}
+                onChange={(e)=>setEditedGoalTitle(e.target.value)}
+                />
+                <textarea
+                value={editedGoalDescription}
+                onChange={(e)=>setEditedGoalDescription(e.target.value)}
+                />
+                <button onClick={handleSaveGoal}>Save</button>
+                <button onClick={()=>setIsEditingGoal(false)}>Cancel</button>
+                </>
+
+            ):(
+                <>
+                <h3>{goal.title}</h3>
+                <p>{goal.description}</p>
+
+                <button onClick={()=>setIsEditingGoal(true)}>Edit Goal</button>
+                
+                </>
+            )}
+
+            
             <div
                 style={{
                     height: "10px",

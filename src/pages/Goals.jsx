@@ -2,7 +2,7 @@ import {useState,useEffect} from 'react';
 import {supabase} from '../supabaseClient';
 import GoalCard from '../components/GoalCard'; 
 
-export default function Goals({user,goals,tasks,setTasks,fetchGoals,fetchTasks,toggleTask,updateTask}){
+export default function Goals({user,goals,tasks,setTasks,fetchGoals,fetchTasks,toggleTask,updateTask,updateGoal}){
     
     
     
@@ -159,7 +159,9 @@ export default function Goals({user,goals,tasks,setTasks,fetchGoals,fetchTasks,t
                 deadlineInputs={deadlineInputs}
                 setDeadlineInputs={setDeadlineInputs}
                 updateTask={updateTask}
+                updateGoal={updateGoal}
                 />
+
             ))}
         </ul>
 
