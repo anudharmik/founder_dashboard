@@ -1,6 +1,7 @@
 import {useState} from "react";
 import GoalChart from "../components/GoalChart";
 import GoalProgressChart from "../components/GoalProgressChart"
+import WeeklyChart from "../components/WeeklyChart";
 
 export default function Analytics({goals,tasks}){
     const [selectedGoal,setSelectedGoal]=useState("");
@@ -30,6 +31,9 @@ export default function Analytics({goals,tasks}){
 
         <h2 style={{ marginTop: "40px" }}>All Goals Progress</h2>
         <GoalProgressChart goals={goals} tasks={tasks} />
+
+        <h2 style={{ marginTop: "40px" }}>Weekly Progress</h2>
+        <WeeklyChart tasks={tasks} />
         
         </>
     )

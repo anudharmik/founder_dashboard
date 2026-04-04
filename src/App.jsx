@@ -59,22 +59,34 @@ export default function App() {
     setTasks(data || []);
   }
 
-  async function toggleTask(taskId,completed){
-    setTasks(prevTasks=>
-      prevTasks.map(task =>
-           task.id===taskId? {...task,completed:!completed}:task
-        )
-      );
+  async function toggleTask(taskId, completed) {
 
-      const{error}=await supabase
-          .from("tasks")
-          .update({completed:!completed})
-          .eq("id",taskId);
+    const newCompleted = !completed;
 
-          if(error){
-              fetchTasks();
-          }
+    setTasks(prev =>
+      prev.map(task =>
+        task.id === taskId
+          ? {
+              ...task,
+              completed: newCompleted,
+              completed_at: newCompleted ? new Date().toISOString() : null
+            }
+          : task
+      )
+    );
+
+    const { error } = await supabase
+      .from("tasks")
+      .update({
+        completed: newCompleted,
+        completed_at: newCompleted ? new Date().toISOString() : null
+      })
+      .eq("id", taskId);
+
+    if (error) {
+      fetchTasks();
     }
+  }
 
     async function updateTask(taskId, newTitle, newDeadline) {
     const { error } = await supabase
