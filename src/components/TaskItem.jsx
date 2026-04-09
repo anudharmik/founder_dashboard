@@ -8,6 +8,16 @@ export default function TaskItem({task,toggleTask,deleteTask,updateTask}){
     const [editedDeadline,setEditedDeadline]=useState(task.deadline?task.deadline.split("T")[0]:"");
     let color="black";
 
+    const buttonStyle = {
+      padding: "6px 12px",
+      borderRadius: "6px",
+      border: "none",
+      cursor: "pointer",
+      background: "#3b82f6",
+      color: "white",
+      marginLeft: "8px"
+    };
+
     if(deadlineDate){
         const diff=(deadlineDate-today)/(1000*60*60*24);
 
@@ -24,7 +34,14 @@ export default function TaskItem({task,toggleTask,deleteTask,updateTask}){
     }
 
     return (
-        <li style={{color,marginBottom:"10px"}}>
+        <li style={{
+            color,
+            marginBottom:"10px",
+            padding:"10px",
+            borderRadius:"8px",
+            background:"#f9fafb",
+            boxShadow:"0 4px 12px rgba(0,0,0,0.08)"}}>
+
             {isEditing ? (
             <>
             <input
@@ -37,8 +54,8 @@ export default function TaskItem({task,toggleTask,deleteTask,updateTask}){
             value={editedDeadline}
             onChange={(e)=>setEditedDeadline(e.target.value)}
             />
-            <button onClick={handleSave}>Save</button>
-            <button onClick={()=>setIsEditing(false)}>Cancel</button>
+            <button style={buttonStyle} onClick={handleSave}>Save</button>
+            <button style={buttonStyle} onClick={()=>setIsEditing(false)}>Cancel</button>
             </>
         ) : (
             <>
@@ -54,8 +71,8 @@ export default function TaskItem({task,toggleTask,deleteTask,updateTask}){
             (Due: {task.deadline.split("T")[0]})
         </span>
         )}
-        <button onClick={()=>setIsEditing(true)} style={{marginLeft:"10px"}}>Edit</button>
-        <button onClick={() => deleteTask(task.id)} style={{marginLeft:"10px"}}>Delete</button>
+        <button style={buttonStyle} onClick={()=>setIsEditing(true)} >Edit</button>
+        <button style={{...buttonStyle,background:"#ef4444"}} onClick={() => deleteTask(task.id)} >Delete</button>
         </>
         )}
         </li>

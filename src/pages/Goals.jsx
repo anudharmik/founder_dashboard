@@ -124,6 +124,16 @@ export default function Goals({user,goals,tasks,setTasks,fetchGoals,fetchTasks,t
         }
     }
 
+    const buttonStyle = {
+      padding: "6px 12px",
+      borderRadius: "6px",
+      border: "none",
+      cursor: "pointer",
+      background: "#3b82f6",
+      color: "white",
+      marginLeft: "8px"
+    };
+
     return (
     <div>
         <h1>Goals</h1>
@@ -141,7 +151,7 @@ export default function Goals({user,goals,tasks,setTasks,fetchGoals,fetchTasks,t
             onChange={(e)=>setDescription(e.target.value)}
             />
 
-            <button type="submit">Add Goal</button>
+            <button style={buttonStyle} type="submit">Add Goal</button>
         </form>
 
         <ul>

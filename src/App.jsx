@@ -31,6 +31,7 @@ export default function App() {
     }
   );
 
+  
     return () => {
       listener.subscription.unsubscribe();
     };
@@ -136,7 +137,7 @@ export default function App() {
     return <Login />
   }
   return (
-    <div>
+    <div style={{background:"#f3f4f6"}}>
     <BrowserRouter>
     <Layout>
       <Routes>

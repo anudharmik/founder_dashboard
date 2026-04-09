@@ -47,15 +47,25 @@ export default function Tasks({tasks,goals,toggleTask}){
         return `📅 Due on ${task.deadline.split("T")[0]}`;
     }
 
+    const buttonStyle = {
+      padding: "6px 12px",
+      borderRadius: "6px",
+      border: "none",
+      cursor: "pointer",
+      background: "#3b82f6",
+      color: "white",
+      marginLeft: "8px"
+    };
+
     return (
     <>
     <h1>Tasks</h1>
     <div style={{marginBottom:"20px"}}>
-        <button onClick={()=>setFilter("all")} style={{marginRight:"20px"}}>All</button>
-        <button onClick={()=>setFilter("completed")} style={{marginRight:"20px"}}>Completed</button>
-        <button onClick={()=>setFilter("pending")} style={{marginRight:"20px"}}>Pending</button>
-        <button onClick={()=>setFilter("overdue")} style={{marginRight:"20px"}}>Overdue</button>
-        <button onClick={()=>setFilter("dueSoon")} style={{marginRight:"20px"}}>Due soon</button>
+        <button style={buttonStyle} onClick={()=>setFilter("all")} >All</button>
+        <button style={buttonStyle} onClick={()=>setFilter("completed")} >Completed</button>
+        <button style={buttonStyle} onClick={()=>setFilter("pending")} >Pending</button>
+        <button style={buttonStyle} onClick={()=>setFilter("overdue")} >Overdue</button>
+        <button style={buttonStyle} onClick={()=>setFilter("dueSoon")} >Due soon</button>
     </div>
 
     <ul>

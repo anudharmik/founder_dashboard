@@ -5,6 +5,16 @@ export default function Sidebar(){
     async function logout(){
         await supabase.auth.signOut();
     }
+
+    const buttonStyle = {
+      padding: "6px 12px",
+      borderRadius: "6px",
+      border: "none",
+      cursor: "pointer",
+      background: "#3b82f6",
+      color: "white",
+      marginLeft: "8px"
+    };
     return(
 
         <div
@@ -24,7 +34,7 @@ export default function Sidebar(){
                 <Link to="/projects" style={{color:"white"}}>Projects</Link>
                 <Link to="/analytics" style={{color:"white"}}>Analytics</Link>
             </nav>
-            <button onClick={logout} style={{marginTop:"20px"}}>Logout</button>
+            <button style={buttonStyle}onClick={logout} >Logout</button>
         </div>
     )
 }

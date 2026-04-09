@@ -25,8 +25,25 @@ export default function GoalCard({goal,tasks,taskInputs,setTaskInputs,addTask,to
         setIsEditingGoal(false);
     }
 
+    const buttonStyle = {
+      padding: "6px 12px",
+      borderRadius: "6px",
+      border: "none",
+      cursor: "pointer",
+      background: "#3b82f6",
+      color: "white",
+      marginLeft: "8px"
+    };
+    
+
     return (
-        <div style={{marginBottom :"30px"}}>
+        <div style={{
+            marginBottom :"20px",
+            padding:"20px",
+            borderRadius:"12px",
+            background:"#ffffff",
+            boxShadow:"0 4px 12px rgba(0,0,0,0.08)"
+        }}>
             {isEditingGoal?(
                 <>
                 <input
@@ -37,8 +54,8 @@ export default function GoalCard({goal,tasks,taskInputs,setTaskInputs,addTask,to
                 value={editedGoalDescription}
                 onChange={(e)=>setEditedGoalDescription(e.target.value)}
                 />
-                <button onClick={handleSaveGoal}>Save</button>
-                <button onClick={()=>setIsEditingGoal(false)}>Cancel</button>
+                <button style={buttonStyle} onClick={handleSaveGoal}>Save</button>
+                <button style={buttonStyle} onClick={()=>setIsEditingGoal(false)}>Cancel</button>
                 </>
 
             ):(
@@ -46,7 +63,7 @@ export default function GoalCard({goal,tasks,taskInputs,setTaskInputs,addTask,to
                 <h3>{goal.title}</h3>
                 <p>{goal.description}</p>
 
-                <button onClick={()=>setIsEditingGoal(true)}>Edit Goal</button>
+                <button style={buttonStyle} onClick={()=>setIsEditingGoal(true)}>Edit Goal</button>
                 
                 </>
             )}
@@ -97,14 +114,14 @@ export default function GoalCard({goal,tasks,taskInputs,setTaskInputs,addTask,to
               }
             /></h4>
 
-            <button onClick={()=>addTask(goal.id)}>Add Task</button>
+            <button style={buttonStyle} onClick={()=>addTask(goal.id)}>Add Task</button>
             </div>
 
             <TaskList tasks={tasks} goalId={goal.id} toggleTask={toggleTask} deleteTask={deleteTask} updateTask={updateTask}/>
             <br/>
 
             <button
-               style={{marginBottom:"10px" ,color:"red"}}
+               style={{...buttonStyle,background:"#ef4444"}}
                onClick={()=>
                 deleteGoal(goal.id)}
             >

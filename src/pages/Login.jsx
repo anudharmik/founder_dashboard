@@ -18,6 +18,16 @@ export default function Login() {
     }
   }
 
+  const buttonStyle = {
+      padding: "6px 12px",
+      borderRadius: "6px",
+      border: "none",
+      cursor: "pointer",
+      background: "#3b82f6",
+      color: "white",
+      marginLeft: "8px"
+    };
+
   return (
     <div style={{ padding: "40px" }}>
       <h1>Login</h1>
@@ -30,7 +40,7 @@ export default function Login() {
           onChange={(e) => setEmail(e.target.value)}
         />
 
-        <button type="submit">Send Login Link</button>
+        <button style={buttonStyle} type="submit">Send Login Link</button>
       </form>
     </div>
   );
