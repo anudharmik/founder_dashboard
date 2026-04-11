@@ -1,6 +1,6 @@
 import {Link} from 'react-router-dom';
 import {supabase} from '../supabaseClient';
-export default function Sidebar(){
+export default function Sidebar({darkMode}){
 
     async function logout(){
         await supabase.auth.signOut();
@@ -19,20 +19,45 @@ export default function Sidebar(){
 
         <div
           style={{
-            width:"200px",
+            width:"240px",
             height :"100vh",
-            background :"#0f0d47",
+            background :darkMode? "#020617":"#111827",
             color :"white",
             padding:"20px"
           }}
         >
             <h2>Founder OS</h2>
-            <nav style={{display:"flex",flexDirection:"column",gap:"10px"}}>
-                <Link to="/" style={{color:"white"}}>Dashboard</Link>
-                <Link to="/goals" style={{color:"white"}}>Goals</Link>
-                <Link to="/tasks" style={{color:"white"}}>Tasks</Link>
-                <Link to="/projects" style={{color:"white"}}>Projects</Link>
-                <Link to="/analytics" style={{color:"white"}}>Analytics</Link>
+            <nav style={{display:"flex",flexDirection:"column",gap:"10px",marginBottom:"10px",marginTop:"10px"}}>
+              <Link to="/" style={{
+              padding: "10px 14px",
+              borderRadius: "8px",
+              marginBottom: "8px",
+              cursor: "pointer"
+              }}>Dashboard</Link>
+              <Link to="/goals" style={{
+              padding: "10px 14px",
+              borderRadius: "8px",
+              marginBottom: "8px",
+              cursor: "pointer"
+            }}>Goals</Link> 
+              <Link to="/tasks" style={{
+              padding: "10px 14px",
+              borderRadius: "8px",
+              marginBottom: "8px",
+              cursor: "pointer"
+            }}>Tasks</Link>
+              <Link to="/projects" style={{
+              padding: "10px 14px",
+              borderRadius: "8px",
+              marginBottom: "8px",
+              cursor: "pointer"
+            }}>Projects</Link>
+              <Link to="/analytics" style={{
+              padding: "10px 14px",
+              borderRadius: "8px",
+              marginBottom: "8px",
+              cursor: "pointer"
+            }}>Analytics</Link>
             </nav>
             <button style={buttonStyle}onClick={logout} >Logout</button>
         </div>

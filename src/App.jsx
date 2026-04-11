@@ -14,6 +14,7 @@ export default function App() {
   const[user,setUser]=useState(null);
   const[goals,setGoals]=useState([]);
   const[tasks,setTasks]=useState([]);
+  const[darkMode,setDarkMode]=useState(false);
 
   useEffect(()=>{
       getUser();
@@ -137,15 +138,23 @@ export default function App() {
     return <Login />
   }
   return (
-    <div style={{background:"#f3f4f6"}}>
+    <div style={{background:darkMode?"#0f172a":"#f3f4f6",
+      color:darkMode?"white":"black",
+      minHeight:"100vh",
+      transition:"all 0.3s ease"    
+    }}>
+      
+      <button onClick={()=>setDarkMode(!darkMode)}>
+        {darkMode? "Light Mode" : "Dark Mode"}
+      </button>
     <BrowserRouter>
-    <Layout>
+    <Layout darkMode={darkMode}>
       <Routes>
-        <Route path="/" element={<Dashboard user={user} goals={goals} tasks={tasks}/>} />
-        <Route path="/goals" element={<Goals user={user} goals={goals} tasks={tasks} setTasks={setTasks} fetchGoals={fetchGoals} fetchTasks={fetchTasks} toggleTask={toggleTask} updateTask={updateTask} updateGoal={updateGoal}/>} />
-        <Route path="/tasks" element={<Tasks user={user} tasks={tasks} goals={goals} toggleTask={toggleTask}/>} />
-        <Route path="/projects" element={<Projects user={user}/>} />
-        <Route path="/analytics" element={<Analytics user={user} goals={goals} tasks={tasks}/>} />
+        <Route path="/" element={<Dashboard user={user} goals={goals} tasks={tasks} darkMode={darkMode}/>} />
+        <Route path="/goals" element={<Goals user={user} goals={goals} tasks={tasks} setTasks={setTasks} fetchGoals={fetchGoals} fetchTasks={fetchTasks} toggleTask={toggleTask} updateTask={updateTask} updateGoal={updateGoal} darkMode={darkMode}/>} />
+        <Route path="/tasks" element={<Tasks user={user} tasks={tasks} goals={goals} toggleTask={toggleTask} darkMode={darkMode}/>} />
+        <Route path="/projects" element={<Projects user={user} darkMode={darkMode}/>} />
+        <Route path="/analytics" element={<Analytics user={user} goals={goals} tasks={tasks} darkMode={darkMode}/>} />
       </Routes>
       </Layout>
     </BrowserRouter>

@@ -1,6 +1,6 @@
 import TaskItem from "./TaskItem";
 
-export default function TaskList({tasks,goalId,toggleTask,deleteTask,updateTask}){
+export default function TaskList({tasks,goalId,toggleTask,deleteTask,updateTask,darkMode}){
     const filteredTasks=tasks.filter(task=>task.goal_id===goalId);
     return (
         <ul>
@@ -11,6 +11,7 @@ export default function TaskList({tasks,goalId,toggleTask,deleteTask,updateTask}
                 toggleTask={toggleTask} 
                 deleteTask={deleteTask}
                 updateTask={updateTask}
+                darkMode={darkMode}
                 />
             ))}
             

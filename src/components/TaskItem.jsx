@@ -1,12 +1,12 @@
 import {useState} from "react";
 
-export default function TaskItem({task,toggleTask,deleteTask,updateTask}){
+export default function TaskItem({task,toggleTask,deleteTask,updateTask,darkMode}){
     const today=new Date();
     const deadlineDate=task.deadline?new Date(task.deadline):null;
     const [isEditing,setIsEditing]=useState(false);
     const [editedTitle,setEditedTitle]=useState(task.title);
     const [editedDeadline,setEditedDeadline]=useState(task.deadline?task.deadline.split("T")[0]:"");
-    let color="black";
+    let color=darkMode?"#e2e8f0":"black";
 
     const buttonStyle = {
       padding: "6px 12px",
@@ -39,7 +39,7 @@ export default function TaskItem({task,toggleTask,deleteTask,updateTask}){
             marginBottom:"10px",
             padding:"10px",
             borderRadius:"8px",
-            background:"#f9fafb",
+            background:darkMode?"#334155":"#f9fafb",
             boxShadow:"0 4px 12px rgba(0,0,0,0.08)"}}>
 
             {isEditing ? (

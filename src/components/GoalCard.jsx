@@ -2,7 +2,7 @@ import TaskList from "./TaskList";
 import "../App.css";
 import {useState} from "react";
 
-export default function GoalCard({goal,tasks,taskInputs,setTaskInputs,addTask,toggleTask,deleteTask,deleteGoal,deadlineInputs,setDeadlineInputs,updateTask,updateGoal}){
+export default function GoalCard({goal,tasks,taskInputs,setTaskInputs,addTask,toggleTask,deleteTask,deleteGoal,deadlineInputs,setDeadlineInputs,updateTask,updateGoal,darkMode}){
     const [isEditingGoal,setIsEditingGoal]=useState(false);
     const [editedGoalTitle,setEditedGoalTitle]=useState(goal.title);
     const [editedGoalDescription,setEditedGoalDescription]=useState(goal.description);
@@ -41,8 +41,9 @@ export default function GoalCard({goal,tasks,taskInputs,setTaskInputs,addTask,to
             marginBottom :"20px",
             padding:"20px",
             borderRadius:"12px",
-            background:"#ffffff",
-            boxShadow:"0 4px 12px rgba(0,0,0,0.08)"
+            background:darkMode?"#1e293b":"#ffffff",
+            color:darkMode?"#e2e8f0":"#111827",
+            boxShadow:darkMode?"0 4px 12px rgba(0,0,0,0.3)":"0 4px 12px rgba(0,0,0,0.08)"
         }}>
             {isEditingGoal?(
                 <>
@@ -117,7 +118,7 @@ export default function GoalCard({goal,tasks,taskInputs,setTaskInputs,addTask,to
             <button style={buttonStyle} onClick={()=>addTask(goal.id)}>Add Task</button>
             </div>
 
-            <TaskList tasks={tasks} goalId={goal.id} toggleTask={toggleTask} deleteTask={deleteTask} updateTask={updateTask}/>
+            <TaskList tasks={tasks} goalId={goal.id} toggleTask={toggleTask} deleteTask={deleteTask} updateTask={updateTask} darkMode={darkMode}/>
             <br/>
 
             <button
