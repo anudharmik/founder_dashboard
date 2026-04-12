@@ -3,6 +3,8 @@ import {useState} from "react";
 export default function Tasks({tasks,goals,toggleTask}){
     const [filter,setFilter]=useState("all");
     const today=new Date();
+    const [sortByUrgency,setSortByUrgency]=useState(true);
+    
 
     const filteredTasks=tasks.filter(task=>{
         if(filter==="completed")return task.completed;
@@ -24,11 +26,21 @@ export default function Tasks({tasks,goals,toggleTask}){
         return true;
     });
 
+    function getPriority(task){
+        if(task.completed)return 4;
+        if(!task.cdeadline)return 3;
+        const diff=
+        (new Date(TaskList.deadline)-today)/
+        (1000*60*60*24);
+        if(diff<0)return 1;
+        if(diff <= 2)return 2;
+        return 3;
+    }
+
     const sortedTasks=[...filteredTasks].sort((a,b)=>{
-        if(!a.deadline)return -1;
-        if(!b.deadline) return -1;
-        return new Date(a.deadline)-new Date(b.deadline);
+        return getPriority(a)-getPriority(b);
     });
+    const displayedTasks=sortByUrgency?sortedTasks:filteredTasks;
 
     function getGoalTitle(goalId){
         const goal=goals.find(g=>g.id===goalId);
@@ -69,7 +81,10 @@ export default function Tasks({tasks,goals,toggleTask}){
     </div>
 
     <ul>
-        {sortedTasks.map(task => (
+        <button onClick={()=>setSortByUrgency(!sortByUrgency)}>
+            {sortByUrgency?"Sort by Deadline":"Sort by Urgency"}
+        </button>
+        {displayedTasks.map(task => (
         <li key={task.id} style={{ marginBottom: "10px" }}>
 
         <b>[{getGoalTitle(task.goal_id)}]</b> — {task.title}
@@ -82,10 +97,14 @@ export default function Tasks({tasks,goals,toggleTask}){
         <span style={{marginLeft:"10px",fontSize:"12px"}}>
             {getDeadlineStatus(task)}
         </span>
-
         </li>
         ))}
     </ul>
+    {displayedTasks.length===0 && (
+        <p style={{marginTop:"20px",color:"#6b7280"}}>
+            No tasks found for this filter.
+        </p>
+    )}
     </>
     )
 }
