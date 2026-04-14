@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
-
+import { useNavigate } from "react-router-dom";
 import {supabase} from "./supabaseClient";
 import Login from "./pages/Login";
 import Layout from "./components/Layout";
@@ -15,6 +15,7 @@ export default function App() {
   const[goals,setGoals]=useState([]);
   const[tasks,setTasks]=useState([]);
   const[darkMode,setDarkMode]=useState(false);
+  
 
   useEffect(()=>{
       getUser();
@@ -38,10 +39,39 @@ export default function App() {
     };
     }, []);
 
+function AppContent({ children }) {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    function handleKeyDown(e) {
+
+      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") {
+        return;
+      }
+
+      if (e.key === "g") navigate("/goals");
+      if (e.key === "t") navigate("/tasks");
+      if (e.key === "d") navigate("/");
+      if (e.key === "n") navigate("/goals");
+
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
+  return children;
+}
+
   async function getUser(){
           const {data}=await supabase.auth.getUser();
           setUser(data.user);
       }
+
+    
 
   async function fetchGoals(){
     const{data}=await supabase
@@ -149,6 +179,8 @@ export default function App() {
       </button>
     <BrowserRouter>
     <Layout darkMode={darkMode}>
+      <div style={{flex:1}}>
+      <AppContent>
       <Routes>
         <Route path="/" element={<Dashboard user={user} goals={goals} tasks={tasks} darkMode={darkMode}/>} />
         <Route path="/goals" element={<Goals user={user} goals={goals} tasks={tasks} setTasks={setTasks} fetchGoals={fetchGoals} fetchTasks={fetchTasks} toggleTask={toggleTask} updateTask={updateTask} updateGoal={updateGoal} darkMode={darkMode}/>} />
@@ -156,6 +188,8 @@ export default function App() {
         <Route path="/projects" element={<Projects user={user} darkMode={darkMode}/>} />
         <Route path="/analytics" element={<Analytics user={user} goals={goals} tasks={tasks} darkMode={darkMode}/>} />
       </Routes>
+      </AppContent>
+      </div>
       </Layout>
     </BrowserRouter>
     </div>

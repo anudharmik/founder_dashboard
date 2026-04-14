@@ -1,6 +1,7 @@
 import {useState,useEffect} from 'react';
 import {supabase} from '../supabaseClient';
 import GoalCard from '../components/GoalCard'; 
+import {useRef} from 'react';
 
 export default function Goals({user,goals,tasks,setTasks,fetchGoals,fetchTasks,toggleTask,updateTask,updateGoal,darkMode}){
     
@@ -9,10 +10,10 @@ export default function Goals({user,goals,tasks,setTasks,fetchGoals,fetchTasks,t
     const[title,setTitle]=useState("");
     const[description,setDescription]=useState("");
 
-    const [taskInputs,setTaskInputs]=useState("");
+    const [taskInputs,setTaskInputs]=useState({});
     const [deadlineInputs,setDeadlineInputs]=useState({});
     
-    
+    const taskInputRef=useRef(null);
     // async function fetchGoals(){
     //     const {data,error}=await supabase
     //     .from("goals")
@@ -35,7 +36,10 @@ export default function Goals({user,goals,tasks,setTasks,fetchGoals,fetchTasks,t
     //     }
     // }
 
-        
+    useEffect(()=>{
+    taskInputRef.current?.focus();
+    },[]); 
+
     async function handleSubmit(e){
         e.preventDefault();
         if(!user){
@@ -82,6 +86,10 @@ export default function Goals({user,goals,tasks,setTasks,fetchGoals,fetchTasks,t
         if(!error){
             setTaskInputs({
                 ...taskInputs,
+                [goalId]:""
+            })
+            setDeadlineInputs({
+                ...deadlineInputs,
                 [goalId]:""
             });
             fetchTasks();
@@ -135,11 +143,18 @@ export default function Goals({user,goals,tasks,setTasks,fetchGoals,fetchTasks,t
     };
 
     return (
-    <div>
+    <div
+    style={{
+        maxWidth:"1100px",
+        margin:"0 auto",
+        padding:"20px"
+    }}
+    >
         <h1>Goals</h1>
 
         <form onSubmit={handleSubmit}>
             <input 
+            ref={taskInputRef}
             placeholder="Goal title"
             value={title}
             onChange={(e)=>setTitle(e.target.value)}
