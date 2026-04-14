@@ -1,7 +1,7 @@
 import StatCard from "../components/StatCard";
 import TaskChart from "../components/TaskChart";
 
-export default function Dashboard({goals,tasks,darkMode}){
+export default function Dashboard({goals,tasks,darkMode,loading}){
     const totalGoals=goals.length;
     const totalTasks=tasks.length;
     const completedTasks=tasks.filter(
@@ -27,12 +27,16 @@ export default function Dashboard({goals,tasks,darkMode}){
         return diff>=0 && diff<=2;
     });
 
+
+    if(loading){
+        return <p>Loading dashboard...</p>;
+    }
     return (
         <div
             style={{
                 maxWidth:"1200px",
                 margin:"0 auto",
-                //padding:"30px 20px",
+                padding:"30px 20px",
                 width:"100%"
             }}
         >

@@ -15,6 +15,7 @@ export default function App() {
   const[goals,setGoals]=useState([]);
   const[tasks,setTasks]=useState([]);
   const[darkMode,setDarkMode]=useState(false);
+  const [loading,setLoading]=useState(true);
   
 
   useEffect(()=>{
@@ -33,11 +34,12 @@ export default function App() {
     }
   );
 
-  
-    return () => {
-      listener.subscription.unsubscribe();
-    };
-    }, []);
+  return () => {
+    listener.subscription.unsubscribe();
+  };
+  }, []);
+
+
 
 function AppContent({ children }) {
   const navigate = useNavigate();
@@ -74,21 +76,26 @@ function AppContent({ children }) {
     
 
   async function fetchGoals(){
+    setLoading(true);
+
     const{data}=await supabase
     .from("goals")
     .select("*")
     .order("created_at",{ascending:false});
 
     setGoals(data || []);
+    setLoading(false);
   }
 
   async function fetchTasks(){
+    setLoading(true);
     const {data}=await supabase
     .from("tasks")
     .select("*")
     .order("created_at",{ascending:false});
 
     setTasks(data || []);
+    setLoading(false);
   }
 
   async function toggleTask(taskId, completed) {
@@ -171,7 +178,8 @@ function AppContent({ children }) {
     <div style={{background:darkMode?"#0f172a":"#f3f4f6",
       color:darkMode?"white":"black",
       minHeight:"100vh",
-      transition:"all 0.3s ease"    
+      transition:"all 0.3s ease"   
+       
     }}>
       
       <button onClick={()=>setDarkMode(!darkMode)}>
@@ -182,11 +190,11 @@ function AppContent({ children }) {
       <div style={{flex:1}}>
       <AppContent>
       <Routes>
-        <Route path="/" element={<Dashboard user={user} goals={goals} tasks={tasks} darkMode={darkMode}/>} />
-        <Route path="/goals" element={<Goals user={user} goals={goals} tasks={tasks} setTasks={setTasks} fetchGoals={fetchGoals} fetchTasks={fetchTasks} toggleTask={toggleTask} updateTask={updateTask} updateGoal={updateGoal} darkMode={darkMode}/>} />
-        <Route path="/tasks" element={<Tasks user={user} tasks={tasks} goals={goals} toggleTask={toggleTask} darkMode={darkMode}/>} />
-        <Route path="/projects" element={<Projects user={user} darkMode={darkMode}/>} />
-        <Route path="/analytics" element={<Analytics user={user} goals={goals} tasks={tasks} darkMode={darkMode}/>} />
+        <Route path="/" element={<Dashboard user={user} goals={goals} tasks={tasks} darkMode={darkMode} loading={loading}/>} />
+        <Route path="/goals" element={<Goals user={user} goals={goals} tasks={tasks} setTasks={setTasks} fetchGoals={fetchGoals} fetchTasks={fetchTasks} toggleTask={toggleTask} updateTask={updateTask} updateGoal={updateGoal} darkMode={darkMode} loading={loading}/>} />
+        <Route path="/tasks" element={<Tasks user={user} tasks={tasks} goals={goals} toggleTask={toggleTask} darkMode={darkMode} loading={loading}/>} />
+        <Route path="/projects" element={<Projects user={user} darkMode={darkMode} loading={loading}/>} />
+        <Route path="/analytics" element={<Analytics user={user} goals={goals} tasks={tasks} darkMode={darkMode} loading={loading}/>} />
       </Routes>
       </AppContent>
       </div>

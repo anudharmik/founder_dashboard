@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-export default function Tasks({tasks,goals,toggleTask}){
+export default function Tasks({tasks,goals,toggleTask,loading}){
     const [filter,setFilter]=useState("all");
     const today=new Date();
     const [sortByUrgency,setSortByUrgency]=useState(true);
@@ -66,11 +66,18 @@ export default function Tasks({tasks,goals,toggleTask}){
       cursor: "pointer",
       background: "#3b82f6",
       color: "white",
-      marginLeft: "8px"
+      marginLeft: "8px",
+      transition: "all 0.2s ease"
     };
 
     return (
     <>
+    {displayedTasks.length===0 && (
+        <p style={{marginTop:"20px",color:"#6b7280"}}>
+            No tasks found for this filter. 
+        </p>
+    )}
+
     <h1>Tasks</h1>
     <div style={{marginBottom:"20px"}}>
         <button style={buttonStyle} onClick={()=>setFilter("all")} >All</button>

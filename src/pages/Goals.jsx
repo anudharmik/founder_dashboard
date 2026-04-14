@@ -3,7 +3,7 @@ import {supabase} from '../supabaseClient';
 import GoalCard from '../components/GoalCard'; 
 import {useRef} from 'react';
 
-export default function Goals({user,goals,tasks,setTasks,fetchGoals,fetchTasks,toggleTask,updateTask,updateGoal,darkMode}){
+export default function Goals({user,goals,tasks,setTasks,fetchGoals,fetchTasks,toggleTask,updateTask,updateGoal,darkMode,loading}){
     
     
     
@@ -14,27 +14,6 @@ export default function Goals({user,goals,tasks,setTasks,fetchGoals,fetchTasks,t
     const [deadlineInputs,setDeadlineInputs]=useState({});
     
     const taskInputRef=useRef(null);
-    // async function fetchGoals(){
-    //     const {data,error}=await supabase
-    //     .from("goals")
-    //     .select("*")
-    //     .order("created_at",{ascending:false});
-
-    //     if(!error){
-    //         setgoals(data);
-    //     }
-    // }
-
-    // async function fetchTasks(){
-    //     const {data,error}= await supabase
-    //     .from("tasks")
-    //     .select("*")
-    //     .order("created_at", {ascending:false});
-
-    //     if(!error){
-    //         setTasks(data);
-    //     }
-    // }
 
     useEffect(()=>{
     taskInputRef.current?.focus();
@@ -139,7 +118,8 @@ export default function Goals({user,goals,tasks,setTasks,fetchGoals,fetchTasks,t
       cursor: "pointer",
       background: "#3b82f6",
       color: "white",
-      marginLeft: "8px"
+      marginLeft: "8px",
+      transition: "all 0.2s ease"
     };
 
     return (
@@ -150,6 +130,12 @@ export default function Goals({user,goals,tasks,setTasks,fetchGoals,fetchTasks,t
         padding:"20px"
     }}
     >
+        {goals.length===0 && (
+            <p style={{marginTop:"20px",color:"#6b7280"}}>
+                No goals yet. Start by adding one 📈
+            </p>
+        )}
+
         <h1>Goals</h1>
 
         <form onSubmit={handleSubmit}>

@@ -25,7 +25,8 @@ export default function Login() {
       cursor: "pointer",
       background: "#3b82f6",
       color: "white",
-      marginLeft: "8px"
+      marginLeft: "8px",
+      transition: "all 0.2s ease"
     };
 
   return (
