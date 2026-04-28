@@ -229,7 +229,7 @@ function AppContent({ children }) {
         <Route path="/" element={<Dashboard user={user} goals={goals} tasks={tasks} darkMode={darkMode} loading={loading}/>} />
         <Route path="/goals" element={<Goals user={user} goals={goals} tasks={tasks} projects={projects} setTasks={setTasks} fetchGoals={fetchGoals} fetchTasks={fetchTasks} toggleTask={toggleTask} updateTask={updateTask} updateGoal={updateGoal} darkMode={darkMode} loading={loading}/>} />
         <Route path="/tasks" element={<Tasks user={user} tasks={tasks} goals={goals} toggleTask={toggleTask} darkMode={darkMode} loading={loading}/>} />
-        <Route path="/projects" element={<Projects user={user} darkMode={darkMode} loading={loading} projects={projects} fetchProjects={fetchProjects}/>} />
+        <Route path="/projects" element={<Projects user={user} darkMode={darkMode} loading={loading} projects={projects} fetchProjects={fetchProjects} goals={goals} tasks={tasks}/>} />
         <Route path="/analytics" element={<Analytics user={user} goals={goals} tasks={tasks} darkMode={darkMode} loading={loading}/>} />
       </Routes>
       </AppContent>

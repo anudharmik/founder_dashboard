@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { supabase } from "../supabaseClient";
 
-export default function Projects({ user,projects,fetchProjects,darkMode,loading}) {
+export default function Projects({ user,projects,fetchProjects,darkMode,loading,goals,tasks}) {
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-
+  
   async function createProject(e) {
     e.preventDefault();
 
@@ -26,7 +26,7 @@ export default function Projects({ user,projects,fetchProjects,darkMode,loading}
     }
   }
 
-
+  if (!projects || !goals || !tasks) return null;
   return (
     
     <div style={{ padding: "20px" }}>
@@ -53,23 +53,69 @@ export default function Projects({ user,projects,fetchProjects,darkMode,loading}
       No projects yet. Create your first one 🚀
       </p>
     )}
-    
+
       <div style={{ marginTop: "20px" }}>
-      {projects.map(project => (
+      {projects.map(project => {
+
+  const projectGoals = goals.filter(
+    g => g.project_id === project.id
+  );
+
+  const totalGoals = projectGoals.length;
+
+  const projectTasks = tasks.filter(task =>
+    projectGoals.some(goal => goal.id === task.goal_id)
+  );
+
+  const completedTasks = projectTasks.filter(t => t.completed).length;
+
+  const progress =
+    projectTasks.length === 0
+      ? 0
+      : Math.round((completedTasks / projectTasks.length) * 100);
+
+  return (
+    <div
+      key={project.id}
+      style={{
+        padding: "20px",
+        borderRadius: "12px",
+        background: darkMode ? "#1e293b" : "#ffffff",
+        marginBottom: "15px",
+        boxShadow: "0 2px 8px rgba(0,0,0,0.08)"
+      }}
+    >
+      <h3>{project.title}</h3>
+      <p>{project.description}</p>
+
+      <p style={{ marginTop: "10px" }}>
+        Goals: {totalGoals}
+      </p>
+
+      <p>
+        Progress: {progress}%
+      </p>
+
       <div
-       key={project.id}
-       style={{
-        padding: "15px",
-        borderRadius: "10px",
-        background: "#fff",
-        marginBottom: "10px",
-        boxShadow: "0 2px 6px rgba(0,0,0,0.08)"
-       }}
+        style={{
+          height: "8px",
+          background: "#e5e7eb",
+          borderRadius: "6px",
+          marginTop: "8px"
+        }}
       >
-       <h3>{project.title}</h3>
-       <p>{project.description}</p>
+        <div
+          style={{
+            width: `${progress}%`,
+            height: "100%",
+            background: "#22c55e",
+            borderRadius: "6px"
+          }}
+        />
       </div>
-      ))}
+    </div>
+  );
+})}
     </div>
     </div>
   );
