@@ -9,19 +9,21 @@ import Goals from "./pages/Goals";
 import Tasks from "./pages/Tasks";
 import Projects from "./pages/Projects";
 import Analytics from "./pages/Analytics";
+import ResetPassword from "./pages/ResetPassword";
 
 export default function App() {
   const[user,setUser]=useState(null);
   const[goals,setGoals]=useState([]);
   const[tasks,setTasks]=useState([]);
   const[darkMode,setDarkMode]=useState(false);
-  const [loading,setLoading]=useState(true);
-  
+  const[loading,setLoading]=useState(true);
+  const[projects,setProjects]=useState([]);
 
   useEffect(()=>{
       getUser();
       fetchGoals();
       fetchTasks();
+      fetchProjects();
   },[]);
 
   useEffect(() => {
@@ -75,28 +77,47 @@ function AppContent({ children }) {
 
     
 
-  async function fetchGoals(){
+  async function fetchGoals(customUserId){
     setLoading(true);
+    const authData = await supabase.auth.getUser();
+    const id = customUserId || authData.data.user?.id;
+    if (!id) {
+      setGoals([]);
+      setLoading(false);
+      return;
+    }
 
     const{data}=await supabase
     .from("goals")
     .select("*")
+    .eq("user_id", id)
     .order("created_at",{ascending:false});
 
     setGoals(data || []);
     setLoading(false);
   }
 
-  async function fetchTasks(){
+  async function fetchTasks(customUserId){
     setLoading(true);
+    const authData = await supabase.auth.getUser();
+    const id = customUserId || authData.data.user?.id;
+    if (!id) {
+      setTasks([]);
+      setLoading(false);
+      return;
+    }
+
     const {data}=await supabase
     .from("tasks")
     .select("*")
+    .eq("user_id", id)
     .order("created_at",{ascending:false});
 
     setTasks(data || []);
     setLoading(false);
   }
+
+
 
   async function toggleTask(taskId, completed) {
 
@@ -125,6 +146,15 @@ function AppContent({ children }) {
     if (error) {
       fetchTasks();
     }
+  }
+
+  async function fetchProjects() {
+  const { data } = await supabase
+    .from("projects")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+    setProjects(data || []);
   }
 
     async function updateTask(taskId, newTitle, newDeadline) {
@@ -171,6 +201,12 @@ function AppContent({ children }) {
   }
 
 
+  const isResetPath = window.location.pathname === '/reset-password';
+
+  if (isResetPath) {
+    return <ResetPassword />
+  }
+
   if(!user){
     return <Login />
   }
@@ -193,7 +229,7 @@ function AppContent({ children }) {
         <Route path="/" element={<Dashboard user={user} goals={goals} tasks={tasks} darkMode={darkMode} loading={loading}/>} />
         <Route path="/goals" element={<Goals user={user} goals={goals} tasks={tasks} setTasks={setTasks} fetchGoals={fetchGoals} fetchTasks={fetchTasks} toggleTask={toggleTask} updateTask={updateTask} updateGoal={updateGoal} darkMode={darkMode} loading={loading}/>} />
         <Route path="/tasks" element={<Tasks user={user} tasks={tasks} goals={goals} toggleTask={toggleTask} darkMode={darkMode} loading={loading}/>} />
-        <Route path="/projects" element={<Projects user={user} darkMode={darkMode} loading={loading}/>} />
+        <Route path="/projects" element={<Projects user={user} darkMode={darkMode} loading={loading} projects={projects} fetchProjects={fetchProjects}/>} />
         <Route path="/analytics" element={<Analytics user={user} goals={goals} tasks={tasks} darkMode={darkMode} loading={loading}/>} />
       </Routes>
       </AppContent>

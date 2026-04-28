@@ -1,56 +1,30 @@
 import { useState } from "react";
 import { supabase } from "../supabaseClient";
 
-export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+export default function ResetPassword() {
+  const [newPassword, setNewPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
-  const [mode, setMode] = useState("signin"); // 'signin', 'signup', 'forgot'
 
-  async function handleSubmit(e) {
+  async function handleReset(e) {
     e.preventDefault();
     setLoading(true);
     setErrorMsg("");
     setSuccessMsg("");
 
-    if (mode === "signin") {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      if (error) setErrorMsg(error.message);
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword,
+    });
 
-    } else if (mode === "signup") {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
-      if (error) {
-        setErrorMsg(error.message);
-      } else {
-        setSuccessMsg("Check your email to confirm your sign up!");
-      }
-
-    } else if (mode === "forgot") {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: "http://localhost:5173/reset-password",
-      });
-      if (error) {
-        setErrorMsg(error.message);
-      } else {
-        setSuccessMsg("Password reset link sent to your email!");
-      }
+    if (error) {
+      setErrorMsg(error.message);
+    } else {
+      setSuccessMsg("Password updated successfully! Redirecting...");
+      setTimeout(() => window.location.href = "/", 2000);
     }
-
+    
     setLoading(false);
-  }
-
-  function toggleMode(newMode) {
-    setMode(newMode);
-    setErrorMsg("");
-    setSuccessMsg("");
   }
 
   return (
@@ -134,10 +108,6 @@ export default function Login() {
           box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
         }
 
-        .form-input::placeholder {
-          color: #9ca3af;
-        }
-
         .login-btn {
           margin-top: 8px;
           padding: 12px;
@@ -181,94 +151,33 @@ export default function Login() {
           text-align: center;
           margin-bottom: 16px;
         }
-
-        .toggle-section {
-          text-align: center;
-          margin-top: 20px;
-          font-size: 14px;
-          color: #4b5563;
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-        }
-
-        .toggle-btn {
-          background: none;
-          border: none;
-          color: #3b82f6;
-          font-size: 14px;
-          cursor: pointer;
-          padding: 0;
-        }
-        
-        .toggle-btn:hover {
-          text-decoration: underline;
-        }
       `}</style>
-
       <div className="login-card">
         <div className="login-header">
-          <h1 className="login-title">
-            {mode === "signin" ? "Login" : mode === "signup" ? "Create Account" : "Reset Password"}
-          </h1>
-          <p className="login-subtitle">
-            {mode === "signin" 
-              ? "Sign in to your account" 
-              : mode === "signup"
-              ? "Sign up for a new account"
-              : "Enter your email to receive a reset link"}
-          </p>
+          <h1 className="login-title">Reset Password</h1>
+          <p className="login-subtitle">Enter your new password below.</p>
         </div>
 
         {errorMsg && <div className="error-msg">{errorMsg}</div>}
         {successMsg && <div className="success-msg">{successMsg}</div>}
 
-        <form className="login-form" onSubmit={handleSubmit}>
+        <form className="login-form" onSubmit={handleReset}>
           <div className="form-group">
-            <label className="form-label">Email</label>
+            <label className="form-label">New Password</label>
             <input
               className="form-input"
-              type="email"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="password"
+              placeholder="••••••••"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
               required
             />
           </div>
 
-          {mode !== "forgot" && (
-            <div className="form-group">
-              <label className="form-label">Password</label>
-              <input
-                className="form-input"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-          )}
-
           <button className="login-btn" type="submit" disabled={loading}>
-            {loading ? "Processing..." : mode === "signin" ? "Sign In" : mode === "signup" ? "Sign Up" : "Send Reset Link"}
+            {loading ? "Updating..." : "Update Password"}
           </button>
         </form>
-
-        <div className="toggle-section">
-          {mode === "signin" && (
-            <>
-              <div>Don't have an account? <button type="button" className="toggle-btn" onClick={() => toggleMode("signup")}>Sign up</button></div>
-              <div><button type="button" className="toggle-btn" onClick={() => toggleMode("forgot")}>Forgot password?</button></div>
-            </>
-          )}
-          {mode === "signup" && (
-            <div>Already have an account? <button type="button" className="toggle-btn" onClick={() => toggleMode("signin")}>Sign in</button></div>
-          )}
-          {mode === "forgot" && (
-            <div>Remembered your password? <button type="button" className="toggle-btn" onClick={() => toggleMode("signin")}>Sign in</button></div>
-          )}
-        </div>
       </div>
     </div>
   );
