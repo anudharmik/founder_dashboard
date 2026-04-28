@@ -3,9 +3,7 @@ import {supabase} from '../supabaseClient';
 import GoalCard from '../components/GoalCard'; 
 import {useRef} from 'react';
 
-export default function Goals({user,goals,tasks,setTasks,fetchGoals,fetchTasks,toggleTask,updateTask,updateGoal,darkMode,loading}){
-    
-    
+export default function Goals({user,goals,tasks,projects,setTasks,fetchGoals,fetchTasks,toggleTask,updateTask,updateGoal,darkMode,loading}){
     
     const[title,setTitle]=useState("");
     const[description,setDescription]=useState("");
@@ -14,6 +12,9 @@ export default function Goals({user,goals,tasks,setTasks,fetchGoals,fetchTasks,t
     const [deadlineInputs,setDeadlineInputs]=useState({});
     
     const taskInputRef=useRef(null);
+
+    const[selectedProject,setSelectedProject]=useState("");
+    const [filterProject, setFilterProject] = useState("");
 
     useEffect(()=>{
     taskInputRef.current?.focus();
@@ -34,6 +35,7 @@ export default function Goals({user,goals,tasks,setTasks,fetchGoals,fetchTasks,t
             progress:0,
             status:"active",
             user_id: user.id,
+            project_id:selectedProject || null
             }
         ]);
 
@@ -41,6 +43,7 @@ export default function Goals({user,goals,tasks,setTasks,fetchGoals,fetchTasks,t
             setTitle("");
             setDescription("");
             fetchGoals();
+            setSelectedProject("");
         }
     }
 
@@ -137,6 +140,17 @@ export default function Goals({user,goals,tasks,setTasks,fetchGoals,fetchTasks,t
         )}
 
         <h1>Goals</h1>
+        <select
+        value={selectedProject}
+        onChange={(e) => setSelectedProject(e.target.value)}
+        >
+        <option value="">Select Project</option>
+        {projects.map(project => (
+            <option key={project.id} value={project.id}>
+            {project.title}
+            </option>
+        ))}
+        </select>
 
         <form onSubmit={handleSubmit}>
             <input 
@@ -155,8 +169,25 @@ export default function Goals({user,goals,tasks,setTasks,fetchGoals,fetchTasks,t
             <button style={buttonStyle} type="submit">Add Goal</button>
         </form>
 
+        <select
+        value={filterProject}
+        onChange={(e) => setFilterProject(e.target.value)}
+        >
+        <option value="">All Projects</option>
+
+        {projects.map(project => (
+            <option key={project.id} value={project.id}>
+            {project.title}
+            </option>
+        ))}
+        </select>
+
         <ul>
-            {goals.map(goal => (
+        {goals
+            .filter(goal =>
+                filterProject ? goal.project_id === filterProject : true
+            )
+            .map(goal => (
                 <GoalCard
                 key={goal.id}
                 goal={goal}
