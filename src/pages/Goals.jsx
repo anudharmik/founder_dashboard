@@ -2,6 +2,7 @@ import {useState,useEffect} from 'react';
 import {supabase} from '../supabaseClient';
 import GoalCard from '../components/GoalCard'; 
 import {useRef} from 'react';
+import {useLocation} from "react-router-dom";
 
 export default function Goals({user,goals,tasks,projects,setTasks,fetchGoals,fetchTasks,toggleTask,updateTask,updateGoal,darkMode,loading}){
     
@@ -15,10 +16,20 @@ export default function Goals({user,goals,tasks,projects,setTasks,fetchGoals,fet
 
     const[selectedProject,setSelectedProject]=useState("");
     const [filterProject, setFilterProject] = useState("");
+    const location = useLocation();
+
+    const queryParams = new URLSearchParams(location.search);
+    const projectFromURL = queryParams.get("project");
 
     useEffect(()=>{
     taskInputRef.current?.focus();
     },[]); 
+
+    useEffect(() => {
+    if(projectFromURL) {
+    setFilterProject(projectFromURL);
+    }
+    }, [projectFromURL]);
 
     async function handleSubmit(e){
         e.preventDefault();
@@ -125,6 +136,12 @@ export default function Goals({user,goals,tasks,projects,setTasks,fetchGoals,fet
       transition: "all 0.2s ease"
     };
 
+    {filterProject && (
+    <p style={{ marginBottom: "10px", fontWeight: "bold" }}>
+    Viewing goals for selected project
+    </p>
+    )}
+    
     return (
     <div
     style={{

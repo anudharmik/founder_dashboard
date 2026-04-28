@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { supabase } from "../supabaseClient";
+import {useNavigate} from "react-router-dom"
+
 
 export default function Projects({ user,projects,fetchProjects,darkMode,loading,goals,tasks}) {
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  
+  const navigate=useNavigate();
+
   async function createProject(e) {
     e.preventDefault();
 
@@ -54,8 +57,8 @@ export default function Projects({ user,projects,fetchProjects,darkMode,loading,
       </p>
     )}
 
-      <div style={{ marginTop: "20px" }}>
-      {projects.map(project => {
+<div style={{ marginTop: "20px" }}>
+{projects.map(project => {
 
   const projectGoals = goals.filter(
     g => g.project_id === project.id
@@ -77,12 +80,14 @@ export default function Projects({ user,projects,fetchProjects,darkMode,loading,
   return (
     <div
       key={project.id}
+      onClick={()=>navigate(`/goals?project=${project.id}`)}
       style={{
         padding: "20px",
         borderRadius: "12px",
         background: darkMode ? "#1e293b" : "#ffffff",
         marginBottom: "15px",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.08)"
+        boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+        cursor: "pointer"
       }}
     >
       <h3>{project.title}</h3>
