@@ -1,5 +1,6 @@
 import StatCard from "../components/StatCard";
 import TaskChart from "../components/TaskChart";
+import {useState,useEffect} from "react"
 
 export default function Dashboard({goals,tasks,darkMode,loading}){
     const totalGoals=goals.length;
@@ -13,6 +14,7 @@ export default function Dashboard({goals,tasks,darkMode,loading}){
         totalTasks===0?0:Math.round((completedTasks/totalTasks)*100);
 
     const today=new Date();
+
     const overdueTasks=tasks.filter(task=>{
         if(!task.deadline || task.completed) return false;
 
@@ -27,6 +29,63 @@ export default function Dashboard({goals,tasks,darkMode,loading}){
         return diff>=0 && diff<=2;
     });
 
+    const [aiInsights, setAiInsights] = useState("");
+    console.log("Sending Tasks:",tasks);
+
+async function fetchAIInsights() {
+  try {
+    const res = await fetch("http://localhost:3001/api/ai-insights", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ tasks }),
+    });
+
+    const data = await res.json();
+
+    
+    function formatInsights(text) {
+      if (!text || typeof text !== 'string') return "";
+      
+      const cleanText = text.replace(/\*\*/g, '');
+      const focus = cleanText.match(/Focus Today:[\s\S]*?(?=\n\n|$)/i);
+      const risks = cleanText.match(/Risks:[\s\S]*?(?=\n\n|$)/i);
+      const insight = cleanText.match(/Insight:[\s\S]*?(?=\n\n|$)/i);
+
+      const sections = [focus?.[0], risks?.[0], insight?.[0]].filter(Boolean);
+      
+      if (sections.length === 0) {
+        return text;
+      }
+
+      return sections.join("\n\n");
+    }
+
+    const formatted = formatInsights(data.insights);
+
+    setAiInsights(formatted);
+    sessionStorage.setItem("aiInsightsCache", formatted);
+    sessionStorage.setItem("tasksCache", JSON.stringify(tasks));
+
+  } catch (error) {
+    console.error("Fetch failed:", error);
+  }
+}
+
+    useEffect(()=>{
+        if(tasks.length>0){
+            const currentTasksStr = JSON.stringify(tasks);
+            const cachedTasksStr = sessionStorage.getItem("tasksCache");
+            const cachedInsights = sessionStorage.getItem("aiInsightsCache");
+
+            if (currentTasksStr === cachedTasksStr && cachedInsights) {
+                setAiInsights(cachedInsights);
+            } else {
+                fetchAIInsights();
+            }
+        }
+    },[tasks]);
 
     if(loading){
         return <p>Loading dashboard...</p>;
@@ -84,6 +143,16 @@ export default function Dashboard({goals,tasks,darkMode,loading}){
             <TaskChart completed={completedTasks} remaining={remainingTasks}/>
             </div>
 
+        </div>
+        <div style={{ marginTop: "30px" }}>
+        <h2>AI Insights</h2>
+        {aiInsights ? (
+            <p style={{ whiteSpace: "pre-line" }}>
+            {aiInsights}
+            </p>
+        ) : (
+            <p>Generating insights...</p>
+        )}
         </div>
         </div>
     )

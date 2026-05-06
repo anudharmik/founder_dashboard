@@ -157,6 +157,7 @@ export default function Goals({user,goals,tasks,projects,setTasks,fetchGoals,fet
         )}
 
         <h1>Goals</h1>
+        <h4>Select Project to add Goals in it  :
         <select
         value={selectedProject}
         onChange={(e) => setSelectedProject(e.target.value)}
@@ -168,6 +169,7 @@ export default function Goals({user,goals,tasks,projects,setTasks,fetchGoals,fet
             </option>
         ))}
         </select>
+        </h4>
 
         <form onSubmit={handleSubmit}>
             <input 
@@ -186,6 +188,7 @@ export default function Goals({user,goals,tasks,projects,setTasks,fetchGoals,fet
             <button style={buttonStyle} type="submit">Add Goal</button>
         </form>
 
+        <h4>View from this Project  :
         <select
         value={filterProject}
         onChange={(e) => setFilterProject(e.target.value)}
@@ -198,6 +201,7 @@ export default function Goals({user,goals,tasks,projects,setTasks,fetchGoals,fet
             </option>
         ))}
         </select>
+        </h4>
 
         <ul>
         {goals
