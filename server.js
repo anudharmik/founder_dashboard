@@ -19,12 +19,13 @@ app.post("/api/ai-insights", async (req, res) => {
 
   const prompt = `
   Analyze these tasks and give productivity insights.
-  IMPORTANT: You must format your response EXACTLY using the following sections:
-  "Focus Today:" - What should be prioritized right now.
-  "Risks:" - Potential delays, overdue tasks, or bottlenecks.
-  "Insight:" - A general productivity tip or observation based on the tasks.
-  
-  Do not use markdown formatting like ** or # for the section headers. Ensure the section names are written exactly as requested.
+  IMPORTANT: You must format your response EXACTLY as a valid JSON object. Do not include any markdown, backticks, or extra text. Only return the JSON object.
+  The JSON object must have the following structure:
+  {
+    "focusToday": ["Task 1", "Task 2"],
+    "risk": "Potential delays, overdue tasks, or bottlenecks.",
+    "insight": "A general productivity tip or observation based on the tasks."
+  }
   
   Tasks:
   ${JSON.stringify(tasks)}
@@ -56,14 +57,22 @@ app.post("/api/ai-insights", async (req, res) => {
     const data = await response.json();
     console.log("Gemini RAW RESPONSE",JSON.stringify(data,null,2));
 
-    const insight=
-    data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-    data?.error?.message ||
-    "No insights generated";
+    let raw = data?.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
+    raw = raw.replace(/```json/gi, '').replace(/```/g, '').trim();
 
-    res.json({
-      insights: insight
-    });
+    let parsed;
+
+    try {
+      parsed = JSON.parse(raw);
+    } catch {
+      parsed = {
+        focusToday: [],
+        risk: "Could not analyze tasks",
+        insight: "AI parsing failed"
+      };
+    }
+
+    res.json(parsed);
 
   }catch (err){
     console.error("FULL ERROR:",err);

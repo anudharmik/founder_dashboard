@@ -29,7 +29,11 @@ export default function Dashboard({goals,tasks,darkMode,loading}){
         return diff>=0 && diff<=2;
     });
 
-    const [aiInsights, setAiInsights] = useState("");
+    const [aiInsights, setAiInsights] = useState({
+  focusToday: [],
+  risk: "",
+  insight: ""
+});
     console.log("Sending Tasks:",tasks);
 
 async function fetchAIInsights() {
@@ -44,28 +48,8 @@ async function fetchAIInsights() {
 
     const data = await res.json();
 
-    
-    function formatInsights(text) {
-      if (!text || typeof text !== 'string') return "";
-      
-      const cleanText = text.replace(/\*\*/g, '');
-      const focus = cleanText.match(/Focus Today:[\s\S]*?(?=\n\n|$)/i);
-      const risks = cleanText.match(/Risks:[\s\S]*?(?=\n\n|$)/i);
-      const insight = cleanText.match(/Insight:[\s\S]*?(?=\n\n|$)/i);
-
-      const sections = [focus?.[0], risks?.[0], insight?.[0]].filter(Boolean);
-      
-      if (sections.length === 0) {
-        return text;
-      }
-
-      return sections.join("\n\n");
-    }
-
-    const formatted = formatInsights(data.insights);
-
-    setAiInsights(formatted);
-    sessionStorage.setItem("aiInsightsCache", formatted);
+    setAiInsights(data);
+    sessionStorage.setItem("aiInsightsCache", JSON.stringify(data));
     sessionStorage.setItem("tasksCache", JSON.stringify(tasks));
 
   } catch (error) {
@@ -80,7 +64,11 @@ async function fetchAIInsights() {
             const cachedInsights = sessionStorage.getItem("aiInsightsCache");
 
             if (currentTasksStr === cachedTasksStr && cachedInsights) {
-                setAiInsights(cachedInsights);
+                try {
+                    setAiInsights(JSON.parse(cachedInsights));
+                } catch (e) {
+                    fetchAIInsights();
+                }
             } else {
                 fetchAIInsights();
             }
@@ -129,6 +117,27 @@ async function fetchAIInsights() {
                 )}
             </div>
 
+            <div
+  style={{
+    padding: "20px",
+    borderRadius: "12px",
+    background: darkMode ? "#1e293b" : "#ffffff",
+    marginTop: "20px"
+  }}
+>
+  <h3>🔥 Focus Today</h3>
+
+  {aiInsights.focusToday?.map((task, index) => (
+    <p key={index}>• {task}</p>
+  ))}
+
+  <h3 style={{ marginTop: "15px" }}>⚠️ Risk</h3>
+  <p>{aiInsights.risk}</p>
+
+  <h3 style={{ marginTop: "15px" }}>📊 Insight</h3>
+  <p>{aiInsights.insight}</p>
+</div>
+
             <div style={{
                 display:"grid",
                 gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))",
@@ -144,7 +153,7 @@ async function fetchAIInsights() {
             </div>
 
         </div>
-        <div style={{ marginTop: "30px" }}>
+        {/* <div style={{ marginTop: "30px" }}>
         <h2>AI Insights</h2>
         {aiInsights ? (
             <p style={{ whiteSpace: "pre-line" }}>
@@ -153,7 +162,7 @@ async function fetchAIInsights() {
         ) : (
             <p>Generating insights...</p>
         )}
-        </div>
+        </div> */}
         </div>
     )
 }
