@@ -4,7 +4,7 @@ import GoalCard from '../components/GoalCard';
 import {useRef} from 'react';
 import {useLocation} from "react-router-dom";
 
-export default function Goals({user,goals,tasks,projects,setTasks,fetchGoals,fetchTasks,toggleTask,updateTask,updateGoal,darkMode,loading}){
+export default function Goals({user,goals,tasks,projects,setTasks,fetchGoals,fetchTasks,toggleTask,updateTask,updateGoal,darkMode,loading,aiInsights}){
     
     const[title,setTitle]=useState("");
     const[description,setDescription]=useState("");
@@ -224,6 +224,7 @@ export default function Goals({user,goals,tasks,projects,setTasks,fetchGoals,fet
                 updateTask={updateTask}
                 updateGoal={updateGoal}
                 darkMode={darkMode}
+                aiInsights={aiInsights}
                 />
 
             ))}

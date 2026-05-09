@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-export default function TaskItem({task,toggleTask,deleteTask,updateTask,darkMode}){
+export default function TaskItem({task,toggleTask,deleteTask,updateTask,darkMode,isFocusTask}){
     const today=new Date();
     const deadlineDate=task.deadline?new Date(task.deadline):null;
     const [isEditing,setIsEditing]=useState(false);
@@ -39,8 +39,14 @@ export default function TaskItem({task,toggleTask,deleteTask,updateTask,darkMode
             marginBottom:"10px",
             padding:"10px",
             borderRadius:"8px",
-            background:darkMode?"#334155":"#f9fafb",
-            boxShadow:"0 4px 12px rgba(0,0,0,0.08)"}}>
+            border: isFocusTask
+            ? "2px solid #f59e0b"
+            : "1px solid #d1d5db",
+            boxShadow:"0 4px 12px rgba(0,0,0,0.08)",
+            background: isFocusTask
+            ? (darkMode ? "#3f2f0b" : "#fef3c7")
+            : (darkMode ? "#1e293b" : "#ffffff")
+            }}>
 
             {isEditing ? (
             <>
@@ -64,6 +70,18 @@ export default function TaskItem({task,toggleTask,deleteTask,updateTask,darkMode
         onClick={() => toggleTask(task.id,task.completed)}>
 
             {task.completed ? "✅" : "⬜"} {task.title}
+            {isFocusTask && (
+            <span
+                style={{
+                marginLeft: "10px",
+                fontSize: "12px",
+                fontWeight: "bold",
+                color: "#b45309"
+                }}
+            >
+                🔥 Focus
+            </span>
+            )}
         </span>
 
         {task.deadline && (
