@@ -38,6 +38,7 @@ export default function Dashboard({goals,tasks,darkMode,loading}){
     console.log("Sending Tasks:",tasks);
 
 async function fetchAIInsights() {
+    if(!tasks.length) return;
   try {
     const res = await fetch("http://localhost:3001/api/ai-insights", {
       method: "POST",
@@ -47,14 +48,16 @@ async function fetchAIInsights() {
       body: JSON.stringify({ tasks }),
     });
 
+     if (!res.ok) {
+      throw new Error("Failed to fetch AI insights");
+    }
     const data = await res.json();
 
     setAiInsights(data);
     
     sessionStorage.setItem("aiInsightsCache", JSON.stringify(data));
     sessionStorage.setItem("tasksCache", JSON.stringify(tasks));
-    if(!error){
-    toast.success("AI insights fetched successfully and here to help you out");}
+    toast.success("AI insights updated and ready to help you out");
 
   } catch (error) {
     console.error("Fetch failed:", error);
