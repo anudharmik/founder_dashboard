@@ -61,7 +61,7 @@ export default function GoalCard({goal,tasks,taskInputs,setTaskInputs,addTask,to
 
             ):(
                 <>
-                <h3>{goal.title}</h3>
+                <h2>{goal.title}</h2>
                 <p>{goal.description}</p>
 
                 <button style={buttonStyle} onClick={()=>setIsEditingGoal(true)}>Edit Goal</button>
@@ -117,7 +117,8 @@ export default function GoalCard({goal,tasks,taskInputs,setTaskInputs,addTask,to
 
             <button style={buttonStyle} onClick={()=>addTask(goal.id)}>Add Task</button>
             </div>
-
+            <hr/>
+            <h3>Tasks for the above goal:</h3>
             <TaskList tasks={tasks} goalId={goal.id} toggleTask={toggleTask} deleteTask={deleteTask} updateTask={updateTask} darkMode={darkMode} aiInsights={aiInsights}/>
             <br/>
 

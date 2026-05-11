@@ -3,6 +3,7 @@ import {supabase} from '../supabaseClient';
 import GoalCard from '../components/GoalCard'; 
 import {useRef} from 'react';
 import {useLocation} from "react-router-dom";
+import toast from "react-hot-toast";
 
 export default function Goals({user,goals,tasks,projects,setTasks,fetchGoals,fetchTasks,toggleTask,updateTask,updateGoal,darkMode,loading,aiInsights}){
     
@@ -55,6 +56,9 @@ export default function Goals({user,goals,tasks,projects,setTasks,fetchGoals,fet
             setDescription("");
             fetchGoals();
             setSelectedProject("");
+            toast.success("Goal added successfully");
+        }else{
+            toast.error("Failed to add goal");
         }
     }
 
@@ -86,6 +90,9 @@ export default function Goals({user,goals,tasks,projects,setTasks,fetchGoals,fet
                 [goalId]:""
             });
             fetchTasks();
+            toast.success("Task added successfully");
+        }else{
+            toast.error("Failed to add task");
         }
     }
 
@@ -99,6 +106,9 @@ export default function Goals({user,goals,tasks,projects,setTasks,fetchGoals,fet
 
         if(!error){
             setTasks(prev=>prev.filter(task=> task.id!==taskId));
+            toast.success("Task deleted successfully")
+        }else{
+            toast.error("Failed to delete task")
         }
     }
 
@@ -122,6 +132,9 @@ export default function Goals({user,goals,tasks,projects,setTasks,fetchGoals,fet
         if(!goalError){
             fetchGoals();
             fetchTasks();
+            toast.success("Goal deleted successfully");
+        }else{
+            toast.error("Failed to delete goal");
         }
     }
 

@@ -11,6 +11,7 @@ import Projects from "./pages/Projects";
 import Analytics from "./pages/Analytics";
 import ResetPassword from "./pages/ResetPassword";
 import aiInsights from "./pages/Dashboard";
+import {Toaster} from "react-hot-toast";
 
 export default function App() {
   const[user,setUser]=useState(null);
@@ -218,6 +219,24 @@ function AppContent({ children }) {
       transition:"all 0.3s ease"   
        
     }}>
+      <Toaster 
+      position="top-right"
+      toastOptions={{
+        duration:4000,
+        style:{
+          background: darkMode? "#1e293b": "#ffffff",
+          color: darkMode ? "#e2e8f0": "#111827",
+          border: darkMode?"1px solid #334155": "1px solid #e2e8f0",
+          borderRadius:"10px"
+        },
+        error:{
+          style:{border:"1px solid #ef4444"},
+        },
+        success:{
+          style:{border:"1px solid #22c55e"},
+        },
+      }}
+      />
       
       <button onClick={()=>setDarkMode(!darkMode)}>
         {darkMode? "Light Mode" : "Dark Mode"}

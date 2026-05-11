@@ -1,6 +1,7 @@
 import StatCard from "../components/StatCard";
 import TaskChart from "../components/TaskChart";
 import {useState,useEffect} from "react"
+import toast from "react-hot-toast";
 
 export default function Dashboard({goals,tasks,darkMode,loading}){
     const totalGoals=goals.length;
@@ -49,11 +50,15 @@ async function fetchAIInsights() {
     const data = await res.json();
 
     setAiInsights(data);
+    
     sessionStorage.setItem("aiInsightsCache", JSON.stringify(data));
     sessionStorage.setItem("tasksCache", JSON.stringify(tasks));
+    if(!error){
+    toast.success("AI insights fetched successfully and here to help you out");}
 
   } catch (error) {
     console.error("Fetch failed:", error);
+    toast.error("Failed to fetch AI insights")
   }
 }
 
