@@ -124,14 +124,18 @@ function AppContent({ children }) {
   async function toggleTask(taskId, completed) {
 
     const newCompleted = !completed;
-
+    const completedAt =
+    newCompleted
+      ? new Date().toISOString()
+      : null;
+      
     setTasks(prev =>
       prev.map(task =>
         task.id === taskId
           ? {
               ...task,
               completed: newCompleted,
-              completed_at: newCompleted ? new Date().toISOString() : null
+              completed_at: completedAt
             }
           : task
       )

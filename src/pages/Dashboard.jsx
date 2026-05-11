@@ -83,19 +83,87 @@ async function fetchAIInsights() {
         }
     },[tasks]);
 
+    function calculateProductivityScore() {
+    if (!tasks.length) return 0;
+
+    const completed = tasks.filter(
+        task => task.completed
+    ).length;
+
+    const overdue = tasks.filter(task => {
+        if (!task.deadline || task.completed) {
+            return false;
+        }
+        return new Date(task.deadline) < new Date();
+    }).length;
+
+    const completionRate=completed / tasks.length;
+    let score =completionRate * 100 - overdue * 5;
+    score = Math.max(0, Math.min(100, score));
+
+    return Math.round(score);
+    }
+
+    const productivityScore = calculateProductivityScore();
+
+    function calculateStreak() {
+
+  // completed tasks only
+  const completedTasks = tasks.filter(
+    task => task.completed && task.completed_at
+  );
+
+  if (!completedTasks.length) {
+    return 0;
+  }
+
+  // unique completion dates
+  const dates = [
+    ...new Set(
+      completedTasks.map(task =>
+        new Date(task.completed_at)
+          .toISOString()
+          .split("T")[0]
+      )
+    )
+  ].sort().reverse();
+
+  let streak = 1;
+
+  for (let i = 0; i < dates.length - 1; i++) {
+
+    const current = new Date(dates[i]);
+    const next = new Date(dates[i + 1]);
+
+    const diff =
+      (current - next) / (1000 * 60 * 60 * 24);
+
+    if (diff === 1) {
+      streak++;
+    } else {
+      break;
+    }
+  }
+
+  return streak;
+}
+
+    const streak = calculateStreak();
+
     if(loading){
         return <p>Loading dashboard...</p>;
     }
     return (
         <div
             style={{
+                fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
                 maxWidth:"1200px",
                 margin:"0 auto",
                 padding:"30px 20px",
                 width:"100%"
             }}
         >
-        <h1 style={{fontSize:"28px",fontWeight:"600",marginBottom:"10px"}}>Dashboard</h1>
+        <h1 style={{fontSize:"32px",fontWeight:"600",marginBottom:"10px"}}>Dashboard</h1>
 
         <div
         style={{
@@ -107,19 +175,19 @@ async function fetchAIInsights() {
             <div style={{marginBottom:"20px"}}>
 
                 {overdueTasks.length ===0 && upcomingTasks.length===0 && (
-                    <p style={{color:"red",fontWeight:"bold"}}>
+                    <p style={{fontSize: "16px", color:"red",fontWeight:"bold"}}>
                         ✅ No urgent deadlines as of now
                     </p>
                 )}
 
                 {overdueTasks.length>0 && (
-                    <div style={{padding:"10px 15px",borderRadius:"8px",background:"#fee2e2",color:"#b91c1c",marginBottom:"10px"}}>
+                    <div style={{fontSize: "16px", padding:"10px 15px",borderRadius:"8px",background:"#fee2e2",color:"#b91c1c",marginBottom:"10px"}}>
                         ❗ {overdueTasks.length} task{overdueTasks.length>1?"s":""} overdue
                     </div>
                 )}
 
                 {upcomingTasks.length>0 && (
-                    <div style={{padding:"10px 15px",borderRadius:"8px",background:"#fef3c7",color:"#92400e"}}>
+                    <div style={{fontSize: "16px", padding:"10px 15px",borderRadius:"8px",background:"#fef3c7",color:"#92400e"}}>
                         ⚠️ {upcomingTasks.length} task{upcomingTasks.length>1?"s":""}
                     </div>
                 )}
@@ -133,18 +201,63 @@ async function fetchAIInsights() {
     marginTop: "20px"
   }}
 >
-  <h3>🔥 Focus Today</h3>
+  <h3 style={{ fontSize: "20px" }}>🔥 Focus Today</h3>
 
   {aiInsights.focusToday?.map((task, index) => (
-    <p key={index}>• {task}</p>
+    <p key={index} style={{ fontSize: "16px" }}>• {task}</p>
   ))}
 
-  <h3 style={{ marginTop: "15px" }}>⚠️ Risk</h3>
-  <p>{aiInsights.risk}</p>
+  <h3 style={{ fontSize: "20px", marginTop: "15px" }}>⚠️ Risk</h3>
+  <p style={{ fontSize: "16px" }}>{aiInsights.risk}</p>
 
-  <h3 style={{ marginTop: "15px" }}>📊 Insight</h3>
-  <p>{aiInsights.insight}</p>
+  <h3 style={{ fontSize: "20px", marginTop: "15px" }}>📊 Insight</h3>
+  <p style={{ fontSize: "16px" }}>{aiInsights.insight}</p>
 </div>
+
+        <div style={{
+            padding: "20px",
+            borderRadius: "12px",
+            background: darkMode ? "#1e293b" : "#ffffff",
+            marginBottom: "20px",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.08)"
+            }}
+        >
+            <h2 style={{ fontSize: "24px" }}>🔥 Productivity Score</h2>
+
+            <h2 style={{
+                fontSize: "38px",
+                margin: "10px 0"
+                }}>
+                {productivityScore}/100
+               </h2>
+
+            <p style={{ fontSize: "16px" }}>
+                Based on completed and overdue tasks
+            </p>
+            </div>
+
+            <div
+    style={{
+    padding: "20px",
+    borderRadius: "12px",
+    background: darkMode ? "#1e293b" : "#ffffff",
+    marginBottom: "20px",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.08)"
+            }}  
+            >
+                <h2 style={{ fontSize: "24px" }}>🔥 Current Streak</h2>
+
+                <h1 style={{
+                fontSize:"38px",
+                margin:"10px 0"
+                }}>
+                {streak} Days
+            </h1>
+
+               <p>
+                Consecutive productive days
+            </p>
+        </div>
 
             <div style={{
                 display:"grid",
