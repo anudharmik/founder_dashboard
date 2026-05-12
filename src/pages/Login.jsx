@@ -10,6 +10,7 @@ export default function Login() {
   const [mode, setMode] = useState("signin"); // 'signin', 'signup', 'forgot'
 
   async function handleSubmit(e) {
+    try{
     e.preventDefault();
     setLoading(true);
     setErrorMsg("");
@@ -30,12 +31,12 @@ export default function Login() {
       if (error) {
         setErrorMsg(error.message);
       } else {
-        setSuccessMsg("Check your email to confirm your sign up!");
+        setSuccessMsg("Account created successfully! You can now sign in.");
       }
 
     } else if (mode === "forgot") {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: "http://localhost:5173/reset-password",
+        redirectTo: `${window.location.origin}/reset-password`,
       });
       if (error) {
         setErrorMsg(error.message);
@@ -44,7 +45,9 @@ export default function Login() {
       }
     }
 
+  }finally{
     setLoading(false);
+  }
   }
 
   function toggleMode(newMode) {
