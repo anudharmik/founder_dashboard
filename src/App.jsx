@@ -21,27 +21,42 @@ export default function App() {
   const[loading,setLoading]=useState(true);
   const[projects,setProjects]=useState([]);
 
-  useEffect(()=>{
-      getUser();
-      fetchGoals();
-      fetchTasks();
-      fetchProjects();
-  },[]);
+useEffect(() => {
+  const getSession = async () => {
+    const { data } = await supabase.auth.getSession();
+    setUser(data.session?.user || null);
+  };
 
-  useEffect(() => {
-  supabase.auth.getUser().then(({ data }) => {
-    setUser(data.user);
-  });
-  const { data: listener } = supabase.auth.onAuthStateChange(
+  getSession();
+
+  const {
+    data: { subscription },
+  } = supabase.auth.onAuthStateChange(
     (_event, session) => {
-      setUser(session?.user ?? null);
+
+      
+      setGoals([]);
+      setTasks([]);
+      setProjects([]);
+
+      
+      setUser(session?.user || null);
     }
   );
+  return () => subscription.unsubscribe();
 
-  return () => {
-    listener.subscription.unsubscribe();
-  };
-  }, []);
+}, []);
+
+useEffect(() => {
+
+  if (user) {
+    fetchGoals();
+    fetchTasks();
+    fetchProjects();
+  }
+
+}, [user]);
+
 
 
 
