@@ -38,12 +38,14 @@ export default function GoalCard({goal,tasks,taskInputs,setTaskInputs,addTask,to
 
     return (
         <div style={{
-            marginBottom :"20px",
-            padding:"20px",
-            borderRadius:"12px",
+            marginBottom :"24px",
+            padding:"24px",
+            borderRadius:"16px",
             background:darkMode?"#1e293b":"#ffffff",
             color:darkMode?"#e2e8f0":"#111827",
-            boxShadow:darkMode?"0 4px 12px rgba(0,0,0,0.3)":"0 4px 12px rgba(0,0,0,0.08)"
+            boxShadow:darkMode?"0 4px 20px rgba(0,0,0,0.4)":"0 4px 20px rgba(0,0,0,0.05)",
+            border: darkMode ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(0,0,0,0.05)",
+            transition: "all 0.3s ease"
         }}>
             {isEditingGoal?(
                 <>
@@ -73,26 +75,45 @@ export default function GoalCard({goal,tasks,taskInputs,setTaskInputs,addTask,to
             <div
                 style={{
                     height: "10px",
-                    background: "#eee",
-                    borderRadius: "6px",
-                    margin: "10px 0"
+                    background: darkMode ? "#334155" : "#e2e8f0",
+                    borderRadius: "8px",
+                    margin: "16px 0 8px 0",
+                    overflow: "hidden"
                 }}
             >
                 <div
                     style={{
                     width: `${progress}%`,
-                    background: "#4caf50",
+                    background: "linear-gradient(to right, #22c55e, #10b981)",
                     height: "100%",
-                    borderRadius: "6px"
+                    borderRadius: "8px",
+                    transition: "width 0.5s ease-out"
                     }}
                 />
             </div>
 
-            <p>{progress}% complete</p>
+            <p style={{ fontSize: "14px", fontWeight: "600", color: darkMode ? "#94a3b8" : "#64748b", marginBottom: "20px" }}>{progress}% complete</p>
 
-            <div style={{marginBottom:"20px"}} className="container">
+            <div style={{
+                marginBottom:"24px", 
+                display: "flex", 
+                flexWrap: "wrap", 
+                gap: "12px", 
+                alignItems: "center",
+                background: darkMode ? "#334155" : "#f8fafc",
+                padding: "16px",
+                borderRadius: "12px"
+            }} className="container">
             <input 
-            style={{marginRight:"20px"}}
+            style={{
+                padding: "10px 14px",
+                borderRadius: "8px",
+                border: darkMode ? "1px solid #475569" : "1px solid #cbd5e1",
+                background: darkMode ? "#1e293b" : "#ffffff",
+                color: darkMode ? "#f8fafc" : "#0f172a",
+                outline: "none",
+                flex: "1 1 200px"
+            }}
             placeholder="New task"
             value = {taskInputs[goal.id] || ""}
             onChange={(e)=>
@@ -103,33 +124,52 @@ export default function GoalCard({goal,tasks,taskInputs,setTaskInputs,addTask,to
             }
             />
 
-            <h4>Deadline for the task: <input
-              style={{marginRight:"20px"}}
-              type="date"
-              value={deadlineInputs[goal.id] || ""}
-              onChange={(e)=>
-                setDeadlineInputs({
-                    ...deadlineInputs,
-                    [goal.id]:e.target.value
-                })
-              }
-            /></h4>
-
-            <button style={buttonStyle} onClick={()=>addTask(goal.id)}>Add Task</button>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <span style={{ fontSize: "14px", fontWeight: "500", color: darkMode ? "#cbd5e1" : "#475569" }}>Deadline:</span> 
+                <input
+                style={{
+                    padding: "10px 14px",
+                    borderRadius: "8px",
+                    border: darkMode ? "1px solid #475569" : "1px solid #cbd5e1",
+                    background: darkMode ? "#1e293b" : "#ffffff",
+                    color: darkMode ? "#f8fafc" : "#0f172a",
+                    outline: "none",
+                    cursor: "pointer"
+                }}
+                type="date"
+                value={deadlineInputs[goal.id] || ""}
+                onChange={(e)=>
+                    setDeadlineInputs({
+                        ...deadlineInputs,
+                        [goal.id]:e.target.value
+                    })
+                }
+                />
             </div>
-            <hr/>
-            <h3>Tasks for the above goal:</h3>
-            <TaskList tasks={tasks} goalId={goal.id} toggleTask={toggleTask} deleteTask={deleteTask} updateTask={updateTask} darkMode={darkMode} aiInsights={aiInsights}/>
-            <br/>
 
-            <button
-               style={{...buttonStyle,background:"#ef4444"}}
-               onClick={()=>
-                deleteGoal(goal.id)}
-            >
-                Delete the above goal entirely
-            </button>
-            <hr/>
+            <button style={{...buttonStyle, background: "#10b981"}} onClick={()=>addTask(goal.id)}>Add Task</button>
+            </div>
+            <h3 style={{ fontSize: "18px", marginBottom: "12px", display: "flex", alignItems: "center", gap: "8px" }}>
+                <span>📝</span> Tasks for this goal
+            </h3>
+            <TaskList tasks={tasks} goalId={goal.id} toggleTask={toggleTask} deleteTask={deleteTask} updateTask={updateTask} darkMode={darkMode} aiInsights={aiInsights}/>
+            
+            <div style={{ marginTop: "24px", display: "flex", justifyContent: "flex-end" }}>
+                <button
+                style={{
+                    ...buttonStyle,
+                    background:"transparent",
+                    border: "1px solid #ef4444",
+                    color: "#ef4444"
+                }}
+                onMouseEnter={(e)=>{e.target.style.background="#ef4444"; e.target.style.color="white";}}
+                onMouseLeave={(e)=>{e.target.style.background="transparent"; e.target.style.color="#ef4444";}}
+                onClick={()=>
+                    deleteGoal(goal.id)}
+                >
+                    Delete Goal
+                </button>
+            </div>
         </div>
     )
 }

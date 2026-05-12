@@ -151,7 +151,13 @@ async function fetchAIInsights() {
     const streak = calculateStreak();
 
     if(loading){
-        return <p>Loading dashboard...</p>;
+        return (
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+                <p style={{ fontSize: "18px", fontWeight: "500", color: darkMode ? "#94a3b8" : "#64748b" }}>
+                    Loading dashboard...
+                </p>
+            </div>
+        );
     }
     return (
         <div
@@ -172,98 +178,166 @@ async function fetchAIInsights() {
             flexWrap:"wrap"
         }}
         >
-            <div style={{marginBottom:"20px"}}>
+            <div style={{marginBottom:"20px", display: "flex", flexDirection: "column", gap: "12px"}}>
 
                 {overdueTasks.length ===0 && upcomingTasks.length===0 && (
-                    <p style={{fontSize: "16px", color:"red",fontWeight:"bold"}}>
-                        ✅ No urgent deadlines as of now
-                    </p>
+                    <div style={{
+                        padding: "16px 20px",
+                        borderRadius: "12px",
+                        background: darkMode ? "rgba(34, 197, 94, 0.1)" : "#dcfce7",
+                        color: darkMode ? "#4ade80" : "#166534",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "10px",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
+                    }}>
+                        <span style={{ fontSize: "20px" }}>✅</span>
+                        <p style={{fontSize: "16px", fontWeight:"600", margin: 0}}>
+                            No urgent deadlines as of now. You're all caught up!
+                        </p>
+                    </div>
                 )}
 
                 {overdueTasks.length>0 && (
-                    <div style={{fontSize: "16px", padding:"10px 15px",borderRadius:"8px",background:"#fee2e2",color:"#b91c1c",marginBottom:"10px"}}>
-                        ❗ {overdueTasks.length} task{overdueTasks.length>1?"s":""} overdue
+                    <div style={{
+                        fontSize: "16px", 
+                        padding:"16px 20px",
+                        borderRadius:"12px",
+                        background: darkMode ? "rgba(239, 68, 68, 0.1)" : "#fee2e2",
+                        color: darkMode ? "#f87171" : "#b91c1c",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "10px",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
+                    }}>
+                        <span style={{ fontSize: "20px" }}>❗</span>
+                        <p style={{ margin: 0, fontWeight: "600" }}>{overdueTasks.length} task{overdueTasks.length>1?"s":""} overdue</p>
                     </div>
                 )}
 
                 {upcomingTasks.length>0 && (
-                    <div style={{fontSize: "16px", padding:"10px 15px",borderRadius:"8px",background:"#fef3c7",color:"#92400e"}}>
-                        ⚠️ {upcomingTasks.length} task{upcomingTasks.length>1?"s":""}
+                    <div style={{
+                        fontSize: "16px", 
+                        padding:"16px 20px",
+                        borderRadius:"12px",
+                        background: darkMode ? "rgba(245, 158, 11, 0.1)" : "#fef3c7",
+                        color: darkMode ? "#fbbf24" : "#92400e",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "10px",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
+                    }}>
+                        <span style={{ fontSize: "20px" }}>⚠️</span>
+                        <p style={{ margin: 0, fontWeight: "600" }}>{upcomingTasks.length} task{upcomingTasks.length>1?"s":""} due soon</p>
                     </div>
                 )}
             </div>
 
-            <div
-  style={{
-    padding: "20px",
-    borderRadius: "12px",
-    background: darkMode ? "#1e293b" : "#ffffff",
-    marginTop: "20px"
-  }}
->
-  <h3 style={{ fontSize: "20px" }}>🔥 Focus Today</h3>
+            <div style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+                gap: "24px",
+                marginBottom: "24px"
+            }}>
+                <div
+                    style={{
+                        padding: "24px",
+                        borderRadius: "16px",
+                        background: darkMode ? "#1e293b" : "#ffffff",
+                        boxShadow: darkMode ? "0 4px 20px rgba(0,0,0,0.4)" : "0 4px 20px rgba(0,0,0,0.05)",
+                        border: darkMode ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(0,0,0,0.05)",
+                        display: "flex",
+                        flexDirection: "column"
+                    }}
+                >
+                    <h3 style={{ fontSize: "20px", marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px" }}>
+                        <span>🔥</span> Focus Today
+                    </h3>
 
-  {aiInsights.focusToday?.map((task, index) => (
-    <p key={index} style={{ fontSize: "16px" }}>• {task}</p>
-  ))}
+                    {aiInsights.focusToday?.map((task, index) => (
+                        <div key={index} style={{ 
+                            fontSize: "15px", 
+                            padding: "10px", 
+                            background: darkMode ? "#334155" : "#f8fafc", 
+                            borderRadius: "8px",
+                            marginBottom: "8px"
+                        }}>
+                            • {task}
+                        </div>
+                    ))}
 
-  <h3 style={{ fontSize: "20px", marginTop: "15px" }}>⚠️ Risk</h3>
-  <p style={{ fontSize: "16px" }}>{aiInsights.risk}</p>
+                    <h3 style={{ fontSize: "18px", marginTop: "20px", marginBottom: "8px", display: "flex", alignItems: "center", gap: "8px" }}>
+                        <span>⚠️</span> Risk
+                    </h3>
+                    <p style={{ fontSize: "15px", color: darkMode ? "#cbd5e1" : "#475569", lineHeight: "1.5" }}>{aiInsights.risk}</p>
 
-  <h3 style={{ fontSize: "20px", marginTop: "15px" }}>📊 Insight</h3>
-  <p style={{ fontSize: "16px" }}>{aiInsights.insight}</p>
-</div>
+                    <h3 style={{ fontSize: "18px", marginTop: "20px", marginBottom: "8px", display: "flex", alignItems: "center", gap: "8px" }}>
+                        <span>📊</span> Insight
+                    </h3>
+                    <p style={{ fontSize: "15px", color: darkMode ? "#cbd5e1" : "#475569", lineHeight: "1.5" }}>{aiInsights.insight}</p>
+                </div>
 
-        <div style={{
-            padding: "20px",
-            borderRadius: "12px",
-            background: darkMode ? "#1e293b" : "#ffffff",
-            marginBottom: "20px",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.08)"
-            }}
-        >
-            <h2 style={{ fontSize: "24px" }}>🔥 Productivity Score</h2>
+                <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+                    <div style={{
+                        padding: "24px",
+                        borderRadius: "16px",
+                        background: darkMode ? "#1e293b" : "#ffffff",
+                        boxShadow: darkMode ? "0 4px 20px rgba(0,0,0,0.4)" : "0 4px 20px rgba(0,0,0,0.05)",
+                        border: darkMode ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(0,0,0,0.05)",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        flex: 1
+                        }}
+                    >
+                        <h2 style={{ fontSize: "20px", color: darkMode ? "#94a3b8" : "#64748b" }}>Productivity Score</h2>
+                        <h2 style={{
+                            fontSize: "48px",
+                            fontWeight: "800",
+                            margin: "16px 0",
+                            color: darkMode ? "#f8fafc" : "#0f172a"
+                            }}>
+                            {productivityScore}/100
+                        </h2>
+                        <p style={{ fontSize: "14px", color: darkMode ? "#94a3b8" : "#64748b" }}>
+                            Based on completed and overdue tasks
+                        </p>
+                    </div>
 
-            <h2 style={{
-                fontSize: "38px",
-                margin: "10px 0"
-                }}>
-                {productivityScore}/100
-               </h2>
-
-            <p style={{ fontSize: "16px" }}>
-                Based on completed and overdue tasks
-            </p>
+                    <div style={{
+                        padding: "24px",
+                        borderRadius: "16px",
+                        background: darkMode ? "#1e293b" : "#ffffff",
+                        boxShadow: darkMode ? "0 4px 20px rgba(0,0,0,0.4)" : "0 4px 20px rgba(0,0,0,0.05)",
+                        border: darkMode ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(0,0,0,0.05)",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        flex: 1
+                        }}  
+                    >
+                        <h2 style={{ fontSize: "20px", color: darkMode ? "#94a3b8" : "#64748b" }}>Current Streak</h2>
+                        <h1 style={{
+                            fontSize:"48px",
+                            fontWeight: "800",
+                            margin:"16px 0",
+                            color: darkMode ? "#f8fafc" : "#0f172a"
+                        }}>
+                            {streak} Days
+                        </h1>
+                        <p style={{ fontSize: "14px", color: darkMode ? "#94a3b8" : "#64748b" }}>
+                            Consecutive productive days
+                        </p>
+                    </div>
+                </div>
             </div>
-
-            <div
-    style={{
-    padding: "20px",
-    borderRadius: "12px",
-    background: darkMode ? "#1e293b" : "#ffffff",
-    marginBottom: "20px",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.08)"
-            }}  
-            >
-                <h2 style={{ fontSize: "24px" }}>🔥 Current Streak</h2>
-
-                <h1 style={{
-                fontSize:"38px",
-                margin:"10px 0"
-                }}>
-                {streak} Days
-            </h1>
-
-               <p>
-                Consecutive productive days
-            </p>
-        </div>
 
             <div style={{
                 display:"grid",
                 gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))",
-                gap:"20px",
-                marginTop:"20px",
+                gap:"24px",
                 width:"100%"
             }}>
             <StatCard title="Total Goals" value={totalGoals} darkMode={darkMode} />

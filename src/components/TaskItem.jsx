@@ -36,61 +36,98 @@ export default function TaskItem({task,toggleTask,deleteTask,updateTask,darkMode
     return (
         <li style={{
             color,
-            marginBottom:"10px",
-            padding:"10px",
-            borderRadius:"8px",
+            marginBottom:"12px",
+            padding:"16px",
+            borderRadius:"12px",
             border: isFocusTask
             ? "2px solid #f59e0b"
-            : "1px solid #d1d5db",
-            boxShadow:"0 4px 12px rgba(0,0,0,0.08)",
+            : (darkMode ? "1px solid #334155" : "1px solid #e2e8f0"),
+            boxShadow: darkMode ? "0 4px 12px rgba(0,0,0,0.2)" : "0 4px 12px rgba(0,0,0,0.05)",
             background: isFocusTask
-            ? (darkMode ? "#3f2f0b" : "#fef3c7")
-            : (darkMode ? "#1e293b" : "#ffffff")
+            ? (darkMode ? "#452d08" : "#fef3c7")
+            : (darkMode ? "#1e293b" : "#ffffff"),
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: "12px",
+            transition: "all 0.2s ease"
             }}>
 
             {isEditing ? (
-            <>
-            <input
-            type="text"
-            value={editedTitle}
-            onChange={(e)=>setEditedTitle(e.target.value)}
-            />
-            <input
-            type="date"
-            value={editedDeadline}
-            onChange={(e)=>setEditedDeadline(e.target.value)}
-            />
-            <button style={buttonStyle} onClick={handleSave}>Save</button>
-            <button style={buttonStyle} onClick={()=>setIsEditing(false)}>Cancel</button>
-            </>
+            <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", width: "100%", alignItems: "center" }}>
+                <input
+                type="text"
+                value={editedTitle}
+                onChange={(e)=>setEditedTitle(e.target.value)}
+                style={{
+                    padding: "8px 12px",
+                    borderRadius: "6px",
+                    border: darkMode ? "1px solid #475569" : "1px solid #cbd5e1",
+                    background: darkMode ? "#0f172a" : "#ffffff",
+                    color: darkMode ? "#f8fafc" : "#0f172a",
+                    flex: 1,
+                    minWidth: "200px"
+                }}
+                />
+                <input
+                type="date"
+                value={editedDeadline}
+                onChange={(e)=>setEditedDeadline(e.target.value)}
+                style={{
+                    padding: "8px 12px",
+                    borderRadius: "6px",
+                    border: darkMode ? "1px solid #475569" : "1px solid #cbd5e1",
+                    background: darkMode ? "#0f172a" : "#ffffff",
+                    color: darkMode ? "#f8fafc" : "#0f172a"
+                }}
+                />
+                <button style={{...buttonStyle, background: "#10b981"}} onClick={handleSave}>Save</button>
+                <button style={{...buttonStyle, background: "#64748b"}} onClick={()=>setIsEditing(false)}>Cancel</button>
+            </div>
         ) : (
             <>
-        <span
-        style={{color,cursor:"pointer"}}
-        onClick={() => toggleTask(task.id,task.completed)}>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px", flex: 1 }}>
+                <span
+                style={{ cursor:"pointer", fontSize: "20px" }}
+                onClick={() => toggleTask(task.id,task.completed)}>
+                    {task.completed ? "✅" : "⬜"}
+                </span>
 
-            {task.completed ? "✅" : "⬜"} {task.title}
-            {isFocusTask && (
-            <span
-                style={{
-                marginLeft: "10px",
-                fontSize: "12px",
-                fontWeight: "bold",
-                color: "#b45309"
-                }}
-            >
-                🔥 Focus
-            </span>
-            )}
-        </span>
+                <span style={{ 
+                    fontWeight: task.completed ? "400" : "500",
+                    textDecoration: task.completed ? "line-through" : "none",
+                    color: task.completed ? (darkMode ? "#64748b" : "#94a3b8") : color
+                }}>
+                    {task.title}
+                    {isFocusTask && (
+                    <span
+                        style={{
+                        marginLeft: "10px",
+                        fontSize: "12px",
+                        fontWeight: "bold",
+                        background: "#f59e0b",
+                        color: "white",
+                        padding: "2px 8px",
+                        borderRadius: "12px"
+                        }}
+                    >
+                        🔥 Focus
+                    </span>
+                    )}
+                </span>
 
-        {task.deadline && (
-        <span style={{ marginLeft: "10px", fontSize: "12px" }}>
-            (Due: {task.deadline.split("T")[0]})
-        </span>
-        )}
-        <button style={buttonStyle} onClick={()=>setIsEditing(true)} >Edit</button>
-        <button style={{...buttonStyle,background:"#ef4444"}} onClick={() => deleteTask(task.id)} >Delete</button>
+                {task.deadline && (
+                <span style={{ marginLeft: "auto", fontSize: "13px", fontWeight: "500", color: color === "red" || color === "orange" ? color : (darkMode ? "#94a3b8" : "#64748b") }}>
+                    (Due: {task.deadline.split("T")[0]})
+                </span>
+                )}
+            </div>
+
+            <div style={{ display: "flex", gap: "8px" }}>
+                <button style={{...buttonStyle, background: darkMode ? "#475569" : "#cbd5e1", color: darkMode ? "#f8fafc" : "#0f172a"}} onClick={()=>setIsEditing(true)} >Edit</button>
+                <button style={{...buttonStyle,background:"#ef4444"}} onClick={() => deleteTask(task.id)} >Delete</button>
+            </div>
         </>
         )}
         </li>

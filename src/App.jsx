@@ -217,11 +217,12 @@ function AppContent({ children }) {
     return <Login />
   }
   return (
-    <div style={{background:darkMode?"#0f172a":"#f3f4f6",
+    <div style={{
+      background:darkMode?"#0f172a":"#f3f4f6",
       color:darkMode?"white":"black",
       minHeight:"100vh",
+      fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
       transition:"all 0.3s ease"   
-       
     }}>
       <Toaster 
       position="top-right"
@@ -242,8 +243,25 @@ function AppContent({ children }) {
       }}
       />
       
-      <button onClick={()=>setDarkMode(!darkMode)}>
-        {darkMode? "Light Mode" : "Dark Mode"}
+      <button 
+        onClick={()=>setDarkMode(!darkMode)}
+        style={{
+          position: "fixed",
+          bottom: "20px",
+          right: "20px",
+          padding: "10px 16px",
+          borderRadius: "30px",
+          border: "none",
+          background: darkMode ? "#334155" : "#ffffff",
+          color: darkMode ? "#f8fafc" : "#0f172a",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+          cursor: "pointer",
+          fontWeight: "600",
+          zIndex: 1000,
+          transition: "all 0.2s ease"
+        }}
+      >
+        {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
       </button>
     <BrowserRouter>
     <Layout darkMode={darkMode}>

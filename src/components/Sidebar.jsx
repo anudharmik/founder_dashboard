@@ -7,59 +7,63 @@ export default function Sidebar({darkMode}){
     }
 
     const buttonStyle = {
-      padding: "6px 12px",
-      borderRadius: "6px",
+      padding: "10px 16px",
+      borderRadius: "8px",
       border: "none",
       cursor: "pointer",
-      background: "#3b82f6",
+      background: "#ef4444",
       color: "white",
-      marginLeft: "8px"
+      fontWeight: "600",
+      marginTop: "auto",
+      width: "100%",
+      transition: "all 0.2s ease"
     };
-    return(
 
+    const linkStyle = {
+      padding: "12px 16px",
+      borderRadius: "8px",
+      marginBottom: "8px",
+      cursor: "pointer",
+      textDecoration: "none",
+      color: darkMode ? "#e2e8f0" : "#d1d5db",
+      fontWeight: "500",
+      transition: "all 0.2s ease",
+      display: "block"
+    };
+
+    return(
         <div
           style={{
-            width:"240px",
+            width:"260px",
             height :"100vh",
-            background :darkMode? "#020617":"#111827",
+            position: "sticky",
+            top: 0,
+            background :darkMode? "#0f172a":"#111827",
             color :"white",
-            padding:"20px"
+            padding:"24px",
+            display: "flex",
+            flexDirection: "column",
+            boxShadow: "4px 0 15px rgba(0,0,0,0.1)",
+            borderRight: darkMode ? "1px solid #1e293b" : "none"
           }}
         >
-            <h2>Founder OS</h2>
-            <nav style={{display:"flex",flexDirection:"column",gap:"10px",marginBottom:"10px",marginTop:"10px"}}>
-              <Link to="/" style={{
-              padding: "10px 14px",
-              borderRadius: "8px",
-              marginBottom: "8px",
-              cursor: "pointer"
-              }}>Dashboard</Link>
-              <Link to="/goals" style={{
-              padding: "10px 14px",
-              borderRadius: "8px",
-              marginBottom: "8px",
-              cursor: "pointer"
-            }}>Goals</Link> 
-              <Link to="/tasks" style={{
-              padding: "10px 14px",
-              borderRadius: "8px",
-              marginBottom: "8px",
-              cursor: "pointer"
-            }}>Tasks</Link>
-              <Link to="/projects" style={{
-              padding: "10px 14px",
-              borderRadius: "8px",
-              marginBottom: "8px",
-              cursor: "pointer"
-            }}>Projects</Link>
-              <Link to="/analytics" style={{
-              padding: "10px 14px",
-              borderRadius: "8px",
-              marginBottom: "8px",
-              cursor: "pointer"
-            }}>Analytics</Link>
+            <h2 style={{
+                fontSize: "24px", 
+                fontWeight: "800", 
+                marginBottom: "30px",
+                background: "linear-gradient(to right, #3b82f6, #8b5cf6)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent"
+            }}>Founder OS</h2>
+            
+            <nav style={{display:"flex",flexDirection:"column",gap:"4px"}}>
+              <Link to="/" style={linkStyle} onMouseEnter={(e)=>e.target.style.background=darkMode?"#1e293b":"#374151"} onMouseLeave={(e)=>e.target.style.background="transparent"}>Dashboard</Link>
+              <Link to="/goals" style={linkStyle} onMouseEnter={(e)=>e.target.style.background=darkMode?"#1e293b":"#374151"} onMouseLeave={(e)=>e.target.style.background="transparent"}>Goals</Link> 
+              <Link to="/tasks" style={linkStyle} onMouseEnter={(e)=>e.target.style.background=darkMode?"#1e293b":"#374151"} onMouseLeave={(e)=>e.target.style.background="transparent"}>Tasks</Link>
+              <Link to="/projects" style={linkStyle} onMouseEnter={(e)=>e.target.style.background=darkMode?"#1e293b":"#374151"} onMouseLeave={(e)=>e.target.style.background="transparent"}>Projects</Link>
+              <Link to="/analytics" style={linkStyle} onMouseEnter={(e)=>e.target.style.background=darkMode?"#1e293b":"#374151"} onMouseLeave={(e)=>e.target.style.background="transparent"}>Analytics</Link>
             </nav>
-            <button style={buttonStyle}onClick={logout} >Logout</button>
+            <button style={buttonStyle} onClick={logout} onMouseEnter={(e)=>e.target.style.background="#dc2626"} onMouseLeave={(e)=>e.target.style.background="#ef4444"}>Logout</button>
         </div>
     )
 }

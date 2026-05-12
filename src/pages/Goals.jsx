@@ -139,14 +139,33 @@ export default function Goals({user,goals,tasks,projects,setTasks,fetchGoals,fet
     }
 
     const buttonStyle = {
-      padding: "6px 12px",
-      borderRadius: "6px",
+      padding: "10px 20px",
+      borderRadius: "8px",
       border: "none",
       cursor: "pointer",
       background: "#3b82f6",
       color: "white",
-      marginLeft: "8px",
-      transition: "all 0.2s ease"
+      fontWeight: "600",
+      transition: "all 0.2s ease",
+      boxShadow: "0 2px 4px rgba(59, 130, 246, 0.3)"
+    };
+
+    const inputStyle = {
+        padding: "10px 14px",
+        borderRadius: "8px",
+        border: darkMode ? "1px solid #334155" : "1px solid #cbd5e1",
+        background: darkMode ? "#1e293b" : "#ffffff",
+        color: darkMode ? "#f8fafc" : "#0f172a",
+        outline: "none",
+        width: "100%",
+        maxWidth: "300px"
+    };
+
+    const selectStyle = {
+        ...inputStyle,
+        cursor: "pointer",
+        appearance: "none",
+        maxWidth: "200px"
     };
 
     {filterProject && (
@@ -164,28 +183,52 @@ export default function Goals({user,goals,tasks,projects,setTasks,fetchGoals,fet
     }}
     >
         {goals.length===0 && (
-            <p style={{marginTop:"20px",color:"#6b7280"}}>
-                No goals yet. Start by adding one 📈
-            </p>
+            <div style={{
+                padding: "40px",
+                textAlign: "center",
+                background: darkMode ? "#1e293b" : "#ffffff",
+                borderRadius: "16px",
+                border: darkMode ? "1px dashed #334155" : "1px dashed #cbd5e1",
+                marginTop: "20px",
+                marginBottom: "30px"
+            }}>
+                <p style={{fontSize: "18px", color: darkMode ? "#94a3b8" : "#64748b", margin: 0}}>
+                    No goals yet. Start by adding one 📈
+                </p>
+            </div>
         )}
 
-        <h1>Goals</h1>
-        <h4>Select Project to add Goals in it  :
-        <select
-        value={selectedProject}
-        onChange={(e) => setSelectedProject(e.target.value)}
-        >
-        <option value="">Select Project</option>
-        {projects.map(project => (
-            <option key={project.id} value={project.id}>
-            {project.title}
-            </option>
-        ))}
-        </select>
-        </h4>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px", flexWrap: "wrap", gap: "16px" }}>
+            <h1 style={{ margin: 0, fontSize: "32px", fontWeight: "700" }}>Goals</h1>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <span style={{ fontWeight: "500", color: darkMode ? "#cbd5e1" : "#475569" }}>Add to Project:</span>
+                <select
+                style={selectStyle}
+                value={selectedProject}
+                onChange={(e) => setSelectedProject(e.target.value)}
+                >
+                <option value="">None</option>
+                {projects.map(project => (
+                    <option key={project.id} value={project.id}>
+                    {project.title}
+                    </option>
+                ))}
+                </select>
+            </div>
+        </div>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} style={{ 
+            display: "flex", 
+            gap: "16px", 
+            marginBottom: "30px", 
+            flexWrap: "wrap",
+            padding: "20px",
+            background: darkMode ? "#1e293b" : "#f8fafc",
+            borderRadius: "12px",
+            border: darkMode ? "1px solid #334155" : "1px solid #e2e8f0"
+        }}>
             <input 
+            style={inputStyle}
             ref={taskInputRef}
             placeholder="Goal title"
             value={title}
@@ -193,28 +236,33 @@ export default function Goals({user,goals,tasks,projects,setTasks,fetchGoals,fet
             />
 
             <input
+            style={inputStyle}
             placeholder="Description"
             value={description}
             onChange={(e)=>setDescription(e.target.value)}
             />
 
-            <button style={buttonStyle} type="submit">Add Goal</button>
+            <button style={buttonStyle} type="submit" onMouseEnter={(e)=>e.target.style.background="#2563eb"} onMouseLeave={(e)=>e.target.style.background="#3b82f6"}>
+                Add Goal
+            </button>
         </form>
 
-        <h4>View from this Project  :
-        <select
-        value={filterProject}
-        onChange={(e) => setFilterProject(e.target.value)}
-        >
-        <option value="">All Projects</option>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "20px" }}>
+            <span style={{ fontWeight: "500", color: darkMode ? "#cbd5e1" : "#475569" }}>Filter by Project:</span>
+            <select
+            style={selectStyle}
+            value={filterProject}
+            onChange={(e) => setFilterProject(e.target.value)}
+            >
+            <option value="">All Projects</option>
 
-        {projects.map(project => (
-            <option key={project.id} value={project.id}>
-            {project.title}
-            </option>
-        ))}
-        </select>
-        </h4>
+            {projects.map(project => (
+                <option key={project.id} value={project.id}>
+                {project.title}
+                </option>
+            ))}
+            </select>
+        </div>
 
         <ul>
         {goals

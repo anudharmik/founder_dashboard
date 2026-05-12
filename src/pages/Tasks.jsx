@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-export default function Tasks({tasks,goals,toggleTask,loading}){
+export default function Tasks({tasks,goals,toggleTask,loading,darkMode}){
     const [filter,setFilter]=useState("all");
     const today=new Date();
     const [sortByUrgency,setSortByUrgency]=useState(true);
@@ -78,39 +78,87 @@ export default function Tasks({tasks,goals,toggleTask,loading}){
         </p>
     )}
 
-    <h1>Tasks</h1>
-    <div style={{marginBottom:"20px"}}>
-        <button style={buttonStyle} onClick={()=>setFilter("all")} >All</button>
-        <button style={buttonStyle} onClick={()=>setFilter("completed")} >Completed</button>
-        <button style={buttonStyle} onClick={()=>setFilter("pending")} >Pending</button>
-        <button style={buttonStyle} onClick={()=>setFilter("overdue")} >Overdue</button>
-        <button style={buttonStyle} onClick={()=>setFilter("dueSoon")} >Due soon</button>
-    </div>
-
-    <ul>
-        <button onClick={()=>setSortByUrgency(!sortByUrgency)}>
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
+        <h1 style={{ margin: 0, fontSize: "32px", fontWeight: "700" }}>Tasks</h1>
+        <button 
+            style={{...buttonStyle, background: darkMode ? "#334155" : "#e2e8f0", color: darkMode ? "#f8fafc" : "#0f172a"}} 
+            onClick={()=>setSortByUrgency(!sortByUrgency)}
+            onMouseEnter={(e)=>e.target.style.background=darkMode ? "#475569" : "#cbd5e1"} 
+            onMouseLeave={(e)=>e.target.style.background=darkMode ? "#334155" : "#e2e8f0"}
+        >
             {sortByUrgency?"Sort by Deadline":"Sort by Urgency"}
         </button>
-        {displayedTasks.map(task => (
-        <li key={task.id} style={{ marginBottom: "10px" }}>
+    </div>
 
-        <b>[{getGoalTitle(task.goal_id)}]</b> — {task.title}
-        <span
-        style={{ cursor: "pointer", marginLeft: "10px" }}
-        onClick={() => toggleTask(task.id, task.completed)}
-        >
-        {task.completed ? "✅" : "⬜"}
-        </span>
-        <span style={{marginLeft:"10px",fontSize:"12px"}}>
-            {getDeadlineStatus(task)}
-        </span>
+    <div style={{marginBottom:"24px", display: "flex", gap: "10px", flexWrap: "wrap"}}>
+        {["all", "completed", "pending", "overdue", "dueSoon"].map(f => (
+            <button 
+                key={f}
+                style={{
+                    ...buttonStyle, 
+                    background: filter === f ? "#3b82f6" : (darkMode ? "#1e293b" : "#ffffff"),
+                    color: filter === f ? "white" : (darkMode ? "#e2e8f0" : "#475569"),
+                    border: darkMode ? "1px solid #334155" : "1px solid #cbd5e1",
+                    boxShadow: "0 1px 2px rgba(0,0,0,0.05)"
+                }} 
+                onClick={()=>setFilter(f)} 
+            >
+                {f.charAt(0).toUpperCase() + f.slice(1).replace(/([A-Z])/g, ' $1').trim()}
+            </button>
+        ))}
+    </div>
+
+    <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "12px" }}>
+        {displayedTasks.map(task => (
+        <li key={task.id} style={{ 
+            padding: "16px",
+            borderRadius: "12px",
+            background: darkMode ? "#1e293b" : "#ffffff",
+            border: darkMode ? "1px solid #334155" : "1px solid #e2e8f0",
+            display: "flex",
+            alignItems: "center",
+            gap: "16px",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
+        }}>
+            <span
+            style={{ cursor: "pointer", fontSize: "20px" }}
+            onClick={() => toggleTask(task.id, task.completed)}
+            >
+            {task.completed ? "✅" : "⬜"}
+            </span>
+
+            <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "4px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <b style={{ color: darkMode ? "#94a3b8" : "#64748b", fontSize: "14px", background: darkMode ? "#334155" : "#f1f5f9", padding: "2px 8px", borderRadius: "12px" }}>{getGoalTitle(task.goal_id)}</b>
+                    <span style={{ fontWeight: task.completed ? "400" : "500", textDecoration: task.completed ? "line-through" : "none", color: task.completed ? (darkMode ? "#64748b" : "#94a3b8") : (darkMode ? "#f8fafc" : "#0f172a") }}>{task.title}</span>
+                </div>
+            </div>
+
+            <span style={{
+                fontSize:"13px", 
+                fontWeight: "500",
+                color: getDeadlineStatus(task).includes("Overdue") ? "#ef4444" : 
+                       getDeadlineStatus(task).includes("Due soon") ? "#f59e0b" : 
+                       (darkMode ? "#94a3b8" : "#64748b")
+            }}>
+                {getDeadlineStatus(task)}
+            </span>
         </li>
         ))}
     </ul>
     {displayedTasks.length===0 && (
-        <p style={{marginTop:"20px",color:"#6b7280"}}>
-            No tasks found for this filter.
-        </p>
+        <div style={{
+            padding: "40px",
+            textAlign: "center",
+            background: darkMode ? "#1e293b" : "#ffffff",
+            borderRadius: "16px",
+            border: darkMode ? "1px dashed #334155" : "1px dashed #cbd5e1",
+            marginTop: "20px"
+        }}>
+            <p style={{fontSize: "18px", color: darkMode ? "#94a3b8" : "#64748b", margin: 0}}>
+                No tasks found for this filter.
+            </p>
+        </div>
     )}
     </>
     )
