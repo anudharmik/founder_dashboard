@@ -40,7 +40,7 @@ export default function Dashboard({goals,tasks,darkMode,loading}){
 async function fetchAIInsights() {
     if(!tasks.length) return;
   try {
-    const res = await fetch("http://localhost:3001/api/ai-insights", {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ai-insights`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
