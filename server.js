@@ -9,7 +9,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-
+app.get("/", (req, res) => {
+  res.send("Backend running");
+});
 app.post("/api/ai-insights", async (req, res) => {
   const { tasks } = req.body || {};
   if(!tasks) {
