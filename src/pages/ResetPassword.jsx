@@ -13,168 +13,158 @@ export default function ResetPassword() {
     setErrorMsg("");
     setSuccessMsg("");
 
-    const { error } = await supabase.auth.updateUser({
-      password: newPassword,
-    });
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
 
     if (error) {
       setErrorMsg(error.message);
     } else {
-      setSuccessMsg("Password updated successfully! Redirecting...");
-      setTimeout(() => window.location.href = "/", 2000);
+      setSuccessMsg("Password updated! Redirecting...");
+      setTimeout(() => (window.location.href = "/"), 2000);
     }
-    
+
     setLoading(false);
   }
 
   return (
-    <div className="login-wrapper">
+    <div className="lw">
       <style>{`
-        .login-wrapper {
+        .lw {
           display: flex;
           align-items: center;
           justify-content: center;
           min-height: 100vh;
-          background-color: #f3f4f6;
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-          margin: 0;
+          background: #0f172a;
+          font-family: 'Inter', system-ui, -apple-system, sans-serif;
           padding: 20px;
           box-sizing: border-box;
           position: fixed;
-          top: 0; left: 0; right: 0; bottom: 0;
+          inset: 0;
           z-index: 9999;
         }
-
-        .login-card {
-          background: #ffffff;
-          border: 1px solid #e5e7eb;
+        .lw::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: radial-gradient(ellipse at 30% 40%, rgba(99,102,241,0.12) 0%, transparent 60%);
+          pointer-events: none;
+        }
+        .lc {
+          background: #1e293b;
+          border: 1px solid rgba(255,255,255,0.08);
           padding: 40px;
-          border-radius: 12px;
+          border-radius: 16px;
           width: 100%;
           max-width: 400px;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-          color: #1f2937;
+          box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+          position: relative;
         }
-
-        .login-header {
+        .lbrand-name {
+          font-size: 20px;
+          font-weight: 800;
+          background: linear-gradient(135deg, #60a5fa, #a78bfa);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          margin: 0 0 6px;
           text-align: center;
-          margin-bottom: 24px;
+          display: block;
         }
-
-        .login-title {
-          margin: 0 0 8px;
-          font-size: 24px;
+        .ltitle {
+          font-size: 22px;
+          font-weight: 700;
+          color: #f1f5f9;
+          margin: 0 0 4px;
+          text-align: center;
+        }
+        .lsub {
+          font-size: 13px;
+          color: #64748b;
+          margin: 0 0 28px;
+          text-align: center;
+        }
+        .lform {
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+        }
+        .fgroup {
+          display: flex;
+          flex-direction: column;
+          gap: 5px;
+        }
+        .flabel {
+          font-size: 12px;
           font-weight: 600;
-          color: #111827;
+          color: #94a3b8;
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
         }
-
-        .login-subtitle {
-          margin: 0;
-          color: #6b7280;
-          font-size: 14px;
-        }
-
-        .login-form {
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
-        }
-
-        .form-group {
-          display: flex;
-          flex-direction: column;
-          gap: 6px;
-        }
-
-        .form-label {
-          font-size: 14px;
-          color: #374151;
-          font-weight: 500;
-        }
-
-        .form-input {
+        .finput {
           padding: 10px 14px;
-          border-radius: 6px;
-          border: 1px solid #d1d5db;
-          background: #ffffff;
-          color: #111827;
-          font-size: 15px;
+          border-radius: 8px;
+          border: 1px solid rgba(255,255,255,0.1);
+          background: #0f172a;
+          color: #f1f5f9;
+          font-size: 14px;
           outline: none;
-          transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+          transition: border-color 0.15s ease, box-shadow 0.15s ease;
+          font-family: inherit;
         }
-
-        .form-input:focus {
-          border-color: #3b82f6;
-          box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        .finput:focus {
+          border-color: #6366f1;
+          box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
         }
-
-        .login-btn {
-          margin-top: 8px;
-          padding: 12px;
-          border-radius: 6px;
+        .lbtn {
+          margin-top: 6px;
+          padding: 11px;
+          border-radius: 8px;
           border: none;
-          background: #3b82f6;
+          background: #6366f1;
           color: white;
-          font-size: 15px;
+          font-size: 14px;
           font-weight: 600;
           cursor: pointer;
-          transition: background-color 0.15s ease-in-out;
+          transition: background 0.15s ease;
+          font-family: inherit;
+          box-shadow: 0 2px 8px rgba(99,102,241,0.35);
         }
-
-        .login-btn:hover:not(:disabled) {
-          background: #2563eb;
-        }
-
-        .login-btn:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
-        }
-
-        .error-msg {
-          background: #fef2f2;
-          border: 1px solid #fecaca;
-          color: #b91c1c;
-          padding: 12px;
-          border-radius: 6px;
-          font-size: 14px;
+        .lbtn:hover:not(:disabled) { background: #4f46e5; }
+        .lbtn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .lerr {
+          background: rgba(239,68,68,0.1);
+          border: 1px solid rgba(239,68,68,0.25);
+          color: #f87171;
+          padding: 10px 14px;
+          border-radius: 8px;
+          font-size: 13px;
           text-align: center;
-          margin-bottom: 16px;
+          margin-bottom: 4px;
         }
-        
-        .success-msg {
-          background: #ecfdf5;
-          border: 1px solid #a7f3d0;
-          color: #047857;
-          padding: 12px;
-          border-radius: 6px;
-          font-size: 14px;
+        .lsuc {
+          background: rgba(34,197,94,0.1);
+          border: 1px solid rgba(34,197,94,0.25);
+          color: #4ade80;
+          padding: 10px 14px;
+          border-radius: 8px;
+          font-size: 13px;
           text-align: center;
-          margin-bottom: 16px;
+          margin-bottom: 4px;
         }
       `}</style>
-      <div className="login-card">
-        <div className="login-header">
-          <h1 className="login-title">Reset Password</h1>
-          <p className="login-subtitle">Enter your new password below.</p>
-        </div>
 
-        {errorMsg && <div className="error-msg">{errorMsg}</div>}
-        {successMsg && <div className="success-msg">{successMsg}</div>}
+      <div className="lc">
+        <span className="lbrand-name">Founder OS</span>
+        <h1 className="ltitle">Reset Password</h1>
+        <p className="lsub">Enter your new password below.</p>
 
-        <form className="login-form" onSubmit={handleReset}>
-          <div className="form-group">
-            <label className="form-label">New Password</label>
-            <input
-              className="form-input"
-              type="password"
-              placeholder="••••••••"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              required
-            />
+        {errorMsg && <div className="lerr">{errorMsg}</div>}
+        {successMsg && <div className="lsuc">{successMsg}</div>}
+
+        <form className="lform" onSubmit={handleReset}>
+          <div className="fgroup">
+            <label className="flabel">New Password</label>
+            <input className="finput" type="password" placeholder="••••••••" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required />
           </div>
-
-          <button className="login-btn" type="submit" disabled={loading}>
+          <button className="lbtn" type="submit" disabled={loading}>
             {loading ? "Updating..." : "Update Password"}
           </button>
         </form>

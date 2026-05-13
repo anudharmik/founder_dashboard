@@ -1,363 +1,494 @@
 import StatCard from "../components/StatCard";
 import TaskChart from "../components/TaskChart";
-import {useState,useEffect} from "react"
+import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 
-export default function Dashboard({goals,tasks,darkMode,loading}){
-    const totalGoals=goals.length;
-    const totalTasks=tasks.length;
-    const completedTasks=tasks.filter(
-        task=>task.completed
-    ).length;
+export default function Dashboard({ goals, tasks, darkMode, loading }) {
+  const totalGoals = goals.length;
+  const totalTasks = tasks.length;
+  const completedTasks = tasks.filter((task) => task.completed).length;
+  const remainingTasks = totalTasks - completedTasks;
+  const completionRate =
+    totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
 
-    const remainingTasks=totalTasks-completedTasks;
-    const completionRate=
-        totalTasks===0?0:Math.round((completedTasks/totalTasks)*100);
+  const today = new Date();
 
-    const today=new Date();
+  const overdueTasks = tasks.filter((task) => {
+    if (!task.deadline || task.completed) return false;
+    const deadlineDate = new Date(task.deadline);
+    return deadlineDate < today;
+  });
 
-    const overdueTasks=tasks.filter(task=>{
-        if(!task.deadline || task.completed) return false;
+  const upcomingTasks = tasks.filter((task) => {
+    if (!task.deadline || task.completed) return false;
+    const deadlineDate = new Date(task.deadline);
+    const diff = (deadlineDate - today) / (1000 * 60 * 60 * 24);
+    return diff >= 0 && diff <= 2;
+  });
 
-        const deadlineDate=new Date(task.deadline);
-        return deadlineDate<today;
-    });
+  const [aiInsights, setAiInsights] = useState({
+    focusToday: [],
+    risk: "",
+    insight: "",
+  });
 
-    const upcomingTasks=tasks.filter(task=>{
-        if(!task.deadline || task.completed) return false;
-        const deadlineDate=new Date(task.deadline);
-        const diff=(deadlineDate-today)/(1000*60*60*24);
-        return diff>=0 && diff<=2;
-    });
+  console.log("Sending Tasks:", tasks);
 
-    const [aiInsights, setAiInsights] = useState({
-  focusToday: [],
-  risk: "",
-  insight: ""
-});
-    console.log("Sending Tasks:",tasks);
+  async function fetchAIInsights() {
+    if (!tasks.length) return;
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ai-insights`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tasks }),
+      });
 
-async function fetchAIInsights() {
-    if(!tasks.length) return;
-  try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ai-insights`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ tasks }),
-    });
+      if (!res.ok) throw new Error("Failed to fetch AI insights");
 
-     if (!res.ok) {
-      throw new Error("Failed to fetch AI insights");
+      const data = await res.json();
+      setAiInsights(data);
+      sessionStorage.setItem("aiInsightsCache", JSON.stringify(data));
+      sessionStorage.setItem("tasksCache", JSON.stringify(tasks));
+      toast.success("AI insights updated and ready to help you out");
+    } catch (error) {
+      console.error("Fetch failed:", error);
+      toast.error("Failed to fetch AI insights");
     }
-    const data = await res.json();
-
-    setAiInsights(data);
-    
-    sessionStorage.setItem("aiInsightsCache", JSON.stringify(data));
-    sessionStorage.setItem("tasksCache", JSON.stringify(tasks));
-    toast.success("AI insights updated and ready to help you out");
-
-  } catch (error) {
-    console.error("Fetch failed:", error);
-    toast.error("Failed to fetch AI insights")
   }
-}
 
-    useEffect(()=>{
-        if(tasks.length>0){
-            const currentTasksStr = JSON.stringify(tasks);
-            const cachedTasksStr = sessionStorage.getItem("tasksCache");
-            const cachedInsights = sessionStorage.getItem("aiInsightsCache");
+  useEffect(() => {
+    if (tasks.length > 0) {
+      const currentTasksStr = JSON.stringify(tasks);
+      const cachedTasksStr = sessionStorage.getItem("tasksCache");
+      const cachedInsights = sessionStorage.getItem("aiInsightsCache");
 
-            if (currentTasksStr === cachedTasksStr && cachedInsights) {
-                try {
-                    setAiInsights(JSON.parse(cachedInsights));
-                } catch (e) {
-                    fetchAIInsights();
-                }
-            } else {
-                fetchAIInsights();
-            }
+      if (currentTasksStr === cachedTasksStr && cachedInsights) {
+        try {
+          setAiInsights(JSON.parse(cachedInsights));
+        } catch (e) {
+          fetchAIInsights();
         }
-    },[tasks]);
+      } else {
+        fetchAIInsights();
+      }
+    }
+  }, [tasks]);
 
-    function calculateProductivityScore() {
+  function calculateProductivityScore() {
     if (!tasks.length) return 0;
-
-    const completed = tasks.filter(
-        task => task.completed
-    ).length;
-
-    const overdue = tasks.filter(task => {
-        if (!task.deadline || task.completed) {
-            return false;
-        }
-        return new Date(task.deadline) < new Date();
+    const completed = tasks.filter((task) => task.completed).length;
+    const overdue = tasks.filter((task) => {
+      if (!task.deadline || task.completed) return false;
+      return new Date(task.deadline) < new Date();
     }).length;
-
-    const completionRate=completed / tasks.length;
-    let score =completionRate * 100 - overdue * 5;
+    const completionRate = completed / tasks.length;
+    let score = completionRate * 100 - overdue * 5;
     score = Math.max(0, Math.min(100, score));
-
     return Math.round(score);
-    }
-
-    const productivityScore = calculateProductivityScore();
-
-    function calculateStreak() {
-
-  // completed tasks only
-  const completedTasks = tasks.filter(
-    task => task.completed && task.completed_at
-  );
-
-  if (!completedTasks.length) {
-    return 0;
   }
 
-  // unique completion dates
-  const dates = [
-    ...new Set(
-      completedTasks.map(task =>
-        new Date(task.completed_at)
-          .toISOString()
-          .split("T")[0]
-      )
-    )
-  ].sort().reverse();
+  const productivityScore = calculateProductivityScore();
 
-  let streak = 1;
+  function calculateStreak() {
+    const completedTasksWithDate = tasks.filter(
+      (task) => task.completed && task.completed_at
+    );
+    if (!completedTasksWithDate.length) return 0;
+    const dates = [
+      ...new Set(
+        completedTasksWithDate.map((task) =>
+          new Date(task.completed_at).toISOString().split("T")[0]
+        )
+      ),
+    ]
+      .sort()
+      .reverse();
 
-  for (let i = 0; i < dates.length - 1; i++) {
-
-    const current = new Date(dates[i]);
-    const next = new Date(dates[i + 1]);
-
-    const diff =
-      (current - next) / (1000 * 60 * 60 * 24);
-
-    if (diff === 1) {
-      streak++;
-    } else {
-      break;
+    let streak = 1;
+    for (let i = 0; i < dates.length - 1; i++) {
+      const current = new Date(dates[i]);
+      const next = new Date(dates[i + 1]);
+      const diff = (current - next) / (1000 * 60 * 60 * 24);
+      if (diff === 1) streak++;
+      else break;
     }
+    return streak;
   }
 
-  return streak;
-}
+  const streak = calculateStreak();
 
-    const streak = calculateStreak();
+  const scoreColor =
+    productivityScore >= 75
+      ? "#22c55e"
+      : productivityScore >= 45
+      ? "#f59e0b"
+      : "#ef4444";
 
-    if(loading){
-        return (
-            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-                <p style={{ fontSize: "18px", fontWeight: "500", color: darkMode ? "#94a3b8" : "#64748b" }}>
-                    Loading dashboard...
-                </p>
-            </div>
-        );
-    }
+  const cardBase = {
+    padding: "24px",
+    borderRadius: "16px",
+    background: darkMode ? "#1e293b" : "#ffffff",
+    boxShadow: darkMode
+      ? "0 2px 16px rgba(0,0,0,0.4)"
+      : "0 2px 16px rgba(0,0,0,0.06)",
+    border: darkMode
+      ? "1px solid rgba(255,255,255,0.07)"
+      : "1px solid rgba(0,0,0,0.04)",
+  };
+
+  const alertBase = {
+    padding: "12px 18px",
+    borderRadius: "10px",
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    fontSize: "14px",
+    fontWeight: "500",
+  };
+
+  const todayStr = today.toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  });
+
+  if (loading) {
     return (
-        <div
-            style={{
-                fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
-                maxWidth:"1200px",
-                margin:"0 auto",
-                padding:"30px 20px",
-                width:"100%"
-            }}
-        >
-        <h1 style={{fontSize:"32px",fontWeight:"600",marginBottom:"10px"}}>Dashboard</h1>
-
-        <div
+      <div
         style={{
-            display:"flex",
-            gap:"20px",
-            flexWrap:"wrap"
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
         }}
+      >
+        <p
+          style={{
+            fontSize: "16px",
+            fontWeight: "500",
+            color: darkMode ? "#94a3b8" : "#64748b",
+          }}
         >
-            <div style={{marginBottom:"20px", display: "flex", flexDirection: "column", gap: "12px"}}>
+          Loading dashboard...
+        </p>
+      </div>
+    );
+  }
 
-                {overdueTasks.length ===0 && upcomingTasks.length===0 && (
-                    <div style={{
-                        padding: "16px 20px",
-                        borderRadius: "12px",
-                        background: darkMode ? "rgba(34, 197, 94, 0.1)" : "#dcfce7",
-                        color: darkMode ? "#4ade80" : "#166534",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "10px",
-                        boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
-                    }}>
-                        <span style={{ fontSize: "20px" }}>✅</span>
-                        <p style={{fontSize: "16px", fontWeight:"600", margin: 0}}>
-                            No urgent deadlines as of now. You're all caught up!
-                        </p>
-                    </div>
-                )}
+  return (
+    <div
+      style={{
+        fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
+        maxWidth: "1200px",
+        margin: "0 auto",
+        width: "100%",
+      }}
+    >
+      {/* Header */}
+      <div style={{ marginBottom: "28px" }}>
+        <h1
+          style={{
+            fontSize: "28px",
+            fontWeight: "700",
+            margin: "0 0 4px",
+            letterSpacing: "-0.5px",
+            color: darkMode ? "#f1f5f9" : "#0f172a",
+          }}
+        >
+          Dashboard
+        </h1>
+        <p
+          style={{
+            fontSize: "14px",
+            color: darkMode ? "#64748b" : "#94a3b8",
+            margin: 0,
+          }}
+        >
+          {todayStr}
+        </p>
+      </div>
 
-                {overdueTasks.length>0 && (
-                    <div style={{
-                        fontSize: "16px", 
-                        padding:"16px 20px",
-                        borderRadius:"12px",
-                        background: darkMode ? "rgba(239, 68, 68, 0.1)" : "#fee2e2",
-                        color: darkMode ? "#f87171" : "#b91c1c",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "10px",
-                        boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
-                    }}>
-                        <span style={{ fontSize: "20px" }}>❗</span>
-                        <p style={{ margin: 0, fontWeight: "600" }}>{overdueTasks.length} task{overdueTasks.length>1?"s":""} overdue</p>
-                    </div>
-                )}
-
-                {upcomingTasks.length>0 && (
-                    <div style={{
-                        fontSize: "16px", 
-                        padding:"16px 20px",
-                        borderRadius:"12px",
-                        background: darkMode ? "rgba(245, 158, 11, 0.1)" : "#fef3c7",
-                        color: darkMode ? "#fbbf24" : "#92400e",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "10px",
-                        boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
-                    }}>
-                        <span style={{ fontSize: "20px" }}>⚠️</span>
-                        <p style={{ margin: 0, fontWeight: "600" }}>{upcomingTasks.length} task{upcomingTasks.length>1?"s":""} due soon</p>
-                    </div>
-                )}
+      {/* Alert banners */}
+      {(overdueTasks.length > 0 || upcomingTasks.length > 0 || (overdueTasks.length === 0 && upcomingTasks.length === 0)) && (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "8px",
+            marginBottom: "28px",
+          }}
+        >
+          {overdueTasks.length === 0 && upcomingTasks.length === 0 && (
+            <div
+              style={{
+                ...alertBase,
+                background: darkMode ? "rgba(34,197,94,0.08)" : "#f0fdf4",
+                color: darkMode ? "#4ade80" : "#166534",
+                border: darkMode ? "1px solid rgba(34,197,94,0.15)" : "1px solid #bbf7d0",
+              }}
+            >
+              <span>✅</span>
+              <span>No urgent deadlines — you're all caught up!</span>
             </div>
-
-            <div style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-                gap: "24px",
-                marginBottom: "24px"
-            }}>
-                <div
-                    style={{
-                        padding: "24px",
-                        borderRadius: "16px",
-                        background: darkMode ? "#1e293b" : "#ffffff",
-                        boxShadow: darkMode ? "0 4px 20px rgba(0,0,0,0.4)" : "0 4px 20px rgba(0,0,0,0.05)",
-                        border: darkMode ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(0,0,0,0.05)",
-                        display: "flex",
-                        flexDirection: "column"
-                    }}
-                >
-                    <h3 style={{ fontSize: "20px", marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px" }}>
-                        <span>🔥</span> Focus Today
-                    </h3>
-
-                    {aiInsights.focusToday?.map((task, index) => (
-                        <div key={index} style={{ 
-                            fontSize: "15px", 
-                            padding: "10px", 
-                            background: darkMode ? "#334155" : "#f8fafc", 
-                            borderRadius: "8px",
-                            marginBottom: "8px"
-                        }}>
-                            • {task}
-                        </div>
-                    ))}
-
-                    <h3 style={{ fontSize: "18px", marginTop: "20px", marginBottom: "8px", display: "flex", alignItems: "center", gap: "8px" }}>
-                        <span>⚠️</span> Risk
-                    </h3>
-                    <p style={{ fontSize: "15px", color: darkMode ? "#cbd5e1" : "#475569", lineHeight: "1.5" }}>{aiInsights.risk}</p>
-
-                    <h3 style={{ fontSize: "18px", marginTop: "20px", marginBottom: "8px", display: "flex", alignItems: "center", gap: "8px" }}>
-                        <span>📊</span> Insight
-                    </h3>
-                    <p style={{ fontSize: "15px", color: darkMode ? "#cbd5e1" : "#475569", lineHeight: "1.5" }}>{aiInsights.insight}</p>
-                </div>
-
-                <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-                    <div style={{
-                        padding: "24px",
-                        borderRadius: "16px",
-                        background: darkMode ? "#1e293b" : "#ffffff",
-                        boxShadow: darkMode ? "0 4px 20px rgba(0,0,0,0.4)" : "0 4px 20px rgba(0,0,0,0.05)",
-                        border: darkMode ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(0,0,0,0.05)",
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        flex: 1
-                        }}
-                    >
-                        <h2 style={{ fontSize: "20px", color: darkMode ? "#94a3b8" : "#64748b" }}>Productivity Score</h2>
-                        <h2 style={{
-                            fontSize: "48px",
-                            fontWeight: "800",
-                            margin: "16px 0",
-                            color: darkMode ? "#f8fafc" : "#0f172a"
-                            }}>
-                            {productivityScore}/100
-                        </h2>
-                        <p style={{ fontSize: "14px", color: darkMode ? "#94a3b8" : "#64748b" }}>
-                            Based on completed and overdue tasks
-                        </p>
-                    </div>
-
-                    <div style={{
-                        padding: "24px",
-                        borderRadius: "16px",
-                        background: darkMode ? "#1e293b" : "#ffffff",
-                        boxShadow: darkMode ? "0 4px 20px rgba(0,0,0,0.4)" : "0 4px 20px rgba(0,0,0,0.05)",
-                        border: darkMode ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(0,0,0,0.05)",
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        flex: 1
-                        }}  
-                    >
-                        <h2 style={{ fontSize: "20px", color: darkMode ? "#94a3b8" : "#64748b" }}>Current Streak</h2>
-                        <h1 style={{
-                            fontSize:"48px",
-                            fontWeight: "800",
-                            margin:"16px 0",
-                            color: darkMode ? "#f8fafc" : "#0f172a"
-                        }}>
-                            {streak} Days
-                        </h1>
-                        <p style={{ fontSize: "14px", color: darkMode ? "#94a3b8" : "#64748b" }}>
-                            Consecutive productive days
-                        </p>
-                    </div>
-                </div>
+          )}
+          {overdueTasks.length > 0 && (
+            <div
+              style={{
+                ...alertBase,
+                background: darkMode ? "rgba(239,68,68,0.08)" : "#fef2f2",
+                color: darkMode ? "#f87171" : "#b91c1c",
+                border: darkMode ? "1px solid rgba(239,68,68,0.15)" : "1px solid #fecaca",
+              }}
+            >
+              <span>❗</span>
+              <span>
+                {overdueTasks.length} task{overdueTasks.length > 1 ? "s" : ""} overdue
+              </span>
             </div>
-
-            <div style={{
-                display:"grid",
-                gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))",
-                gap:"24px",
-                width:"100%"
-            }}>
-            <StatCard title="Total Goals" value={totalGoals} darkMode={darkMode} />
-            <StatCard title="Total Tasks" value={totalTasks} darkMode={darkMode} />
-            <StatCard title="Completed Tasks" value={completedTasks} darkMode={darkMode} />
-            <StatCard title="Completion Rate" value={`${completionRate}%`} darkMode={darkMode} />
-            <TaskChart completed={completedTasks} remaining={remainingTasks}/>
+          )}
+          {upcomingTasks.length > 0 && (
+            <div
+              style={{
+                ...alertBase,
+                background: darkMode ? "rgba(245,158,11,0.08)" : "#fffbeb",
+                color: darkMode ? "#fbbf24" : "#92400e",
+                border: darkMode ? "1px solid rgba(245,158,11,0.15)" : "1px solid #fde68a",
+              }}
+            >
+              <span>⏰</span>
+              <span>
+                {upcomingTasks.length} task{upcomingTasks.length > 1 ? "s" : ""} due soon
+              </span>
             </div>
-
+          )}
         </div>
-        {/* <div style={{ marginTop: "30px" }}>
-        <h2>AI Insights</h2>
-        {aiInsights ? (
-            <p style={{ whiteSpace: "pre-line" }}>
-            {aiInsights}
+      )}
+
+      {/* Main cards */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+          gap: "20px",
+          marginBottom: "20px",
+        }}
+      >
+        {/* AI Insights */}
+        <div style={{ ...cardBase, display: "flex", flexDirection: "column" }}>
+          <h3
+            style={{
+              fontSize: "15px",
+              fontWeight: "600",
+              marginBottom: "16px",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              color: darkMode ? "#f1f5f9" : "#0f172a",
+            }}
+          >
+            <span>🔥</span> Focus Today
+          </h3>
+
+          {aiInsights.focusToday?.map((task, index) => (
+            <div
+              key={index}
+              style={{
+                fontSize: "14px",
+                padding: "10px 12px",
+                background: darkMode ? "rgba(255,255,255,0.04)" : "#f8fafc",
+                borderRadius: "8px",
+                marginBottom: "6px",
+                color: darkMode ? "#cbd5e1" : "#334155",
+                borderLeft: "3px solid #818cf8",
+              }}
+            >
+              {task}
+            </div>
+          ))}
+
+          <h3
+            style={{
+              fontSize: "13px",
+              fontWeight: "600",
+              marginTop: "18px",
+              marginBottom: "6px",
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+              color: darkMode ? "#94a3b8" : "#64748b",
+              textTransform: "uppercase",
+              letterSpacing: "0.05em",
+            }}
+          >
+            ⚠️ Risk
+          </h3>
+          <p
+            style={{
+              fontSize: "14px",
+              color: darkMode ? "#94a3b8" : "#475569",
+              lineHeight: "1.6",
+              margin: 0,
+            }}
+          >
+            {aiInsights.risk}
+          </p>
+
+          <h3
+            style={{
+              fontSize: "13px",
+              fontWeight: "600",
+              marginTop: "18px",
+              marginBottom: "6px",
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+              color: darkMode ? "#94a3b8" : "#64748b",
+              textTransform: "uppercase",
+              letterSpacing: "0.05em",
+            }}
+          >
+            📊 Insight
+          </h3>
+          <p
+            style={{
+              fontSize: "14px",
+              color: darkMode ? "#94a3b8" : "#475569",
+              lineHeight: "1.6",
+              margin: 0,
+            }}
+          >
+            {aiInsights.insight}
+          </p>
+        </div>
+
+        {/* Score + Streak */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+          {/* Productivity Score */}
+          <div
+            style={{
+              ...cardBase,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "flex-start",
+              flex: 1,
+            }}
+          >
+            <p
+              style={{
+                fontSize: "12px",
+                fontWeight: "600",
+                letterSpacing: "0.06em",
+                textTransform: "uppercase",
+                color: darkMode ? "#64748b" : "#94a3b8",
+                margin: "0 0 8px",
+              }}
+            >
+              Productivity Score
             </p>
-        ) : (
-            <p>Generating insights...</p>
-        )}
-        </div> */}
+            <p
+              style={{
+                fontSize: "44px",
+                fontWeight: "800",
+                margin: "0 0 4px",
+                letterSpacing: "-1px",
+                color: scoreColor,
+              }}
+            >
+              {productivityScore}
+              <span
+                style={{
+                  fontSize: "20px",
+                  fontWeight: "500",
+                  color: darkMode ? "#475569" : "#94a3b8",
+                }}
+              >
+                /100
+              </span>
+            </p>
+            <p
+              style={{
+                fontSize: "13px",
+                color: darkMode ? "#475569" : "#94a3b8",
+                margin: 0,
+              }}
+            >
+              Based on completed &amp; overdue tasks
+            </p>
+          </div>
+
+          {/* Streak */}
+          <div
+            style={{
+              ...cardBase,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "flex-start",
+              flex: 1,
+            }}
+          >
+            <p
+              style={{
+                fontSize: "12px",
+                fontWeight: "600",
+                letterSpacing: "0.06em",
+                textTransform: "uppercase",
+                color: darkMode ? "#64748b" : "#94a3b8",
+                margin: "0 0 8px",
+              }}
+            >
+              Current Streak
+            </p>
+            <p
+              style={{
+                fontSize: "44px",
+                fontWeight: "800",
+                margin: "0 0 4px",
+                letterSpacing: "-1px",
+                color: streak > 0 ? "#f59e0b" : darkMode ? "#f1f5f9" : "#0f172a",
+              }}
+            >
+              {streak}
+              <span
+                style={{
+                  fontSize: "20px",
+                  fontWeight: "500",
+                  color: darkMode ? "#475569" : "#94a3b8",
+                }}
+              >
+                {" "}
+                days
+              </span>
+            </p>
+            <p
+              style={{
+                fontSize: "13px",
+                color: darkMode ? "#475569" : "#94a3b8",
+                margin: 0,
+              }}
+            >
+              Consecutive productive days
+            </p>
+          </div>
         </div>
-    )
+      </div>
+
+      {/* Stat cards row */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+          gap: "16px",
+          width: "100%",
+        }}
+      >
+        <StatCard title="Total Goals" value={totalGoals} darkMode={darkMode} />
+        <StatCard title="Total Tasks" value={totalTasks} darkMode={darkMode} />
+        <StatCard title="Completed Tasks" value={completedTasks} darkMode={darkMode} />
+        <StatCard title="Completion Rate" value={`${completionRate}%`} darkMode={darkMode} />
+        <TaskChart completed={completedTasks} remaining={remainingTasks} />
+      </div>
+    </div>
+  );
 }

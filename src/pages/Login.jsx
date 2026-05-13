@@ -7,47 +7,32 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
-  const [mode, setMode] = useState("signin"); // 'signin', 'signup', 'forgot'
+  const [mode, setMode] = useState("signin");
 
   async function handleSubmit(e) {
-    try{
-    e.preventDefault();
-    setLoading(true);
-    setErrorMsg("");
-    setSuccessMsg("");
+    try {
+      e.preventDefault();
+      setLoading(true);
+      setErrorMsg("");
+      setSuccessMsg("");
 
-    if (mode === "signin") {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      if (error) setErrorMsg(error.message);
-
-    } else if (mode === "signup") {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
-      if (error) {
-        setErrorMsg(error.message);
-      } else {
-        setSuccessMsg("Account created successfully! You can now sign in.");
+      if (mode === "signin") {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) setErrorMsg(error.message);
+      } else if (mode === "signup") {
+        const { error } = await supabase.auth.signUp({ email, password });
+        if (error) setErrorMsg(error.message);
+        else setSuccessMsg("Account created! You can now sign in.");
+      } else if (mode === "forgot") {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/reset-password`,
+        });
+        if (error) setErrorMsg(error.message);
+        else setSuccessMsg("Password reset link sent to your email!");
       }
-
-    } else if (mode === "forgot") {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
-      });
-      if (error) {
-        setErrorMsg(error.message);
-      } else {
-        setSuccessMsg("Password reset link sent to your email!");
-      }
+    } finally {
+      setLoading(false);
     }
-
-  }finally{
-    setLoading(false);
-  }
   }
 
   function toggleMode(newMode) {
@@ -56,220 +41,201 @@ export default function Login() {
     setSuccessMsg("");
   }
 
+  const modeTitle = mode === "signin" ? "Welcome back" : mode === "signup" ? "Create account" : "Reset password";
+  const modeSub = mode === "signin"
+    ? "Sign in to your Founder OS"
+    : mode === "signup"
+    ? "Get started with your command center"
+    : "We'll send you a link to reset your password";
+
   return (
-    <div className="login-wrapper">
+    <div className="lw">
       <style>{`
-        .login-wrapper {
+        .lw {
           display: flex;
           align-items: center;
           justify-content: center;
           min-height: 100vh;
-          background-color: #f3f4f6;
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-          margin: 0;
+          background: #0f172a;
+          font-family: 'Inter', system-ui, -apple-system, sans-serif;
           padding: 20px;
           box-sizing: border-box;
           position: fixed;
-          top: 0; left: 0; right: 0; bottom: 0;
+          inset: 0;
           z-index: 9999;
         }
-
-        .login-card {
-          background: #ffffff;
-          border: 1px solid #e5e7eb;
+        .lw::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: radial-gradient(ellipse at 30% 40%, rgba(99,102,241,0.12) 0%, transparent 60%),
+                      radial-gradient(ellipse at 70% 70%, rgba(139,92,246,0.08) 0%, transparent 60%);
+          pointer-events: none;
+        }
+        .lc {
+          background: #1e293b;
+          border: 1px solid rgba(255,255,255,0.08);
           padding: 40px;
-          border-radius: 12px;
+          border-radius: 16px;
           width: 100%;
           max-width: 400px;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-          color: #1f2937;
+          box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+          position: relative;
         }
-
-        .login-header {
+        .lbrand {
           text-align: center;
-          margin-bottom: 24px;
+          margin-bottom: 32px;
         }
-
-        .login-title {
-          margin: 0 0 8px;
-          font-size: 24px;
-          font-weight: 600;
-          color: #111827;
+        .lbrand-name {
+          font-size: 20px;
+          font-weight: 800;
+          background: linear-gradient(135deg, #60a5fa, #a78bfa);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          margin: 0 0 6px;
         }
-
-        .login-subtitle {
+        .ltitle {
+          font-size: 22px;
+          font-weight: 700;
+          color: #f1f5f9;
+          margin: 0 0 4px;
+          letter-spacing: -0.3px;
+        }
+        .lsub {
+          font-size: 13px;
+          color: #64748b;
           margin: 0;
-          color: #6b7280;
-          font-size: 14px;
         }
-
-        .login-form {
+        .lform {
           display: flex;
           flex-direction: column;
-          gap: 16px;
+          gap: 14px;
         }
-
-        .form-group {
+        .fgroup {
+          display: flex;
+          flex-direction: column;
+          gap: 5px;
+        }
+        .flabel {
+          font-size: 12px;
+          font-weight: 600;
+          color: #94a3b8;
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
+        }
+        .finput {
+          padding: 10px 14px;
+          border-radius: 8px;
+          border: 1px solid rgba(255,255,255,0.1);
+          background: #0f172a;
+          color: #f1f5f9;
+          font-size: 14px;
+          outline: none;
+          transition: border-color 0.15s ease, box-shadow 0.15s ease;
+          font-family: inherit;
+        }
+        .finput:focus {
+          border-color: #6366f1;
+          box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+        }
+        .finput::placeholder { color: #334155; }
+        .lbtn {
+          margin-top: 6px;
+          padding: 11px;
+          border-radius: 8px;
+          border: none;
+          background: #6366f1;
+          color: white;
+          font-size: 14px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: background 0.15s ease;
+          font-family: inherit;
+          box-shadow: 0 2px 8px rgba(99,102,241,0.35);
+        }
+        .lbtn:hover:not(:disabled) { background: #4f46e5; }
+        .lbtn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .lerr {
+          background: rgba(239,68,68,0.1);
+          border: 1px solid rgba(239,68,68,0.25);
+          color: #f87171;
+          padding: 10px 14px;
+          border-radius: 8px;
+          font-size: 13px;
+          text-align: center;
+          margin-bottom: 4px;
+        }
+        .lsuc {
+          background: rgba(34,197,94,0.1);
+          border: 1px solid rgba(34,197,94,0.25);
+          color: #4ade80;
+          padding: 10px 14px;
+          border-radius: 8px;
+          font-size: 13px;
+          text-align: center;
+          margin-bottom: 4px;
+        }
+        .ltoggle {
+          text-align: center;
+          margin-top: 20px;
+          font-size: 13px;
+          color: #475569;
           display: flex;
           flex-direction: column;
           gap: 6px;
         }
-
-        .form-label {
-          font-size: 14px;
-          color: #374151;
-          font-weight: 500;
-        }
-
-        .form-input {
-          padding: 10px 14px;
-          border-radius: 6px;
-          border: 1px solid #d1d5db;
-          background: #ffffff;
-          color: #111827;
-          font-size: 15px;
-          outline: none;
-          transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-        }
-
-        .form-input:focus {
-          border-color: #3b82f6;
-          box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-        }
-
-        .form-input::placeholder {
-          color: #9ca3af;
-        }
-
-        .login-btn {
-          margin-top: 8px;
-          padding: 12px;
-          border-radius: 6px;
-          border: none;
-          background: #3b82f6;
-          color: white;
-          font-size: 15px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: background-color 0.15s ease-in-out;
-        }
-
-        .login-btn:hover:not(:disabled) {
-          background: #2563eb;
-        }
-
-        .login-btn:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
-        }
-
-        .error-msg {
-          background: #fef2f2;
-          border: 1px solid #fecaca;
-          color: #b91c1c;
-          padding: 12px;
-          border-radius: 6px;
-          font-size: 14px;
-          text-align: center;
-          margin-bottom: 16px;
-        }
-        
-        .success-msg {
-          background: #ecfdf5;
-          border: 1px solid #a7f3d0;
-          color: #047857;
-          padding: 12px;
-          border-radius: 6px;
-          font-size: 14px;
-          text-align: center;
-          margin-bottom: 16px;
-        }
-
-        .toggle-section {
-          text-align: center;
-          margin-top: 20px;
-          font-size: 14px;
-          color: #4b5563;
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-        }
-
-        .toggle-btn {
+        .tbtn {
           background: none;
           border: none;
-          color: #3b82f6;
-          font-size: 14px;
+          color: #818cf8;
+          font-size: 13px;
           cursor: pointer;
           padding: 0;
+          font-family: inherit;
         }
-        
-        .toggle-btn:hover {
-          text-decoration: underline;
-        }
+        .tbtn:hover { text-decoration: underline; }
       `}</style>
 
-      <div className="login-card">
-        <div className="login-header">
-          <h1 className="login-title">
-            {mode === "signin" ? "Login" : mode === "signup" ? "Create Account" : "Reset Password"}
-          </h1>
-          <p className="login-subtitle">
-            {mode === "signin" 
-              ? "Sign in to your account" 
-              : mode === "signup"
-              ? "Sign up for a new account"
-              : "Enter your email to receive a reset link"}
-          </p>
+      <div className="lc">
+        <div className="lbrand">
+          <p className="lbrand-name">Founder OS</p>
+          <h1 className="ltitle">{modeTitle}</h1>
+          <p className="lsub">{modeSub}</p>
         </div>
 
-        {errorMsg && <div className="error-msg">{errorMsg}</div>}
-        {successMsg && <div className="success-msg">{successMsg}</div>}
+        {errorMsg && <div className="lerr">{errorMsg}</div>}
+        {successMsg && <div className="lsuc">{successMsg}</div>}
 
-        <form className="login-form" onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label className="form-label">Email</label>
-            <input
-              className="form-input"
-              type="email"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
+        <form className="lform" onSubmit={handleSubmit}>
+          <div className="fgroup">
+            <label className="flabel">Email</label>
+            <input className="finput" type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
           </div>
 
           {mode !== "forgot" && (
-            <div className="form-group">
-              <label className="form-label">Password</label>
-              <input
-                className="form-input"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+            <div className="fgroup">
+              <label className="flabel">Password</label>
+              <input className="finput" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required />
             </div>
           )}
 
-          <button className="login-btn" type="submit" disabled={loading}>
+          <button className="lbtn" type="submit" disabled={loading}>
             {loading ? "Processing..." : mode === "signin" ? "Sign In" : mode === "signup" ? "Sign Up" : "Send Reset Link"}
           </button>
         </form>
 
-        <div className="toggle-section">
+        <div className="ltoggle">
           {mode === "signin" && (
             <>
-              <div>Don't have an account? <button type="button" className="toggle-btn" onClick={() => toggleMode("signup")}>Sign up</button></div>
-              <div><button type="button" className="toggle-btn" onClick={() => toggleMode("forgot")}>Forgot password?</button></div>
+              <div>No account? <button type="button" className="tbtn" onClick={() => toggleMode("signup")}>Sign up</button></div>
+              <div><button type="button" className="tbtn" onClick={() => toggleMode("forgot")}>Forgot password?</button></div>
             </>
           )}
           {mode === "signup" && (
-            <div>Already have an account? <button type="button" className="toggle-btn" onClick={() => toggleMode("signin")}>Sign in</button></div>
+            <div>Already have one? <button type="button" className="tbtn" onClick={() => toggleMode("signin")}>Sign in</button></div>
           )}
           {mode === "forgot" && (
-            <div>Remembered your password? <button type="button" className="toggle-btn" onClick={() => toggleMode("signin")}>Sign in</button></div>
+            <div><button type="button" className="tbtn" onClick={() => toggleMode("signin")}>Back to sign in</button></div>
           )}
         </div>
       </div>
