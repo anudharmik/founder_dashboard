@@ -1,108 +1,81 @@
-# 🚀 Founder Dashboard – Productivity & Goal Management System
+# 🚀 FounderOS
 
-A full-stack productivity dashboard designed to help users manage **projects, goals, and tasks** with real-time analytics, deadlines, and smart prioritization.
+FounderOS is a full-stack productivity and execution platform built to help users manage projects, goals, tasks, and daily workflows from a single dashboard.
 
-Built as a scalable SaaS-style application with structured data relationships and interactive insights.
+The platform combines execution tracking, analytics, AI-powered insights, and workflow automation in a scalable SaaS-style architecture.
+
+**🔗 [Live Demo](https://founder-dashboard-five.vercel.app/)**
+
+---
+
+## 💡 Why I Built This
+
+I wanted a system that maps to how execution actually happens—breaking big projects down into actionable goals and specific tasks. Beyond scratching my own itch, I built FounderOS to showcase my ability to ship full-stack applications, handle relational data modeling, and integrate AI in a way that provides tangible value.
 
 ---
 
 ## ✨ Features
 
-### 📁 Project → Goal → Task Hierarchy
-
-* Organize work into **Projects → Goals → Tasks**
-* Structured workflow similar to real-world productivity systems
-
-### 📊 Analytics Dashboard
-
-* Goal progress visualization
-* Task completion insights
-* Weekly productivity tracking
-* Per-project analytics
-
-### ⏰ Deadlines & Smart Alerts
-
-* Task deadlines with visual indicators:
-
-  * 🔴 Overdue
-  * 🟠 Due soon
-* Dashboard alerts for urgent tasks
-
-### ⚡ Productivity Enhancements
-
-* Keyboard shortcuts for fast navigation
-* Urgency-based task sorting
-* Quick task toggling and editing
-
-### 🌙 Modern UI/UX
-
-* Dark mode support
-* Responsive layout
-* Interactive cards and transitions
-* Clean dashboard design
+- 📁 Structured **Project → Goal → Task** workflow system
+- 🧠 AI-powered **Today Focus** recommendations and productivity insights
+- 📊 Analytics dashboard with progress tracking and visualizations
+- ⏰ Smart reminder system with automated email workflows
+- ⚡ Urgency-based task prioritization and quick task management
+- 🌙 Responsive modern dashboard UI with dark mode support
 
 ---
 
 ## 🧠 Tech Stack
 
-**Frontend**
+### Frontend
+- React (Vite)
+- React Router
+- TailwindCSS
+- Recharts
 
-* React (Vite)
-* React Router
-* Recharts (data visualization)
+### Backend
+- Supabase
+- PostgreSQL
+- Supabase Auth
+- Row Level Security (RLS)
 
-**Backend / Database**
-
-* Supabase (PostgreSQL + Auth)
-
-**Deployment**
-
-* Vercel
-
----
-
-## 🔐 Authentication
-
-* Supabase authentication
-* Secure user-based data isolation using Row Level Security (RLS)
+### Automation & Deployment
+- Supabase Edge Functions
+- Resend Email API
+- Vercel
 
 ---
 
-## 📂 Database Structure
+## 🔐 Authentication & Security
 
-```
-Projects
-  └── Goals
-        └── Tasks
-```
-
-Each entity is securely linked via `user_id`.
+- Secure authentication using Supabase Auth
+- User-specific data isolation using Row Level Security (RLS)
+- Protected dashboard routes
 
 ---
 
-## 📈 Key Highlights
+### 🧠 AI Productivity Features
 
-* Built a **relational data-driven system** with real-time UI updates
-* Implemented **derived analytics (progress, completion rates)**
-* Designed a **scalable component architecture**
-* Focused on **UX + performance + usability**
-
----
-
-## 🚀 Live Demo
-
-👉 [Add your Vercel link here]
+- AI-generated **Today Focus** recommendations
+- Productivity scoring based on completed work
+- Smart insights for tracking consistency and execution patterns
 
 ---
 
-## 📌 Future Improvements
+## 📈 Highlights
 
-* Notifications system
-* Drag & drop task management
-* Team collaboration features
+- Built scalable relational database architecture
+- Implemented real-time productivity analytics
+- Developed reusable modular React components
+- Added backend automation workflows for reminders and notifications
 
 ---
+
+
 
 ## 🧑‍💻 Author
 
 **Anurag Dharmik**
+
+*Software Engineering student actively looking for internship opportunities.*
+I love working across the stack, obsessing over UI details, and learning scalable backend patterns. Feel free to reach out!
