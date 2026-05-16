@@ -27,7 +27,7 @@ export default function Analytics({ goals, tasks, darkMode }) {
     letterSpacing: "0.06em",
     textTransform: "uppercase",
     color: darkMode ? "#64748b" : "#94a3b8",
-    margin: "0 0 12px",
+    margin: "0 0 16px",
   };
 
   return (
@@ -36,7 +36,7 @@ export default function Analytics({ goals, tasks, darkMode }) {
       <div style={{ marginBottom: "28px" }}>
         <h1
           style={{
-            fontSize: "28px",
+            fontSize: "clamp(22px, 5vw, 28px)",
             fontWeight: "700",
             margin: "0 0 4px",
             letterSpacing: "-0.5px",
@@ -50,14 +50,15 @@ export default function Analytics({ goals, tasks, darkMode }) {
         </p>
       </div>
 
-      {/* Goal selector */}
+      {/* Goal selector — stacks on mobile */}
       <div
         style={{
           ...cardBase,
           display: "flex",
-          alignItems: "center",
+          alignItems: "flex-start",
           gap: "12px",
           padding: "16px 20px",
+          flexDirection: "column",
         }}
       >
         <label
@@ -80,7 +81,8 @@ export default function Analytics({ goals, tasks, darkMode }) {
             outline: "none",
             cursor: "pointer",
             fontSize: "14px",
-            minWidth: "200px",
+            width: "100%",
+            maxWidth: "320px",
           }}
           value={selectedGoal}
           onChange={(e) => setSelectedGoal(e.target.value)}
@@ -102,20 +104,26 @@ export default function Analytics({ goals, tasks, darkMode }) {
             Select a goal above to view its task progress.
           </p>
         ) : (
-          <GoalChart tasks={filteredTasks} />
+          <div className="chart-scroll">
+            <GoalChart tasks={filteredTasks} />
+          </div>
         )}
       </div>
 
       {/* All Goals Progress */}
       <div style={cardBase}>
         <p style={sectionLabel}>All Goals Progress</p>
-        <GoalProgressChart goals={goals} tasks={tasks} />
+        <div className="chart-scroll">
+          <GoalProgressChart goals={goals} tasks={tasks} />
+        </div>
       </div>
 
       {/* Weekly Progress */}
       <div style={cardBase}>
         <p style={sectionLabel}>Weekly Progress</p>
-        <WeeklyChart tasks={tasks} />
+        <div className="chart-scroll">
+          <WeeklyChart tasks={tasks} />
+        </div>
       </div>
     </div>
   );

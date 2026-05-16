@@ -55,7 +55,7 @@ export default function Tasks({ tasks, goals, toggleTask, loading, darkMode }) {
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "24px", flexWrap: "wrap", gap: "12px" }}>
         <div>
-          <h1 style={{ margin: "0 0 4px", fontSize: "28px", fontWeight: "700", letterSpacing: "-0.5px", color: darkMode ? "#f1f5f9" : "#0f172a" }}>
+          <h1 style={{ margin: "0 0 4px", fontSize: "clamp(22px, 5vw, 28px)", fontWeight: "700", letterSpacing: "-0.5px", color: darkMode ? "#f1f5f9" : "#0f172a" }}>
             Tasks
           </h1>
           <p style={{ margin: 0, fontSize: "14px", color: darkMode ? "#64748b" : "#94a3b8" }}>
@@ -73,12 +73,13 @@ export default function Tasks({ tasks, goals, toggleTask, loading, darkMode }) {
             fontSize: "13px",
             fontWeight: "500",
             transition: "all 0.15s ease",
+            whiteSpace: "nowrap",
           }}
           onClick={() => setSortByUrgency(!sortByUrgency)}
           onMouseEnter={(e) => { e.currentTarget.style.background = darkMode ? "#334155" : "#f1f5f9"; }}
           onMouseLeave={(e) => { e.currentTarget.style.background = darkMode ? "#1e293b" : "#ffffff"; }}
         >
-          {sortByUrgency ? "⬇ Sort: Urgency" : "⬇ Sort: Deadline"}
+          {sortByUrgency ? "⬇ Urgency" : "⬇ Deadline"}
         </button>
       </div>
 
@@ -102,6 +103,7 @@ export default function Tasks({ tasks, goals, toggleTask, loading, darkMode }) {
                 fontSize: "13px",
                 fontWeight: active ? "600" : "400",
                 transition: "all 0.15s ease",
+                whiteSpace: "nowrap",
               }}
             >
               {filterLabel(f)}
@@ -120,13 +122,13 @@ export default function Tasks({ tasks, goals, toggleTask, loading, darkMode }) {
             <li
               key={task.id}
               style={{
-                padding: "14px 18px",
+                padding: "14px 16px",
                 borderRadius: "12px",
                 background: darkMode ? "#1e293b" : "#ffffff",
                 border: darkMode ? "1px solid rgba(255,255,255,0.07)" : "1px solid #f1f5f9",
                 display: "flex",
-                alignItems: "center",
-                gap: "14px",
+                alignItems: "flex-start",
+                gap: "12px",
                 boxShadow: darkMode ? "none" : "0 1px 4px rgba(0,0,0,0.04)",
                 transition: "box-shadow 0.15s ease",
                 borderLeft: isOverdue
@@ -139,13 +141,13 @@ export default function Tasks({ tasks, goals, toggleTask, loading, darkMode }) {
               }}
             >
               <span
-                style={{ cursor: "pointer", fontSize: "18px", flexShrink: 0 }}
+                style={{ cursor: "pointer", fontSize: "18px", flexShrink: 0, marginTop: "2px" }}
                 onClick={() => toggleTask(task.id, task.completed)}
               >
                 {task.completed ? "✅" : "⬜"}
               </span>
 
-              <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "3px", minWidth: 0 }}>
+              <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: "4px" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
                   <span style={{
                     fontSize: "11px",
@@ -166,23 +168,22 @@ export default function Tasks({ tasks, goals, toggleTask, loading, darkMode }) {
                     color: task.completed
                       ? darkMode ? "#475569" : "#94a3b8"
                       : darkMode ? "#f1f5f9" : "#0f172a",
+                    wordBreak: "break-word",
                   }}>
                     {task.title}
                   </span>
                 </div>
-              </div>
 
-              {status && (
-                <span style={{
-                  fontSize: "12px",
-                  fontWeight: "500",
-                  color: isOverdue ? "#ef4444" : isDueSoon ? "#f59e0b" : darkMode ? "#64748b" : "#94a3b8",
-                  whiteSpace: "nowrap",
-                  flexShrink: 0,
-                }}>
-                  {status}
-                </span>
-              )}
+                {status && (
+                  <span style={{
+                    fontSize: "12px",
+                    fontWeight: "500",
+                    color: isOverdue ? "#ef4444" : isDueSoon ? "#f59e0b" : darkMode ? "#64748b" : "#94a3b8",
+                  }}>
+                    {status}
+                  </span>
+                )}
+              </div>
             </li>
           );
         })}
@@ -191,7 +192,7 @@ export default function Tasks({ tasks, goals, toggleTask, loading, darkMode }) {
       {/* Empty state */}
       {displayedTasks.length === 0 && (
         <div style={{
-          padding: "48px",
+          padding: "48px 24px",
           textAlign: "center",
           background: darkMode ? "#1e293b" : "#ffffff",
           borderRadius: "16px",

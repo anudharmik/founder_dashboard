@@ -29,8 +29,8 @@ export default function Projects({ user, projects, fetchProjects, darkMode, load
     color: darkMode ? "#f8fafc" : "#0f172a",
     outline: "none",
     fontSize: "14px",
-    width: "100%",
-    maxWidth: "280px",
+    flex: "1 1 200px",
+    minWidth: 0,
   };
 
   // Cycle through subtle accent colors for project cards
@@ -41,7 +41,7 @@ export default function Projects({ user, projects, fetchProjects, darkMode, load
 
       {/* Header */}
       <div style={{ marginBottom: "28px" }}>
-        <h1 style={{ margin: "0 0 4px", fontSize: "28px", fontWeight: "700", letterSpacing: "-0.5px", color: darkMode ? "#f1f5f9" : "#0f172a" }}>
+        <h1 style={{ margin: "0 0 4px", fontSize: "clamp(22px, 5vw, 28px)", fontWeight: "700", letterSpacing: "-0.5px", color: darkMode ? "#f1f5f9" : "#0f172a" }}>
           Projects
         </h1>
         <p style={{ margin: 0, fontSize: "14px", color: darkMode ? "#64748b" : "#94a3b8" }}>

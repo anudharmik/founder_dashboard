@@ -1,23 +1,80 @@
-.container {
-  display: flex; 
-  align-items: center; 
-  gap: 0; 
-  margin: 10px; 
+/* ===========================
+   Global Resets & Base Styles
+   =========================== */
+
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
-
-.container h4,
-.container input,
-.container button {
-  margin: 0; 
-  padding: 8px; 
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.container h4 {
-  margin-right: 10px; 
+body {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow-x: hidden;
 }
 
-.container input {
-  margin-right: 10px; 
+/* Scrollbar styling for webkit browsers */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.5);
 }
 
+/* GoalCard task input container */
+.task-input-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Overlay for mobile sidebar */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 199;
+  backdrop-filter: blur(2px);
+}
+.sidebar-overlay.open {
+  display: block;
+}
+
+/* Prevent body scroll when mobile drawer is open */
+body.sidebar-open {
+  overflow: hidden;
+}
+
+/* Smooth transitions for interactive elements */
+a, button {
+  transition: all 0.15s ease;
+}
+
+/* Responsive table wrapper */
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Chart container — horizontally scrollable on mobile */
+.chart-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  min-width: 0;
+}

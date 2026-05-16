@@ -262,21 +262,23 @@ function AppContent({ children }) {
         onClick={()=>setDarkMode(!darkMode)}
         style={{
           position: "fixed",
-          bottom: "20px",
-          right: "20px",
-          padding: "10px 16px",
+          bottom: "16px",
+          right: "16px",
+          padding: "8px 14px",
           borderRadius: "30px",
           border: "none",
           background: darkMode ? "#334155" : "#ffffff",
           color: darkMode ? "#f8fafc" : "#0f172a",
-          boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.18)",
           cursor: "pointer",
           fontWeight: "600",
+          fontSize: "13px",
           zIndex: 1000,
-          transition: "all 0.2s ease"
+          transition: "all 0.2s ease",
+          backdropFilter: "blur(8px)",
         }}
       >
-        {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
+        {darkMode ? "☀️ Light" : "🌙 Dark"}
       </button>
     <BrowserRouter>
     <Layout darkMode={darkMode}>

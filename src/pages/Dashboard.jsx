@@ -185,10 +185,10 @@ export default function Dashboard({ goals, tasks, darkMode, loading }) {
       }}
     >
       {/* Header */}
-      <div style={{ marginBottom: "28px" }}>
+      <div style={{ marginBottom: "24px" }}>
         <h1
           style={{
-            fontSize: "28px",
+            fontSize: "clamp(22px, 5vw, 28px)",
             fontWeight: "700",
             margin: "0 0 4px",
             letterSpacing: "-0.5px",
@@ -264,11 +264,12 @@ export default function Dashboard({ goals, tasks, darkMode, loading }) {
         </div>
       )}
 
-      {/* Main cards */}
+      {/* Main cards — responsive grid */}
       <div
+        className="dashboard-main-grid"
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+          gridTemplateColumns: "1fr",
           gap: "20px",
           marginBottom: "20px",
         }}
@@ -476,19 +477,32 @@ export default function Dashboard({ goals, tasks, darkMode, loading }) {
 
       {/* Stat cards row */}
       <div
+        className="dashboard-stat-grid"
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
           gap: "16px",
           width: "100%",
         }}
       >
         <StatCard title="Total Goals" value={totalGoals} darkMode={darkMode} />
         <StatCard title="Total Tasks" value={totalTasks} darkMode={darkMode} />
-        <StatCard title="Completed Tasks" value={completedTasks} darkMode={darkMode} />
-        <StatCard title="Completion Rate" value={`${completionRate}%`} darkMode={darkMode} />
+        <StatCard title="Completed" value={completedTasks} darkMode={darkMode} />
+        <StatCard title="Rate" value={`${completionRate}%`} darkMode={darkMode} />
         <TaskChart completed={completedTasks} remaining={remainingTasks} />
       </div>
+
+      {/* Responsive grid rules */}
+      <style>{`
+        @media (min-width: 768px) {
+          .dashboard-main-grid {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important;
+          }
+          .dashboard-stat-grid {
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

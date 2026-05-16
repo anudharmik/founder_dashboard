@@ -92,15 +92,15 @@ export default function Goals({ user, goals, tasks, projects, setTasks, fetchGoa
     color: darkMode ? "#f8fafc" : "#0f172a",
     outline: "none",
     fontSize: "14px",
-    width: "100%",
-    maxWidth: "280px",
+    flex: "1 1 200px",
+    minWidth: 0,
   };
 
   const selectStyle = {
     ...inputStyle,
     cursor: "pointer",
     appearance: "none",
-    maxWidth: "200px",
+    flex: "0 1 200px",
   };
 
   const btnPrimary = {
@@ -122,7 +122,7 @@ export default function Goals({ user, goals, tasks, projects, setTasks, fetchGoa
       {/* Header row */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "24px", flexWrap: "wrap", gap: "16px" }}>
         <div>
-          <h1 style={{ margin: "0 0 4px", fontSize: "28px", fontWeight: "700", letterSpacing: "-0.5px", color: darkMode ? "#f1f5f9" : "#0f172a" }}>Goals</h1>
+          <h1 style={{ margin: "0 0 4px", fontSize: "clamp(22px, 5vw, 28px)", fontWeight: "700", letterSpacing: "-0.5px", color: darkMode ? "#f1f5f9" : "#0f172a" }}>Goals</h1>
           <p style={{ margin: 0, fontSize: "14px", color: darkMode ? "#64748b" : "#94a3b8" }}>
             {goals.length} goal{goals.length !== 1 ? "s" : ""} total
           </p>
