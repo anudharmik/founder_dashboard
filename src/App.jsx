@@ -10,7 +10,7 @@ import Tasks from "./pages/Tasks";
 import Projects from "./pages/Projects";
 import Analytics from "./pages/Analytics";
 import ResetPassword from "./pages/ResetPassword";
-import aiInsights from "./pages/Dashboard";
+
 import {Toaster} from "react-hot-toast";
 
 export default function App() {
@@ -260,25 +260,35 @@ function AppContent({ children }) {
       
       <button 
         onClick={()=>setDarkMode(!darkMode)}
+        aria-label="Toggle dark mode"
+        title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
         style={{
           position: "fixed",
-          bottom: "16px",
-          right: "16px",
-          padding: "8px 14px",
+          bottom: "20px",
+          right: "20px",
+          padding: "10px 18px",
           borderRadius: "30px",
-          border: "none",
-          background: darkMode ? "#334155" : "#ffffff",
-          color: darkMode ? "#f8fafc" : "#0f172a",
-          boxShadow: "0 4px 12px rgba(0,0,0,0.18)",
+          border: darkMode ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(0,0,0,0.08)",
+          background: darkMode ? "rgba(30,41,59,0.85)" : "rgba(255,255,255,0.9)",
+          color: darkMode ? "#f1f5f9" : "#0f172a",
+          boxShadow: darkMode ? "0 8px 24px rgba(0,0,0,0.4)" : "0 8px 24px rgba(0,0,0,0.12)",
           cursor: "pointer",
           fontWeight: "600",
           fontSize: "13px",
           zIndex: 1000,
           transition: "all 0.2s ease",
-          backdropFilter: "blur(8px)",
+          backdropFilter: "blur(16px)",
+          display: "flex",
+          alignItems: "center",
+          gap: "6px",
+          fontFamily: "'Inter', system-ui, sans-serif",
+          letterSpacing: "-0.1px",
         }}
+        onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-2px)"; }}
+        onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; }}
       >
-        {darkMode ? "☀️ Light" : "🌙 Dark"}
+        <span style={{ fontSize: "15px" }}>{darkMode ? "☀️" : "🌙"}</span>
+        {darkMode ? "Light" : "Dark"}
       </button>
     <BrowserRouter>
     <Layout darkMode={darkMode}>
@@ -286,7 +296,7 @@ function AppContent({ children }) {
       <AppContent>
       <Routes>
         <Route path="/" element={<Dashboard user={user} goals={goals} tasks={tasks} darkMode={darkMode} loading={loading}/>} />
-        <Route path="/goals" element={<Goals user={user} goals={goals} tasks={tasks} projects={projects} setTasks={setTasks} fetchGoals={fetchGoals} fetchTasks={fetchTasks} toggleTask={toggleTask} updateTask={updateTask} updateGoal={updateGoal} darkMode={darkMode} loading={loading} aiInsights={aiInsights}/>} />
+        <Route path="/goals" element={<Goals user={user} goals={goals} tasks={tasks} projects={projects} setTasks={setTasks} fetchGoals={fetchGoals} fetchTasks={fetchTasks} toggleTask={toggleTask} updateTask={updateTask} updateGoal={updateGoal} darkMode={darkMode} loading={loading}/>} />
         <Route path="/tasks" element={<Tasks user={user} tasks={tasks} goals={goals} toggleTask={toggleTask} darkMode={darkMode} loading={loading}/>} />
         <Route path="/projects" element={<Projects user={user} darkMode={darkMode} loading={loading} projects={projects} fetchProjects={fetchProjects} goals={goals} tasks={tasks}/>} />
         <Route path="/analytics" element={<Analytics user={user} goals={goals} tasks={tasks} darkMode={darkMode} loading={loading}/>} />

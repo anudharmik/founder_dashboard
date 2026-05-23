@@ -1,6 +1,6 @@
 import TaskItem from "./TaskItem";
 
-export default function TaskList({tasks,goalId,toggleTask,deleteTask,updateTask,darkMode,aiInsights}){
+export default function TaskList({tasks,goalId,toggleTask,deleteTask,updateTask,darkMode,aiInsights = { focusToday: [] }}){
     const filteredTasks=tasks.filter(task=>task.goal_id===goalId);
     const sortedTasks = [...filteredTasks].sort((a, b) => {
 
