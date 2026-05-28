@@ -16,8 +16,7 @@ export default function TaskList({tasks,goalId,toggleTask,deleteTask,updateTask,
 
 {sortedTasks.map((task) => {
 
-    const isFocusTask =
-      aiInsights.focusToday?.includes(task.title);
+    const isFocusTask = checkFocus(task);
 
     return (
       <TaskItem 
