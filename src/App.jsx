@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {supabase} from "./supabaseClient";
 import Login from "./pages/Login";
@@ -20,6 +20,68 @@ export default function App() {
   const[darkMode,setDarkMode]=useState(false);
   const[loading,setLoading]=useState(true);
   const[projects,setProjects]=useState([]);
+
+  const [aiInsights, setAiInsights] = useState({ focusToday: [], risk: "", insight: "" });
+  const [aiLoading, setAiLoading] = useState(false);
+  const lastFetchedHashRef = useRef(null);
+
+  function buildTasksHash(taskList) {
+    return taskList
+      .map(t => `${t.id}|${t.title}|${t.completed ? '1' : '0'}|${t.deadline || ''}`)
+      .sort()
+      .join('##');
+  }
+
+  async function fetchAIInsights(hash) {
+    if (!tasks.length) return;
+    setAiLoading(true);
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ai-insights`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tasks }),
+      });
+      if (!res.ok) throw new Error("Failed to fetch AI insights");
+      const data = await res.json();
+      setAiInsights(data);
+      sessionStorage.setItem("aiInsightsCache", JSON.stringify(data));
+      sessionStorage.setItem("aiInsightsHash", hash);
+      lastFetchedHashRef.current = hash;
+    } catch (error) {
+      console.error("Fetch failed:", error);
+    } finally {
+      setAiLoading(false);
+    }
+  }
+
+  function refreshAIInsights() {
+    lastFetchedHashRef.current = null;
+    sessionStorage.removeItem("aiInsightsHash");
+    fetchAIInsights(buildTasksHash(tasks));
+  }
+
+  useEffect(() => {
+    if (tasks.length === 0) return;
+
+    const hash = buildTasksHash(tasks);
+
+    if (lastFetchedHashRef.current === hash) return;
+
+    const cachedHash    = sessionStorage.getItem("aiInsightsHash");
+    const cachedInsights = sessionStorage.getItem("aiInsightsCache");
+
+    if (cachedHash === hash && cachedInsights) {
+      try {
+        setAiInsights(JSON.parse(cachedInsights));
+        lastFetchedHashRef.current = hash;
+      } catch {
+        fetchAIInsights(hash);
+      }
+      return;
+    }
+
+    fetchAIInsights(hash);
+  }, [tasks]);
 
 useEffect(() => {
   const getSession = async () => {
@@ -295,8 +357,8 @@ function AppContent({ children }) {
       <div style={{flex:1}}>
       <AppContent>
       <Routes>
-        <Route path="/" element={<Dashboard user={user} goals={goals} tasks={tasks} darkMode={darkMode} loading={loading}/>} />
-        <Route path="/goals" element={<Goals user={user} goals={goals} tasks={tasks} projects={projects} setTasks={setTasks} fetchGoals={fetchGoals} fetchTasks={fetchTasks} toggleTask={toggleTask} updateTask={updateTask} updateGoal={updateGoal} darkMode={darkMode} loading={loading}/>} />
+        <Route path="/" element={<Dashboard user={user} goals={goals} tasks={tasks} darkMode={darkMode} loading={loading} aiInsights={aiInsights} aiLoading={aiLoading} refreshAIInsights={refreshAIInsights}/>} />
+        <Route path="/goals" element={<Goals user={user} goals={goals} tasks={tasks} projects={projects} setTasks={setTasks} fetchGoals={fetchGoals} fetchTasks={fetchTasks} toggleTask={toggleTask} updateTask={updateTask} updateGoal={updateGoal} darkMode={darkMode} loading={loading} aiInsights={aiInsights}/>} />
         <Route path="/tasks" element={<Tasks user={user} tasks={tasks} goals={goals} toggleTask={toggleTask} darkMode={darkMode} loading={loading}/>} />
         <Route path="/projects" element={<Projects user={user} darkMode={darkMode} loading={loading} projects={projects} fetchProjects={fetchProjects} goals={goals} tasks={tasks}/>} />
         <Route path="/analytics" element={<Analytics user={user} goals={goals} tasks={tasks} darkMode={darkMode} loading={loading}/>} />

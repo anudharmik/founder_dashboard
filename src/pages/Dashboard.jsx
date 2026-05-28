@@ -1,6 +1,5 @@
 import StatCard from "../components/StatCard";
 import TaskChart from "../components/TaskChart";
-import { useState, useEffect, useRef } from "react";
 import toast from "react-hot-toast";
 
 // Skeleton placeholder
@@ -55,7 +54,7 @@ function DashboardSkeleton({ darkMode }) {
   );
 }
 
-export default function Dashboard({ goals, tasks, darkMode, loading }) {
+export default function Dashboard({ goals, tasks, darkMode, loading, aiInsights, aiLoading, refreshAIInsights }) {
   const totalGoals = goals.length;
   const totalTasks = tasks.length;
   const completedTasks = tasks.filter((task) => task.completed).length;
@@ -75,77 +74,6 @@ export default function Dashboard({ goals, tasks, darkMode, loading }) {
     const diff = (new Date(task.deadline) - today) / (1000 * 60 * 60 * 24);
     return diff >= 0 && diff <= 2;
   });
-
-  const [aiInsights, setAiInsights] = useState({ focusToday: [], risk: "", insight: "" });
-  const [aiLoading, setAiLoading] = useState(false);
-
-  // Ref holds the hash of the last tasks set we actually sent to the AI.
-  // This prevents duplicate API calls caused by React re-rendering the parent
-  // (which creates a new array reference even when task data hasn't changed).
-  const lastFetchedHashRef = useRef(null);
-
-  /**
-   * Build a stable, lightweight hash from only the fields that matter for AI:
-   * task id, title, completion status, and deadline.
-   * We intentionally ignore timestamps/metadata so those don't trigger extra calls.
-   */
-  function buildTasksHash(taskList) {
-    return taskList
-      .map(t => `${t.id}|${t.title}|${t.completed ? '1' : '0'}|${t.deadline || ''}`)
-      .sort()   // sort so reorder doesn't look like a change
-      .join('##');
-  }
-
-  async function fetchAIInsights(hash) {
-    if (!tasks.length) return;
-    setAiLoading(true);
-    try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ai-insights`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tasks }),
-      });
-      if (!res.ok) throw new Error("Failed to fetch AI insights");
-      const data = await res.json();
-      setAiInsights(data);
-      // Persist in sessionStorage so a page-refresh still hits cache
-      sessionStorage.setItem("aiInsightsCache", JSON.stringify(data));
-      sessionStorage.setItem("aiInsightsHash", hash);
-      lastFetchedHashRef.current = hash;
-      toast.success("AI insights updated");
-    } catch (error) {
-      console.error("Fetch failed:", error);
-      toast.error("Failed to fetch AI insights");
-    } finally {
-      setAiLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    if (tasks.length === 0) return;
-
-    const hash = buildTasksHash(tasks);
-
-    // Guard 1: same hash as what we already fetched this session → skip
-    if (lastFetchedHashRef.current === hash) return;
-
-    // Guard 2: matches sessionStorage cache → restore from cache, no API call
-    const cachedHash    = sessionStorage.getItem("aiInsightsHash");
-    const cachedInsights = sessionStorage.getItem("aiInsightsCache");
-
-    if (cachedHash === hash && cachedInsights) {
-      try {
-        setAiInsights(JSON.parse(cachedInsights));
-        lastFetchedHashRef.current = hash; // remember so we don't check again
-      } catch {
-        fetchAIInsights(hash); // corrupt cache → re-fetch
-      }
-      return;
-    }
-
-    // Tasks genuinely changed → call the AI
-    fetchAIInsights(hash);
-  }, [tasks]);
 
   function calculateProductivityScore() {
     if (!tasks.length) return 0;
@@ -275,12 +203,7 @@ export default function Dashboard({ goals, tasks, darkMode, loading }) {
               <span style={{ fontSize: '18px' }}>🔥</span> Focus Today
             </h3>
             <button
-              onClick={() => {
-                // Force a fresh fetch by clearing the in-memory hash guard
-                lastFetchedHashRef.current = null;
-                sessionStorage.removeItem("aiInsightsHash");
-                fetchAIInsights(buildTasksHash(tasks));
-              }}
+              onClick={refreshAIInsights}
               disabled={aiLoading}
               style={{
                 padding: '5px 12px', borderRadius: '20px', border: '1px solid rgba(99,102,241,0.3)',
