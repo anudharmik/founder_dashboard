@@ -10,6 +10,7 @@ import Tasks from "./pages/Tasks";
 import Projects from "./pages/Projects";
 import Analytics from "./pages/Analytics";
 import ResetPassword from "./pages/ResetPassword";
+import ReminderModal from "./components/reminder/ReminderModal";
 
 import {Toaster} from "react-hot-toast";
 
@@ -23,6 +24,7 @@ export default function App() {
 
   const [aiInsights, setAiInsights] = useState({ focusToday: [], risk: "", insight: "" });
   const [aiLoading, setAiLoading] = useState(false);
+  const [isReminderOpen, setIsReminderOpen] = useState(false);
 
   const lastFetchedHashRef = useRef(null);
   function buildTasksHash(taskList) {
@@ -353,7 +355,7 @@ function AppContent({ children }) {
         {darkMode ? "Light" : "Dark"}
       </button>
     <BrowserRouter>
-    <Layout darkMode={darkMode}>
+    <Layout darkMode={darkMode} onOpenReminders={() => setIsReminderOpen(true)}>
       <div style={{flex:1}}>
       <AppContent>
       <Routes>
@@ -366,6 +368,12 @@ function AppContent({ children }) {
       </AppContent>
       </div>
       </Layout>
+      <ReminderModal
+        isOpen={isReminderOpen}
+        onClose={() => setIsReminderOpen(false)}
+        user={user}
+        darkMode={darkMode}
+      />
     </BrowserRouter>
     </div>
   );

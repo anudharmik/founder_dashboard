@@ -11,7 +11,7 @@ import "../App.css";
  * On mobile (<768px):
  *   Full-width topbar with hamburger → opens sidebar drawer
  */
-export default function Layout({ children, darkMode }) {
+export default function Layout({ children, darkMode, onOpenReminders }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const topbarBg  = darkMode ? "#0c1524"  : "#111827";
@@ -24,6 +24,7 @@ export default function Layout({ children, darkMode }) {
         darkMode={darkMode}
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
+        onOpenReminders={onOpenReminders}
       />
 
       {/* Right-hand column: topbar (mobile) + page content */}

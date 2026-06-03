@@ -11,15 +11,63 @@ serve(async () => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Get pending reminders
-    const { data: reminders, error } = await supabase
+    // 1. Process 15+ days overdue tasks
+    const fifteenDaysAgo = new Date();
+    fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
+
+    const { data: overdueTasks, error: taskError } = await supabase
+      .from("tasks")
+      .select("*")
+      .eq("completed", false)
+      .lte("deadline", fifteenDaysAgo.toISOString())
+      .eq("overdue_email_sent", false);
+
+    if (taskError) {
+      console.error("Error fetching overdue tasks:", taskError);
+    } else {
+      for (const task of overdueTasks || []) {
+        const { data: userData } = await supabase.auth.admin.getUserById(task.user_id);
+        const userEmail = userData.user?.email;
+
+        if (!userEmail) continue;
+
+        // Send alert email
+        await resend.emails.send({
+          from: "FounderOS <onboarding@resend.dev>",
+          to: userEmail,
+          subject: `Action Needed: Overdue Task Alert ⚠️`,
+          html: `
+            <div style="font-family:sans-serif;padding:24px;max-width:550px;background:#0f172a;color:#f1f5f9;border-radius:12px;border:1px solid rgba(255,255,255,0.08);">
+              <h2 style="color:#ef4444;margin-top:0;font-size:22px;letter-spacing:-0.5px;">Task Overdue by 15+ Days</h2>
+              <p style="color:#94a3b8;font-size:14px;line-height:1.5;">This is an automated alert from your Founder OS Command Center. The following task has been overdue for more than 15 days:</p>
+              
+              <div style="background:#1e293b;padding:16px;border-radius:8px;border-left:4px solid #ef4444;margin:20px 0;">
+                <strong style="font-size:16px;color:#ffffff;display:block;margin-bottom:4px;">${task.title}</strong>
+                <span style="color:#64748b;font-size:12px;">Deadline: ${new Date(task.deadline).toLocaleDateString()}</span>
+              </div>
+              
+              <p style="color:#94a3b8;font-size:14px;line-height:1.5;margin-bottom:0;">Please log back into <a href="https://founder-dashboard.vercel.app" style="color:#6366f1;text-decoration:none;font-weight:600;">Founder OS</a> to mark it as complete or reschedule. Keep pushing forward! 🚀</p>
+            </div>
+          `,
+        });
+
+        // Mark task email as sent
+        await supabase
+          .from("tasks")
+          .update({ overdue_email_sent: true })
+          .eq("id", task.id);
+      }
+    }
+
+    // 2. Process custom pending reminders
+    const { data: reminders, error: reminderError } = await supabase
       .from("reminders")
       .select("*")
       .eq("sent", false)
       .lte("remind_at", new Date().toISOString());
 
-    if (error) {
-      throw error;
+    if (reminderError) {
+      throw reminderError;
     }
 
     for (const reminder of reminders || []) {
@@ -37,10 +85,13 @@ serve(async () => {
         to: userEmail,
         subject: `Reminder: ${reminder.title}`,
         html: `
-          <div style="font-family:sans-serif;padding:20px;">
-            <h2>${reminder.title}</h2>
-            <p>${reminder.description || ""}</p>
-            <p>Stay consistent 🚀</p>
+          <div style="font-family:sans-serif;padding:24px;max-width:550px;background:#0f172a;color:#f1f5f9;border-radius:12px;border:1px solid rgba(255,255,255,0.08);">
+            <h2 style="color:#6366f1;margin-top:0;font-size:22px;letter-spacing:-0.5px;">Custom Reminder</h2>
+            <div style="background:#1e293b;padding:16px;border-radius:8px;border-left:4px solid #6366f1;margin:20px 0;">
+              <strong style="font-size:16px;color:#ffffff;display:block;margin-bottom:4px;">${reminder.title}</strong>
+              <p style="color:#94a3b8;font-size:14px;margin:0;">${reminder.description || ""}</p>
+            </div>
+            <p style="color:#94a3b8;font-size:14px;margin-bottom:0;">Stay consistent 🚀</p>
           </div>
         `,
       });

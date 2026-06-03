@@ -42,7 +42,7 @@ const NAV_ITEMS = [
   },
 ];
 
-export default function Sidebar({ darkMode, isOpen, onClose }) {
+export default function Sidebar({ darkMode, isOpen, onClose, onOpenReminders }) {
   const location = useLocation();
 
   useEffect(() => {
@@ -193,6 +193,47 @@ export default function Sidebar({ darkMode, isOpen, onClose }) {
           );
         })}
       </nav>
+
+      {/* Reminders Button */}
+      <button
+        onClick={onOpenReminders}
+        style={{
+          padding: '10px 12px',
+          borderRadius: '10px',
+          border: 'none',
+          cursor: 'pointer',
+          background: 'transparent',
+          color: 'rgba(255,255,255,0.45)',
+          fontWeight: '400',
+          fontSize: '13.5px',
+          width: '100%',
+          transition: 'all 0.18s ease',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px',
+          textAlign: 'left',
+          letterSpacing: '-0.1px',
+          marginBottom: '2px',
+          fontFamily: 'inherit',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+          e.currentTarget.style.color = 'rgba(255,255,255,0.8)';
+          e.currentTarget.style.transform = 'translateX(2px)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = 'transparent';
+          e.currentTarget.style.color = 'rgba(255,255,255,0.45)';
+          e.currentTarget.style.transform = 'translateX(0)';
+        }}
+      >
+        <span style={{ opacity: 0.6, flexShrink: 0, display: 'flex' }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+        </span>
+        Reminders
+      </button>
 
       {/* Divider */}
       <div style={{ height: '1px', background: 'rgba(255,255,255,0.06)', margin: '16px 4px' }} />
