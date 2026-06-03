@@ -19,7 +19,7 @@ export default function ResetPassword() {
     if (tokenHash) {
       // Verify token_hash first to authenticate the user session
       const { error: verifyError } = await supabase.auth.verifyOtp({
-        token: tokenHash,
+        token_hash: tokenHash,
         type: "recovery",
       });
 
