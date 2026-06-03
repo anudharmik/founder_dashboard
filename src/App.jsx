@@ -23,8 +23,8 @@ export default function App() {
 
   const [aiInsights, setAiInsights] = useState({ focusToday: [], risk: "", insight: "" });
   const [aiLoading, setAiLoading] = useState(false);
-  const lastFetchedHashRef = useRef(null);
 
+  const lastFetchedHashRef = useRef(null);
   function buildTasksHash(taskList) {
     return taskList
       .map(t => `${t.id}|${t.title}|${t.completed ? '1' : '0'}|${t.deadline || ''}`)

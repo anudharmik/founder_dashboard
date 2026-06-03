@@ -13,6 +13,23 @@ export default function ResetPassword() {
     setErrorMsg("");
     setSuccessMsg("");
 
+    const queryParams = new URLSearchParams(window.location.search);
+    const tokenHash = queryParams.get("token_hash");
+
+    if (tokenHash) {
+      // Verify token_hash first to authenticate the user session
+      const { error: verifyError } = await supabase.auth.verifyOtp({
+        token: tokenHash,
+        type: "recovery",
+      });
+
+      if (verifyError) {
+        setErrorMsg(verifyError.message);
+        setLoading(false);
+        return;
+      }
+    }
+
     const { error } = await supabase.auth.updateUser({ password: newPassword });
 
     if (error) {
