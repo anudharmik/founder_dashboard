@@ -357,8 +357,15 @@ create policy "Owners and managers can manage project_teams" on project_teams
 
 -- GOALS
 drop policy if exists "Goals visible to org members" on goals;
-create policy "Goals visible to org members" on goals
-  for select using (public.is_org_member(org_id));
+drop policy if exists "Goals visible to org members and invited guests" on goals;
+create policy "Goals visible to org members and invited guests" on goals
+  for select using (
+    public.is_org_member(org_id)
+    or exists (
+      select 1 from guest_project_access gpa
+      where gpa.project_id = goals.project_id and gpa.user_id = auth.uid()
+    )
+  );
 
 drop policy if exists "Owners and managers can insert goals" on goals;
 create policy "Owners and managers can insert goals" on goals
@@ -374,8 +381,16 @@ create policy "Owners and managers can delete goals" on goals
 
 -- TASKS
 drop policy if exists "Tasks visible to org members" on tasks;
-create policy "Tasks visible to org members" on tasks
-  for select using (public.is_org_member(org_id));
+drop policy if exists "Tasks visible to org members and invited guests" on tasks;
+create policy "Tasks visible to org members and invited guests" on tasks
+  for select using (
+    public.is_org_member(org_id)
+    or exists (
+      select 1 from goals g
+      join guest_project_access gpa on gpa.project_id = g.project_id
+      where g.id = tasks.goal_id and gpa.user_id = auth.uid()
+    )
+  );
 
 drop policy if exists "Owners managers and assigned employees can insert tasks" on tasks;
 create policy "Owners managers and assigned employees can insert tasks" on tasks
@@ -406,41 +421,55 @@ drop policy if exists "Owners and managers can delete tasks" on tasks;
 create policy "Owners and managers can delete tasks" on tasks
   for delete using (public.get_org_role(org_id) in ('owner', 'manager'));
 
--- TASK_COMMENTS
+-- TASK_COMMENTS HELPER & POLICIES
+create or replace function public.can_user_comment_on_task(p_task_id uuid, p_user_id uuid, p_org_id uuid)
+returns boolean
+language sql
+security definer
+as $$
+  select exists (
+    select 1 from public.org_members om where om.org_id = p_org_id and om.user_id = p_user_id
+  ) or exists (
+    select 1 from public.tasks t
+    join public.goals g on g.id = t.goal_id
+    join public.guest_project_access gpa on gpa.project_id = g.project_id
+    where t.id = p_task_id and gpa.user_id = p_user_id
+  );
+$$;
+
 drop policy if exists "Task comments visible to org members and invited guests" on task_comments;
 create policy "Task comments visible to org members and invited guests" on task_comments
   for select using (
-    public.is_org_member(org_id)
-    or exists (
-      select 1 from tasks t
-      join goals g on g.id = t.goal_id
-      join guest_project_access gpa on gpa.project_id = g.project_id
-      where t.id = task_comments.task_id and gpa.user_id = auth.uid()
-    )
+    public.can_user_comment_on_task(task_id, auth.uid(), org_id)
   );
 
 drop policy if exists "Org members and invited guests can comment" on task_comments;
 create policy "Org members and invited guests can comment" on task_comments
   for insert with check (
-    author_id = auth.uid() and (
-      public.is_org_member(org_id)
-      or exists (
-        select 1 from tasks t
-        join goals g on g.id = t.goal_id
-        join guest_project_access gpa on gpa.project_id = g.project_id
-        where t.id = task_comments.task_id and gpa.user_id = auth.uid()
-      )
-    )
+    author_id = auth.uid()
+    and public.can_user_comment_on_task(task_id, auth.uid(), org_id)
   );
 
 -- ACTIVITY_LOG
 drop policy if exists "Activity log visible to org members" on activity_log;
 create policy "Activity log visible to org members" on activity_log
-  for select using (public.is_org_member(org_id));
+  for select using (
+    public.is_org_member(org_id)
+    or exists (
+      select 1 from guest_project_access gpa
+      where gpa.user_id = auth.uid()
+    )
+  );
 
 drop policy if exists "Org members can append to activity log" on activity_log;
 create policy "Org members can append to activity log" on activity_log
-  for insert with check (public.is_org_member(org_id));
+  for insert with check (
+    public.is_org_member(org_id)
+    or exists (
+      select 1 from guest_project_access gpa
+      where gpa.user_id = auth.uid()
+    )
+  );
 
 -- REMINDERS
 drop policy if exists "Users can manage their own reminders" on reminders;

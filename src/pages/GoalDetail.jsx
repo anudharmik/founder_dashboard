@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import { useOrg } from "../context/OrgContext";
 import { recomputeGoalProgressAndRisk } from "../utils/rollupEngine";
+import TaskDetailModal from "../components/TaskDetailModal";
 import toast from "react-hot-toast";
 
 async function logActivity(orgId, entityType, entityId, action, metadata = null) {
@@ -29,6 +30,7 @@ export default function GoalDetail({ darkMode }) {
   const [goal, setGoal] = useState(null);
   const [project, setProject] = useState(null);
   const [tasks, setTasks] = useState([]);
+  const [selectedTask, setSelectedTask] = useState(null);
   const [membersList, setMembersList] = useState([]);
   const [currentUserId, setCurrentUserId] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -224,6 +226,7 @@ export default function GoalDetail({ darkMode }) {
       if (error) {
         toast.error(error.message || "Failed to clear override");
       } else {
+        await logActivity(activeOrg.id, 'goal', goal.id, 'overridden', { action_type: 'cleared', previous_override: goal.progress_override });
         toast.success("Progress override cleared!");
         setOverrideInput("");
         loadData();
@@ -708,8 +711,19 @@ export default function GoalDetail({ darkMode }) {
                   )}
                 </div>
 
-                {/* Actions (Complete / Submit / Approve) */}
+                {/* Actions (Complete / Submit / Approve / Comments) */}
                 <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <button
+                    onClick={() => setSelectedTask(t)}
+                    style={{
+                      padding: "8px 14px", borderRadius: "8px", border: `1px solid ${borderCol}`,
+                      background: darkMode ? "#0f172a" : "#f8fafc", color: darkMode ? "#818cf8" : "#6366f1",
+                      fontWeight: "600", fontSize: "13px", cursor: "pointer"
+                    }}
+                  >
+                    💬 Comments & History
+                  </button>
+
                   {t.approval_status === 'not_required' && (
                     <button
                       onClick={() => handleCompleteTask(t)}
@@ -1047,6 +1061,17 @@ export default function GoalDetail({ darkMode }) {
           </div>
         </div>
       )}
+
+      {/* Task Detail Modal (Comments & Activity Feed) */}
+      <TaskDetailModal
+        task={selectedTask}
+        isOpen={Boolean(selectedTask)}
+        onClose={() => setSelectedTask(null)}
+        darkMode={darkMode}
+        activeOrg={activeOrg}
+        userRole={userRole}
+        onTaskUpdate={loadData}
+      />
     </div>
   );
 }

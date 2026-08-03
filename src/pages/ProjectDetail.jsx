@@ -12,6 +12,7 @@ export default function ProjectDetail({ darkMode }) {
 
   const [project, setProject] = useState(null);
   const [goals, setGoals] = useState([]);
+  const [projectActivities, setProjectActivities] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -78,7 +79,30 @@ export default function ProjectDetail({ darkMode }) {
 
       if (!goalsErr) setGoals(goalsData || []);
 
-      // 3. Fetch departments & teams for edit modal
+      // 3. Fetch project-level activity feed (goals + tasks under this project)
+      const goalIds = (goalsData || []).map(g => g.id);
+      if (goalIds.length > 0) {
+        const { data: projTasks } = await supabase.from('tasks').select('id').in('goal_id', goalIds);
+        const taskIds = (projTasks || []).map(t => t.id);
+
+        const filterConditions = [];
+        filterConditions.push(`and(entity_type.eq.goal,entity_id.in.(${goalIds.join(',')}))`);
+        if (taskIds.length > 0) {
+          filterConditions.push(`and(entity_type.eq.task,entity_id.in.(${taskIds.join(',')}))`);
+        }
+
+        const { data: actData } = await supabase
+          .from('activity_log')
+          .select('*')
+          .eq('org_id', activeOrg.id)
+          .or(filterConditions.join(','))
+          .order('created_at', { ascending: false })
+          .limit(30);
+
+        if (actData) setProjectActivities(actData);
+      }
+
+      // 4. Fetch departments & teams for edit modal
       if (canManage) {
         const { data: dData } = await supabase.from('departments').select('*').eq('org_id', activeOrg.id);
         if (dData) setDepartments(dData);
@@ -436,6 +460,58 @@ export default function ProjectDetail({ darkMode }) {
           })}
         </div>
       )}
+
+      {/* Per-Project Activity Feed Section */}
+      <div style={{
+        background: cardBg, borderRadius: "20px", border: `1px solid ${borderCol}`,
+        padding: "28px", marginTop: "32px", marginBottom: "32px"
+      }}>
+        <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "800", color: darkMode ? "#f8fafc" : "#0f172a", display: "flex", alignItems: "center", gap: "8px" }}>
+          📜 Project Activity Stream
+        </h3>
+
+        {projectActivities.length === 0 ? (
+          <p style={{ margin: 0, fontSize: "13px", color: textMuted }}>
+            No activity log entries for this project yet.
+          </p>
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            {projectActivities.map(act => {
+              const actor = act.actor_id ? act.actor_id.slice(0, 8) + "..." : "User";
+              const timeAgo = new Date(act.created_at).toLocaleString();
+
+              let text = `${act.action} by ${actor}`;
+              if (act.action === 'overridden') {
+                text = act.metadata?.action_type === 'cleared'
+                  ? `Manual progress override cleared by ${actor}`
+                  : `Manual progress override set to ${act.metadata?.progress_override}% by ${actor}`;
+              } else if (act.action === 'created') {
+                text = `${act.entity_type === 'task' ? 'Task' : 'Goal'} created by ${actor}`;
+              } else if (act.action === 'commented') {
+                text = `Commented on task: "${act.metadata?.content_snippet || '...'}" by ${actor}`;
+              }
+
+              return (
+                <div
+                  key={act.id}
+                  style={{
+                    padding: "10px 14px", borderRadius: "10px",
+                    background: darkMode ? "#0f172a" : "#f8fafc", border: `1px solid ${borderCol}`,
+                    display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "13px"
+                  }}
+                >
+                  <span style={{ color: darkMode ? "#cbd5e1" : "#334155", fontWeight: "500" }}>
+                    📌 {text}
+                  </span>
+                  <span style={{ fontSize: "12px", color: textMuted }}>
+                    {timeAgo}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
 
       {/* Goal Creation Modal */}
       {showGoalModal && (
