@@ -51,18 +51,24 @@ export default function GoalCard({ goal, tasks, taskInputs, setTaskInputs, addTa
                 borderRadius: "16px",
                 background: darkMode ? "#1e293b" : "#ffffff",
                 color: darkMode ? "#e2e8f0" : "#111827",
-                boxShadow: darkMode ? "0 4px 20px rgba(0,0,0,0.4)" : "0 4px 20px rgba(0,0,0,0.05)",
-                border: darkMode ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.04)",
-                transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                boxShadow: darkMode
+                    ? "0 4px 20px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.05)"
+                    : "0 1px 3px rgba(0,0,0,0.05), 0 10px 24px -4px rgba(15,23,42,0.06), 0 0 0 1px rgba(226,232,240,0.8)",
+                border: darkMode ? "1px solid rgba(255,255,255,0.08)" : "1px solid #e2e8f0",
+                transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
                 overflow: "hidden",
             }}
             onMouseEnter={(e) => {
                 e.currentTarget.style.transform = "translateY(-2px)";
-                e.currentTarget.style.boxShadow = darkMode ? "0 8px 28px rgba(0,0,0,0.5)" : "0 8px 28px rgba(0,0,0,0.08)";
+                e.currentTarget.style.boxShadow = darkMode
+                    ? "0 8px 28px rgba(0,0,0,0.5), 0 0 0 1px rgba(99,102,241,0.4)"
+                    : "0 12px 32px -4px rgba(99,102,241,0.18), 0 2px 6px rgba(0,0,0,0.04)";
             }}
             onMouseLeave={(e) => {
                 e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = darkMode ? "0 4px 20px rgba(0,0,0,0.4)" : "0 4px 20px rgba(0,0,0,0.05)";
+                e.currentTarget.style.boxShadow = darkMode
+                    ? "0 4px 20px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.05)"
+                    : "0 1px 3px rgba(0,0,0,0.05), 0 10px 24px -4px rgba(15,23,42,0.06), 0 0 0 1px rgba(226,232,240,0.8)";
             }}
         >
             {/* Accent left stripe */}

@@ -18,6 +18,7 @@ import OrgSettings from "./pages/OrgSettings";
 import Billing from "./pages/Billing";
 import ResetPassword from "./pages/ResetPassword";
 import ReminderModal from "./components/reminder/ReminderModal";
+import CreateOrgOnboarding from "./components/CreateOrgOnboarding";
 import { OrgProvider, useOrg } from "./context/OrgContext";
 import { Toaster } from "react-hot-toast";
 
@@ -46,7 +47,7 @@ function AppContent({ children }) {
 }
 
 function MainAppContent({ user, darkMode, setDarkMode }) {
-  const { activeOrg, userRole, isEmployee, isGuest } = useOrg() || {};
+  const { activeOrg, userRole, isEmployee, isGuest, loadingOrg } = useOrg() || {};
 
   const [goals, setGoals] = useState([]);
   const [tasks, setTasks] = useState([]);
@@ -58,6 +59,10 @@ function MainAppContent({ user, darkMode, setDarkMode }) {
   const [isReminderOpen, setIsReminderOpen] = useState(false);
 
   const lastFetchedHashRef = useRef(null);
+
+  if (!loadingOrg && !activeOrg) {
+    return <CreateOrgOnboarding user={user} darkMode={darkMode} />;
+  }
 
   const scopeKey = isEmployee ? `emp_${user?.id}` : (isGuest ? 'guest' : 'org');
   const cacheKeyHash = activeOrg ? `aiInsightsHash_${activeOrg.id}_${scopeKey}` : null;

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useOrg } from '../context/OrgContext';
 import { supabase } from '../supabaseClient';
+import CreateOrgOnboarding from '../components/CreateOrgOnboarding';
 import toast from 'react-hot-toast';
 
 export default function OrgSettings({ user, darkMode }) {
@@ -125,25 +126,18 @@ export default function OrgSettings({ user, darkMode }) {
   };
 
   const cardStyle = {
-    background: darkMode ? "rgba(30,41,59,0.7)" : "#ffffff",
+    background: darkMode ? "rgba(30, 41, 59, 0.75)" : "#ffffff",
     border: darkMode ? "1px solid rgba(255,255,255,0.08)" : "1px solid #e2e8f0",
-    borderRadius: "14px",
+    borderRadius: "16px",
     padding: "24px",
-    boxShadow: darkMode ? "0 4px 20px rgba(0,0,0,0.3)" : "0 4px 20px rgba(0,0,0,0.05)",
+    boxShadow: darkMode
+      ? "0 4px 20px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.06)"
+      : "0 1px 3px rgba(0,0,0,0.05), 0 10px 24px -4px rgba(15,23,42,0.06), 0 0 0 1px rgba(226,232,240,0.8)",
     backdropFilter: "blur(12px)",
   };
 
   if (!activeOrg) {
-    return (
-      <div style={{ padding: "32px", maxWidth: "900px", margin: "0 auto" }}>
-        <h2 style={{ color: darkMode ? "#f8fafc" : "#0f172a" }}>Organization Settings</h2>
-        <div style={cardStyle}>
-          <p style={{ color: darkMode ? "#94a3b8" : "#64748b" }}>
-            No active organization found. If you just logged in, please execute the database schema migration script.
-          </p>
-        </div>
-      </div>
-    );
+    return <CreateOrgOnboarding user={user} darkMode={darkMode} />;
   }
 
   return (

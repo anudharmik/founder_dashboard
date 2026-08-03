@@ -114,9 +114,13 @@ export default function Dashboard({ goals, tasks, darkMode, loading, aiInsights,
 
   const cardBase = {
     padding: '24px', borderRadius: '16px',
-    background: darkMode ? '#1e293b' : '#ffffff',
-    boxShadow: darkMode ? '0 2px 16px rgba(0,0,0,0.4)' : '0 2px 16px rgba(0,0,0,0.06)',
-    border: darkMode ? '1px solid rgba(255,255,255,0.07)' : '1px solid rgba(0,0,0,0.04)',
+    background: darkMode ? 'rgba(30, 41, 59, 0.75)' : '#ffffff',
+    boxShadow: darkMode
+      ? '0 4px 20px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.06)'
+      : '0 1px 3px rgba(0,0,0,0.05), 0 10px 24px -4px rgba(15,23,42,0.06), 0 0 0 1px rgba(226,232,240,0.8)',
+    border: darkMode ? '1px solid rgba(255,255,255,0.08)' : '1px solid #e2e8f0',
+    backdropFilter: 'blur(12px)',
+    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
   };
 
   const todayStr = today.toLocaleDateString("en-US", {

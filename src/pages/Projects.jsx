@@ -291,19 +291,26 @@ export default function Projects({ darkMode }) {
                 onClick={() => navigate(`/projects/${project.id}`)}
                 style={{
                   background: cardBg, borderRadius: "16px", border: `1px solid ${borderCol}`,
-                  padding: "24px", cursor: "pointer", transition: "all 0.2s ease",
+                  padding: "24px", cursor: "pointer", transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
                   display: "flex", flexDirection: "column", justifyContent: "space-between",
-                  boxShadow: "0 4px 12px rgba(0,0,0,0.03)"
+                  boxShadow: darkMode
+                    ? "0 4px 20px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.05)"
+                    : "0 1px 3px rgba(0,0,0,0.05), 0 10px 24px -4px rgba(15,23,42,0.06), 0 0 0 1px rgba(226,232,240,0.8)",
+                  backdropFilter: "blur(12px)",
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = "translateY(-3px)";
                   e.currentTarget.style.borderColor = "#6366f1";
-                  e.currentTarget.style.boxShadow = "0 8px 24px rgba(99,102,241,0.12)";
+                  e.currentTarget.style.boxShadow = darkMode
+                    ? "0 8px 30px rgba(0,0,0,0.5), 0 0 0 1px rgba(99,102,241,0.4)"
+                    : "0 12px 32px -4px rgba(99,102,241,0.18), 0 2px 6px rgba(0,0,0,0.04)";
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = "translateY(0)";
                   e.currentTarget.style.borderColor = borderCol;
-                  e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.03)";
+                  e.currentTarget.style.boxShadow = darkMode
+                    ? "0 4px 20px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.05)"
+                    : "0 1px 3px rgba(0,0,0,0.05), 0 10px 24px -4px rgba(15,23,42,0.06), 0 0 0 1px rgba(226,232,240,0.8)";
                 }}
               >
                 <div>
