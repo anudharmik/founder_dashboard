@@ -27,12 +27,13 @@ serve(async (req: Request) => {
     // 1. Process 15+ days overdue tasks (org-scoped if org_id is provided)
     const fifteenDaysAgo = new Date();
     fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
+    const cutoffDateStr = fifteenDaysAgo.toISOString().split("T")[0];
 
     let taskQuery = supabase
       .from("tasks")
       .select("*")
       .eq("completed", false)
-      .lte("deadline", fifteenDaysAgo.toISOString())
+      .lte("deadline", cutoffDateStr)
       .eq("overdue_email_sent", false);
 
     if (org_id) {
