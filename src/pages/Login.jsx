@@ -14,8 +14,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
-  const [mode, setMode] = useState("signin");
-  const [showPassword, setShowPassword] = useState(false);
+  const [orgName, setOrgName] = useState("");
 
   async function handleSubmit(e) {
     try {
@@ -28,9 +27,34 @@ export default function Login() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) setErrorMsg(error.message);
       } else if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({ email, password });
-        if (error) setErrorMsg(error.message);
-        else setSuccessMsg("Account created! You can now sign in.");
+        const { data, error } = await supabase.auth.signUp({ email, password });
+        if (error) {
+          setErrorMsg(error.message);
+        } else {
+          // If session or user is created immediately (or when email confirmation is disabled/auto-confirmed)
+          const newUserId = data.user?.id;
+          if (newUserId) {
+            try {
+              const nameToUse = orgName.trim() || `${email.split('@')[0]}'s Org`;
+              const { data: orgData, error: orgErr } = await supabase
+                .from("organizations")
+                .insert({ name: nameToUse })
+                .select()
+                .single();
+
+              if (!orgErr && orgData) {
+                await supabase.from("org_members").insert({
+                  org_id: orgData.id,
+                  user_id: newUserId,
+                  role: "owner"
+                });
+              }
+            } catch (createErr) {
+              console.warn("Org scaffolding on signup notice:", createErr);
+            }
+          }
+          setSuccessMsg("Account created! You can now sign in.");
+        }
       } else if (mode === "forgot") {
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
           redirectTo: `${window.location.origin}/reset-password`,
@@ -301,6 +325,22 @@ export default function Login() {
 
           {/* Form */}
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {mode === "signup" && (
+              <div>
+                <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', letterSpacing: '0.07em', textTransform: 'uppercase', color: 'rgba(148,163,184,0.7)', marginBottom: '7px' }}>
+                  Organization Name
+                </label>
+                <input
+                  className="login-input"
+                  type="text"
+                  placeholder="Acme Corp"
+                  value={orgName}
+                  onChange={(e) => setOrgName(e.target.value)}
+                  required
+                />
+              </div>
+            )}
+
             <div>
               <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', letterSpacing: '0.07em', textTransform: 'uppercase', color: 'rgba(148,163,184,0.7)', marginBottom: '7px' }}>
                 Email

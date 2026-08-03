@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { supabase } from '../supabaseClient';
+import { useOrg } from '../context/OrgContext';
 
 const NAV_ITEMS = [
   {
@@ -8,6 +9,27 @@ const NAV_ITEMS = [
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
         <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+      </svg>
+    )
+  },
+  {
+    to: '/departments', label: 'Departments', icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="4" y="2" width="16" height="20" rx="2"/><line x1="9" y1="6" x2="15" y2="6"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="15" y2="14"/>
+      </svg>
+    )
+  },
+  {
+    to: '/teams', label: 'Teams', icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
+    )
+  },
+  {
+    to: '/projects', label: 'Projects', icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
       </svg>
     )
   },
@@ -26,13 +48,6 @@ const NAV_ITEMS = [
     )
   },
   {
-    to: '/projects', label: 'Projects', icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-      </svg>
-    )
-  },
-  {
     to: '/analytics', label: 'Analytics', icon: (
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/>
@@ -40,10 +55,20 @@ const NAV_ITEMS = [
       </svg>
     )
   },
+  {
+    to: '/settings/org', label: 'Org Settings', icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/>
+        <circle cx="12" cy="12" r="3"/>
+      </svg>
+    )
+  },
 ];
 
 export default function Sidebar({ darkMode, isOpen, onClose, onOpenReminders }) {
   const location = useLocation();
+  const orgContext = useOrg ? useOrg() : null;
+  const { activeOrg, userRole, userOrgs, switchOrg } = orgContext || {};
 
   useEffect(() => {
     if (isOpen) {
@@ -92,7 +117,7 @@ export default function Sidebar({ darkMode, isOpen, onClose, onOpenReminders }) 
       }} />
 
       {/* Brand + mobile close */}
-      <div style={{ paddingLeft: '10px', marginBottom: '32px', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+      <div style={{ paddingLeft: '10px', marginBottom: '20px', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
             <div style={{
@@ -129,6 +154,55 @@ export default function Sidebar({ darkMode, isOpen, onClose, onOpenReminders }) 
           >✕</button>
         )}
       </div>
+
+      {/* Active Organization Badge & Switcher */}
+      {activeOrg && (
+        <div style={{
+          margin: '0 6px 20px 6px',
+          padding: '10px 12px',
+          borderRadius: '10px',
+          background: 'rgba(255,255,255,0.04)',
+          border: '1px solid rgba(255,255,255,0.08)',
+        }}>
+          <div style={{ fontSize: '10px', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', marginBottom: '4px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span>Organization</span>
+            <span style={{
+              fontSize: '9px', fontWeight: '800', textTransform: 'uppercase',
+              color: userRole === 'owner' ? '#f87171' : userRole === 'manager' ? '#c084fc' : '#60a5fa',
+              background: 'rgba(255,255,255,0.08)', padding: '1px 6px', borderRadius: '8px'
+            }}>
+              {userRole}
+            </span>
+          </div>
+
+          {userOrgs && userOrgs.length > 1 ? (
+            <select
+              value={activeOrg.id}
+              onChange={(e) => switchOrg(e.target.value)}
+              style={{
+                width: '100%',
+                background: 'transparent',
+                border: 'none',
+                color: '#f8fafc',
+                fontSize: '13px',
+                fontWeight: '700',
+                outline: 'none',
+                cursor: 'pointer'
+              }}
+            >
+              {userOrgs.map(o => (
+                <option key={o.id} value={o.id} style={{ background: '#0f172a', color: '#fff' }}>
+                  {o.name} ({o.role})
+                </option>
+              ))}
+            </select>
+          ) : (
+            <div style={{ fontSize: '13px', fontWeight: '700', color: '#f8fafc', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {activeOrg.name}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Section label */}
       <p style={{
