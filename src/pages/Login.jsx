@@ -9,6 +9,8 @@ const FEATURES = [
 ];
 
 export default function Login() {
+  const [mode, setMode] = useState("signin"); // "signin" | "signup" | "forgot"
+  const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
