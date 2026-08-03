@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../../supabaseClient";
+import { useOrg } from "../../context/OrgContext";
 
 export default function ReminderModal({ isOpen, onClose, user, darkMode }) {
+  const { activeOrg } = useOrg() || {};
   const [reminders, setReminders] = useState([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -11,15 +13,17 @@ export default function ReminderModal({ isOpen, onClose, user, darkMode }) {
   const [successMsg, setSuccessMsg] = useState("");
 
   useEffect(() => {
-    if (isOpen && user) {
+    if (isOpen && user && activeOrg?.id) {
       fetchReminders();
     }
-  }, [isOpen, user]);
+  }, [isOpen, user, activeOrg?.id]);
 
   async function fetchReminders() {
+    if (!activeOrg?.id) return;
     const { data, error } = await supabase
       .from("reminders")
       .select("*")
+      .eq("org_id", activeOrg.id)
       .eq("user_id", user.id)
       .order("remind_at", { ascending: true });
 
@@ -35,6 +39,11 @@ export default function ReminderModal({ isOpen, onClose, user, darkMode }) {
       return;
     }
 
+    if (!activeOrg?.id) {
+      setErrorMsg("No active organization selected.");
+      return;
+    }
+
     setLoading(true);
     setErrorMsg("");
     setSuccessMsg("");
@@ -42,6 +51,7 @@ export default function ReminderModal({ isOpen, onClose, user, darkMode }) {
     const { error } = await supabase
       .from("reminders")
       .insert({
+        org_id: activeOrg.id,
         user_id: user.id,
         title,
         description,

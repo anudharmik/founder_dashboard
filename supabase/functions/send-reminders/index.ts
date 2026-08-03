@@ -4,29 +4,49 @@ import { Resend } from "npm:resend";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
-serve(async () => {
+serve(async (req: Request) => {
   try {
+    let org_id: string | null = null;
+    try {
+      if (req.method === "POST") {
+        const body = await req.json();
+        org_id = body?.org_id || null;
+      } else {
+        const url = new URL(req.url);
+        org_id = url.searchParams.get("org_id");
+      }
+    } catch {
+      // optional org_id
+    }
+
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // 1. Process 15+ days overdue tasks
+    // 1. Process 15+ days overdue tasks (org-scoped if org_id is provided)
     const fifteenDaysAgo = new Date();
     fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
 
-    const { data: overdueTasks, error: taskError } = await supabase
+    let taskQuery = supabase
       .from("tasks")
       .select("*")
       .eq("completed", false)
       .lte("deadline", fifteenDaysAgo.toISOString())
       .eq("overdue_email_sent", false);
 
+    if (org_id) {
+      taskQuery = taskQuery.eq("org_id", org_id);
+    }
+
+    const { data: overdueTasks, error: taskError } = await taskQuery;
+
     if (taskError) {
       console.error("Error fetching overdue tasks:", taskError);
     } else {
       for (const task of overdueTasks || []) {
-        const { data: userData } = await supabase.auth.admin.getUserById(task.user_id);
+        const targetUserId = task.assignee_id || task.user_id;
+        const { data: userData } = await supabase.auth.admin.getUserById(targetUserId);
         const userEmail = userData.user?.email;
 
         if (!userEmail) continue;
@@ -59,12 +79,18 @@ serve(async () => {
       }
     }
 
-    // 2. Process custom pending reminders
-    const { data: reminders, error: reminderError } = await supabase
+    // 2. Process custom pending reminders (org-scoped if org_id is provided)
+    let reminderQuery = supabase
       .from("reminders")
       .select("*")
       .eq("sent", false)
       .lte("remind_at", new Date().toISOString());
+
+    if (org_id) {
+      reminderQuery = reminderQuery.eq("org_id", org_id);
+    }
+
+    const { data: reminders, error: reminderError } = await reminderQuery;
 
     if (reminderError) {
       throw reminderError;
