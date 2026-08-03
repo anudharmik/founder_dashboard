@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import { useOrg } from "../context/OrgContext";
+import { calculateProjectProgress } from "../utils/rollupEngine";
 import toast from "react-hot-toast";
 
 export default function ProjectDetail({ darkMode }) {
@@ -258,6 +259,25 @@ export default function ProjectDetail({ darkMode }) {
                 {project.description}
               </p>
             )}
+
+            {/* Weighted Project Progress Gauge */}
+            {(() => {
+              const projProgress = calculateProjectProgress(goals);
+              return (
+                <div style={{ marginTop: "20px", maxWidth: "450px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px", fontWeight: "700", marginBottom: "6px", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+                    <span>Project Weighted Progress</span>
+                    <span style={{ color: "#6366f1", fontSize: "15px" }}>{projProgress}%</span>
+                  </div>
+                  <div style={{ height: "8px", background: darkMode ? "#0f172a" : "#e2e8f0", borderRadius: "10px", overflow: "hidden" }}>
+                    <div style={{
+                      height: "100%", width: `${Math.min(100, Math.max(0, projProgress))}%`,
+                      background: "linear-gradient(90deg, #6366f1, #8b5cf6)", borderRadius: "10px", transition: "width 0.3s ease"
+                    }} />
+                  </div>
+                </div>
+              );
+            })()}
           </div>
 
           {/* Manager / Owner Action Buttons */}

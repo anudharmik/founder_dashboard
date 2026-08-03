@@ -384,6 +384,11 @@ create policy "Owners managers and assigned employees can insert tasks" on tasks
     or (
       public.get_org_role(org_id) = 'employee'
       and assignee_id = auth.uid()
+      and exists (
+        select 1 from tasks existing_t
+        where existing_t.goal_id = tasks.goal_id
+        and existing_t.assignee_id = auth.uid()
+      )
     )
   );
 

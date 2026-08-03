@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useOrg } from '../context/OrgContext';
 import { supabase } from '../supabaseClient';
+import { calculateDepartmentProgress, calculateProjectProgress } from '../utils/rollupEngine';
 
 export default function DepartmentDetail({ user, darkMode }) {
   const { id } = useParams();
@@ -30,10 +31,10 @@ export default function DepartmentDetail({ user, darkMode }) {
       if (deptErr) throw deptErr;
       setDepartment(deptData);
 
-      // Fetch projects in this department
+      // Fetch projects in this department with goals for rollup computation
       const { data: projData, error: projErr } = await supabase
         .from('projects')
-        .select('*')
+        .select('*, goals(id, weight, progress_computed, progress_override)')
         .eq('department_id', id)
         .order('created_at', { ascending: false });
 
@@ -105,6 +106,25 @@ export default function DepartmentDetail({ user, darkMode }) {
               <p style={{ fontSize: "13px", color: darkMode ? "#94a3b8" : "#64748b", margin: 0 }}>
                 Department in {activeOrg?.name} • Created {new Date(department.created_at).toLocaleDateString()}
               </p>
+
+              {/* Department Progress Gauge */}
+              {(() => {
+                const deptProgress = calculateDepartmentProgress(projects);
+                return (
+                  <div style={{ marginTop: "14px", minWidth: "280px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", fontWeight: "700", marginBottom: "4px", color: darkMode ? "#cbd5e1" : "#475569" }}>
+                      <span>Department Progress</span>
+                      <span style={{ color: "#6366f1", fontSize: "14px" }}>{deptProgress}%</span>
+                    </div>
+                    <div style={{ height: "7px", background: darkMode ? "#0f172a" : "#e2e8f0", borderRadius: "10px", overflow: "hidden" }}>
+                      <div style={{
+                        height: "100%", width: `${Math.min(100, Math.max(0, deptProgress))}%`,
+                        background: "linear-gradient(90deg, #6366f1, #8b5cf6)", borderRadius: "10px", transition: "width 0.3s ease"
+                      }} />
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           </div>
         </div>

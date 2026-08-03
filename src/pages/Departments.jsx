@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useOrg } from '../context/OrgContext';
 import { supabase } from '../supabaseClient';
+import { calculateDepartmentProgress, calculateProjectProgress } from '../utils/rollupEngine';
 import toast from 'react-hot-toast';
 
 export default function Departments({ darkMode }) {
@@ -28,26 +29,18 @@ export default function Departments({ darkMode }) {
     try {
       const { data, error } = await supabase
         .from('departments')
-        .select('*')
+        .select('*, projects(*, goals(id, weight, progress_computed, progress_override))')
         .eq('org_id', activeOrg.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
       setDepartments(data || []);
 
-      // Fetch project counts per department
-      const { data: projData } = await supabase
-        .from('projects')
-        .select('department_id')
-        .eq('org_id', activeOrg.id);
-
-      if (projData) {
-        const counts = {};
-        projData.forEach(p => {
-          counts[p.department_id] = (counts[p.department_id] || 0) + 1;
-        });
-        setProjectCounts(counts);
-      }
+      const counts = {};
+      (data || []).forEach(d => {
+        counts[d.id] = d.projects ? d.projects.length : 0;
+      });
+      setProjectCounts(counts);
     } catch (err) {
       console.error("Fetch departments error:", err);
     } finally {
@@ -243,6 +236,25 @@ export default function Departments({ darkMode }) {
                   </div>
                 )}
               </div>
+
+              {/* Department Progress Bar */}
+              {(() => {
+                const deptProgress = calculateDepartmentProgress(dept.projects || []);
+                return (
+                  <div style={{ marginTop: "12px", marginBottom: "16px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", fontWeight: "600", marginBottom: "4px", color: darkMode ? "#cbd5e1" : "#475569" }}>
+                      <span>Department Progress</span>
+                      <span style={{ color: "#6366f1", fontWeight: "700" }}>{deptProgress}%</span>
+                    </div>
+                    <div style={{ height: "6px", background: darkMode ? "#0f172a" : "#e2e8f0", borderRadius: "10px", overflow: "hidden" }}>
+                      <div style={{
+                        height: "100%", width: `${Math.min(100, Math.max(0, deptProgress))}%`,
+                        background: "linear-gradient(90deg, #6366f1, #8b5cf6)", borderRadius: "10px", transition: "width 0.3s ease"
+                      }} />
+                    </div>
+                  </div>
+                );
+              })()}
 
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "12px", borderTop: darkMode ? "1px solid rgba(255,255,255,0.06)" : "1px solid #f1f5f9" }}>
                 <span style={{ fontSize: "13px", color: darkMode ? "#94a3b8" : "#64748b" }}>

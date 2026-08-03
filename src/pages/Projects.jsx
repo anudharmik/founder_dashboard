@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate, Link } from "react-router-dom";
 import { useOrg } from "../context/OrgContext";
+import { calculateProjectProgress } from "../utils/rollupEngine";
 import toast from "react-hot-toast";
 
 export default function Projects({ darkMode }) {
@@ -334,6 +335,25 @@ export default function Projects({ darkMode }) {
                       {project.description}
                     </p>
                   )}
+
+                  {/* Weighted Progress Bar */}
+                  {(() => {
+                    const projProgress = calculateProjectProgress(project.goals || []);
+                    return (
+                      <div style={{ marginTop: "12px", marginBottom: "12px" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", fontWeight: "600", marginBottom: "4px", color: darkMode ? "#cbd5e1" : "#475569" }}>
+                          <span>Weighted Progress</span>
+                          <span style={{ color: "#6366f1", fontWeight: "700" }}>{projProgress}%</span>
+                        </div>
+                        <div style={{ height: "6px", background: darkMode ? "#0f172a" : "#e2e8f0", borderRadius: "10px", overflow: "hidden" }}>
+                          <div style={{
+                            height: "100%", width: `${Math.min(100, Math.max(0, projProgress))}%`,
+                            background: "linear-gradient(90deg, #6366f1, #8b5cf6)", borderRadius: "10px", transition: "width 0.3s ease"
+                          }} />
+                        </div>
+                      </div>
+                    );
+                  })()}
                 </div>
 
                 {/* Footer Metadata */}
