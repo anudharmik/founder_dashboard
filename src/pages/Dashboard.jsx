@@ -1,6 +1,7 @@
 import StatCard from "../components/StatCard";
 import TaskChart from "../components/TaskChart";
 import toast from "react-hot-toast";
+import { useOrg } from "../context/OrgContext";
 
 // Skeleton placeholder
 function SkeletonBlock({ height = 16, width = '100%', style = {} }) {
@@ -55,6 +56,7 @@ function DashboardSkeleton({ darkMode }) {
 }
 
 export default function Dashboard({ goals, tasks, darkMode, loading, aiInsights, aiLoading, refreshAIInsights }) {
+  const { isGuest } = useOrg() || {};
   const totalGoals = goals.length;
   const totalTasks = tasks.length;
   const completedTasks = tasks.filter((task) => task.completed).length;
@@ -191,99 +193,111 @@ export default function Dashboard({ goals, tasks, darkMode, loading, aiInsights,
       <div className="dashboard-main-grid" style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '20px', marginBottom: '20px' }}>
 
         {/* AI Insights Card */}
-        <div style={{ ...cardBase, display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
-          {/* Background accent */}
-          <div style={{
-            position: 'absolute', top: 0, left: 0, right: 0, height: '3px',
-            background: 'linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899)',
-          }} />
-
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', marginTop: '4px' }}>
-            <h3 style={{ fontSize: '15px', fontWeight: '700', margin: 0, display: 'flex', alignItems: 'center', gap: '8px', color: darkMode ? '#f1f5f9' : '#0f172a' }}>
-              <span style={{ fontSize: '18px' }}>🔥</span> Focus Today
+        {isGuest ? (
+          <div style={{ ...cardBase, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', padding: '40px 24px' }}>
+            <div style={{ fontSize: '36px', marginBottom: '12px' }}>🔒</div>
+            <h3 style={{ fontSize: '16px', fontWeight: '700', margin: '0 0 6px', color: darkMode ? '#f1f5f9' : '#0f172a' }}>
+              AI Insights Disabled
             </h3>
-            <button
-              onClick={refreshAIInsights}
-              disabled={aiLoading}
-              style={{
-                padding: '5px 12px', borderRadius: '20px', border: '1px solid rgba(99,102,241,0.3)',
-                background: 'transparent', color: '#818cf8', fontSize: '11px', fontWeight: '600',
-                cursor: aiLoading ? 'not-allowed' : 'pointer', opacity: aiLoading ? 0.6 : 1,
-                transition: 'all 0.15s ease', letterSpacing: '0.02em',
-                display: 'flex', alignItems: 'center', gap: '6px',
-              }}
-              onMouseEnter={(e) => { if (!aiLoading) { e.currentTarget.style.background = 'rgba(99,102,241,0.1)'; } }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
-            >
-              {aiLoading ? <span className="spinner" /> : '↻'} Refresh
-            </button>
+            <p style={{ fontSize: '13px', color: darkMode ? '#64748b' : '#94a3b8', margin: 0, maxWidth: '300px', lineHeight: '1.5' }}>
+              Guests do not have access to organization AI productivity insights per security policy.
+            </p>
           </div>
+        ) : (
+          <div style={{ ...cardBase, display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
+            {/* Background accent */}
+            <div style={{
+              position: 'absolute', top: 0, left: 0, right: 0, height: '3px',
+              background: 'linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899)',
+            }} />
 
-          {/* Focus Today items */}
-          {aiLoading ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px' }}>
-              {[1,2,3].map(i => <SkeletonBlock key={i} height={40} style={{ borderRadius: 8 }} />)}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', marginTop: '4px' }}>
+              <h3 style={{ fontSize: '15px', fontWeight: '700', margin: 0, display: 'flex', alignItems: 'center', gap: '8px', color: darkMode ? '#f1f5f9' : '#0f172a' }}>
+                <span style={{ fontSize: '18px' }}>🔥</span> Focus Today
+              </h3>
+              <button
+                onClick={refreshAIInsights}
+                disabled={aiLoading}
+                style={{
+                  padding: '5px 12px', borderRadius: '20px', border: '1px solid rgba(99,102,241,0.3)',
+                  background: 'transparent', color: '#818cf8', fontSize: '11px', fontWeight: '600',
+                  cursor: aiLoading ? 'not-allowed' : 'pointer', opacity: aiLoading ? 0.6 : 1,
+                  transition: 'all 0.15s ease', letterSpacing: '0.02em',
+                  display: 'flex', alignItems: 'center', gap: '6px',
+                }}
+                onMouseEnter={(e) => { if (!aiLoading) { e.currentTarget.style.background = 'rgba(99,102,241,0.1)'; } }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+              >
+                {aiLoading ? <span className="spinner" /> : '↻'} Refresh
+              </button>
             </div>
-          ) : aiInsights.focusToday?.length > 0 ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px' }}>
-              {aiInsights.focusToday.map((task, index) => (
-                <div key={index} style={{
-                  fontSize: '13.5px', padding: '10px 14px',
-                  background: darkMode ? 'rgba(99,102,241,0.08)' : 'rgba(99,102,241,0.05)',
-                  borderRadius: '10px', color: darkMode ? '#c7d2fe' : '#3730a3',
-                  borderLeft: '3px solid #6366f1',
-                  display: 'flex', alignItems: 'flex-start', gap: '10px',
-                  animation: `slideUp 0.3s ${index * 0.08}s ease both`,
-                  lineHeight: '1.5',
-                }}>
-                  <span style={{
-                    width: '20px', height: '20px', borderRadius: '50%',
-                    background: 'rgba(99,102,241,0.2)', color: '#818cf8',
-                    fontSize: '11px', fontWeight: '700', display: 'flex', alignItems: 'center',
-                    justifyContent: 'center', flexShrink: 0, marginTop: '1px',
-                  }}>{index + 1}</span>
-                  {task}
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p style={{ fontSize: '13px', color: darkMode ? '#475569' : '#94a3b8', marginBottom: '20px', lineHeight: '1.6' }}>
-              No tasks yet — add some to get AI-powered focus recommendations.
-            </p>
-          )}
 
-          {/* Risk section */}
-          <div style={{
-            padding: '12px 14px', borderRadius: '10px', marginBottom: '12px',
-            background: darkMode ? 'rgba(245,158,11,0.06)' : 'rgba(245,158,11,0.05)',
-            border: darkMode ? '1px solid rgba(245,158,11,0.15)' : '1px solid rgba(245,158,11,0.2)',
-          }}>
-            <p style={{ fontSize: '10px', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#f59e0b', margin: '0 0 6px' }}>
-              ⚠️ Risk
-            </p>
-            {aiLoading ? <SkeletonBlock height={14} /> : (
-              <p style={{ fontSize: '13.5px', color: darkMode ? '#cbd5e1' : '#475569', lineHeight: '1.6', margin: 0 }}>
-                {aiInsights.risk || 'No risk signals detected.'}
+            {/* Focus Today items */}
+            {aiLoading ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px' }}>
+                {[1,2,3].map(i => <SkeletonBlock key={i} height={40} style={{ borderRadius: 8 }} />)}
+              </div>
+            ) : aiInsights.focusToday?.length > 0 ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px' }}>
+                {aiInsights.focusToday.map((task, index) => (
+                  <div key={index} style={{
+                    fontSize: '13.5px', padding: '10px 14px',
+                    background: darkMode ? 'rgba(99,102,241,0.08)' : 'rgba(99,102,241,0.05)',
+                    borderRadius: '10px', color: darkMode ? '#c7d2fe' : '#3730a3',
+                    borderLeft: '3px solid #6366f1',
+                    display: 'flex', alignItems: 'flex-start', gap: '10px',
+                    animation: `slideUp 0.3s ${index * 0.08}s ease both`,
+                    lineHeight: '1.5',
+                  }}>
+                    <span style={{
+                      width: '20px', height: '20px', borderRadius: '50%',
+                      background: 'rgba(99,102,241,0.2)', color: '#818cf8',
+                      fontSize: '11px', fontWeight: '700', display: 'flex', alignItems: 'center',
+                      justifyContent: 'center', flexShrink: 0, marginTop: '1px',
+                    }}>{index + 1}</span>
+                    {task}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p style={{ fontSize: '13px', color: darkMode ? '#475569' : '#94a3b8', marginBottom: '20px', lineHeight: '1.6' }}>
+                No tasks yet — add some to get AI-powered focus recommendations.
               </p>
             )}
-          </div>
 
-          {/* Insight section */}
-          <div style={{
-            padding: '12px 14px', borderRadius: '10px',
-            background: darkMode ? 'rgba(6,182,212,0.06)' : 'rgba(6,182,212,0.05)',
-            border: darkMode ? '1px solid rgba(6,182,212,0.15)' : '1px solid rgba(6,182,212,0.2)',
-          }}>
-            <p style={{ fontSize: '10px', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#06b6d4', margin: '0 0 6px' }}>
-              📊 Insight
-            </p>
-            {aiLoading ? <SkeletonBlock height={14} /> : (
-              <p style={{ fontSize: '13.5px', color: darkMode ? '#cbd5e1' : '#475569', lineHeight: '1.6', margin: 0 }}>
-                {aiInsights.insight || 'Complete more tasks to generate insights.'}
+            {/* Risk section */}
+            <div style={{
+              padding: '12px 14px', borderRadius: '10px', marginBottom: '12px',
+              background: darkMode ? 'rgba(245,158,11,0.06)' : 'rgba(245,158,11,0.05)',
+              border: darkMode ? '1px solid rgba(245,158,11,0.15)' : '1px solid rgba(245,158,11,0.2)',
+            }}>
+              <p style={{ fontSize: '10px', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#f59e0b', margin: '0 0 6px' }}>
+                ⚠️ Risk
               </p>
-            )}
+              {aiLoading ? <SkeletonBlock height={14} /> : (
+                <p style={{ fontSize: '13.5px', color: darkMode ? '#cbd5e1' : '#475569', lineHeight: '1.6', margin: 0 }}>
+                  {aiInsights.risk || 'No risk signals detected.'}
+                </p>
+              )}
+            </div>
+
+            {/* Insight section */}
+            <div style={{
+              padding: '12px 14px', borderRadius: '10px',
+              background: darkMode ? 'rgba(6,182,212,0.06)' : 'rgba(6,182,212,0.05)',
+              border: darkMode ? '1px solid rgba(6,182,212,0.15)' : '1px solid rgba(6,182,212,0.2)',
+            }}>
+              <p style={{ fontSize: '10px', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#06b6d4', margin: '0 0 6px' }}>
+                📊 Insight
+              </p>
+              {aiLoading ? <SkeletonBlock height={14} /> : (
+                <p style={{ fontSize: '13.5px', color: darkMode ? '#cbd5e1' : '#475569', lineHeight: '1.6', margin: 0 }}>
+                  {aiInsights.insight || 'Complete more tasks to generate insights.'}
+                </p>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Score + Streak column */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
