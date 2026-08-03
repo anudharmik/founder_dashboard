@@ -8,6 +8,8 @@ import Dashboard from "./pages/Dashboard";
 import Goals from "./pages/Goals";
 import Tasks from "./pages/Tasks";
 import Projects from "./pages/Projects";
+import ProjectDetail from "./pages/ProjectDetail";
+import GoalDetail from "./pages/GoalDetail";
 import Analytics from "./pages/Analytics";
 import Departments from "./pages/Departments";
 import DepartmentDetail from "./pages/DepartmentDetail";
@@ -369,9 +371,11 @@ function AppContent({ children }) {
           <Route path="/departments" element={<Departments darkMode={darkMode} />} />
           <Route path="/departments/:id" element={<DepartmentDetail user={user} darkMode={darkMode} />} />
           <Route path="/teams" element={<Teams darkMode={darkMode} />} />
+          <Route path="/projects" element={<Projects darkMode={darkMode} />} />
+          <Route path="/projects/:id" element={<ProjectDetail darkMode={darkMode} />} />
           <Route path="/goals" element={<Goals user={user} goals={goals} tasks={tasks} projects={projects} setTasks={setTasks} fetchGoals={fetchGoals} fetchTasks={fetchTasks} toggleTask={toggleTask} updateTask={updateTask} updateGoal={updateGoal} darkMode={darkMode} loading={loading} aiInsights={aiInsights}/>} />
+          <Route path="/goals/:id" element={<GoalDetail darkMode={darkMode} />} />
           <Route path="/tasks" element={<Tasks user={user} tasks={tasks} goals={goals} toggleTask={toggleTask} darkMode={darkMode} loading={loading}/>} />
-          <Route path="/projects" element={<Projects user={user} darkMode={darkMode} loading={loading} projects={projects} fetchProjects={fetchProjects} goals={goals} tasks={tasks}/>} />
           <Route path="/analytics" element={<Analytics user={user} goals={goals} tasks={tasks} darkMode={darkMode} loading={loading}/>} />
           <Route path="/settings/org" element={<OrgSettings user={user} darkMode={darkMode} />} />
         </Routes>
