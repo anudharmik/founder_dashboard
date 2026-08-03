@@ -1,150 +1,370 @@
-import { useState } from "react";
-import GoalChart from "../components/GoalChart";
-import GoalProgressChart from "../components/GoalProgressChart";
-import WeeklyChart from "../components/WeeklyChart";
+import { useState, useEffect } from "react";
+import { supabase } from "../supabaseClient";
+import { useOrg } from "../context/OrgContext";
+import {
+  calculateGoalsProgress,
+  calculateDepartmentProgress,
+  calculateProductivityScore,
+  calculateStreak,
+  getTaskPriority,
+  sortTasksByUrgency,
+} from "../utils/rollupEngine";
+import toast from "react-hot-toast";
 
-export default function Analytics({ goals, tasks, darkMode }) {
-  const [selectedGoal, setSelectedGoal] = useState("");
+export default function Analytics({ darkMode }) {
+  const { activeOrg, userRole } = useOrg() || {};
 
-  const filteredTasks = tasks.filter((task) => task.goal_id === selectedGoal);
+  const [loading, setLoading] = useState(true);
+  const [currentUserId, setCurrentUserId] = useState(null);
 
-  // Summary stats
-  const totalTasks = tasks.length;
-  const completedTasks = tasks.filter(t => t.completed).length;
-  const completionRate = totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
-  const overdueTasks = tasks.filter(t => !t.completed && t.deadline && new Date(t.deadline) < new Date()).length;
+  // Data State
+  const [orgGoals, setOrgGoals] = useState([]);
+  const [orgTasks, setOrgTasks] = useState([]);
+  const [departments, setDepartments] = useState([]);
+  const [activeVariant, setActiveVariant] = useState("auto"); // "auto" | "employee" | "org"
 
-  const cardBase = {
-    padding: "24px", borderRadius: "16px",
-    background: darkMode ? "#1e293b" : "#ffffff",
-    boxShadow: darkMode ? "0 2px 16px rgba(0,0,0,0.4)" : "0 2px 16px rgba(0,0,0,0.06)",
-    border: darkMode ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(0,0,0,0.04)",
-    marginBottom: "20px",
-  };
+  const isOwnerOrManager = userRole === 'owner' || userRole === 'manager';
+  const isEmployee = userRole === 'employee';
+  const isGuest = userRole === 'guest';
 
-  const sectionLabel = {
-    fontSize: "11px", fontWeight: "700", letterSpacing: "0.07em", textTransform: "uppercase",
-    color: darkMode ? "#64748b" : "#94a3b8", margin: "0 0 16px",
-    display: "flex", alignItems: "center", gap: "8px",
-  };
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      if (data?.user) setCurrentUserId(data.user.id);
+    });
+  }, []);
 
-  const SUMMARY_STATS = [
-    { label: "Total Goals", value: goals.length, accent: "#6366f1", icon: "🎯" },
-    { label: "Completion Rate", value: `${completionRate}%`, accent: "#22c55e", icon: "📈" },
-    { label: "Tasks Done", value: `${completedTasks}/${totalTasks}`, accent: "#8b5cf6", icon: "✅" },
-    { label: "Overdue", value: overdueTasks, accent: "#ef4444", icon: "❗" },
-  ];
+  useEffect(() => {
+    if (activeOrg) {
+      loadAnalyticsData();
+    }
+  }, [activeOrg]);
+
+  async function loadAnalyticsData() {
+    setLoading(true);
+    try {
+      // 1. Fetch all goals in active org
+      const { data: gData } = await supabase
+        .from('goals')
+        .select('*')
+        .eq('org_id', activeOrg.id);
+      setOrgGoals(gData || []);
+
+      // 2. Fetch all tasks in active org
+      const { data: tData } = await supabase
+        .from('tasks')
+        .select('*')
+        .eq('org_id', activeOrg.id);
+      setOrgTasks(tData || []);
+
+      // 3. Fetch departments with projects & goals for department comparison bar chart
+      const { data: dData } = await supabase
+        .from('departments')
+        .select('*, projects(*, goals(id, weight, progress_computed, progress_override))')
+        .eq('org_id', activeOrg.id);
+      setDepartments(dData || []);
+
+    } catch (err) {
+      console.error("Error loading analytics data:", err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const cardBg = darkMode ? "#1e293b" : "#ffffff";
+  const borderCol = darkMode ? "rgba(255,255,255,0.08)" : "#e2e8f0";
+  const textMuted = darkMode ? "#94a3b8" : "#64748b";
+
+  // 1. Guest Access Denied View
+  if (isGuest) {
+    return (
+      <div style={{ maxWidth: "800px", margin: "40px auto", width: "100%", textAlign: "center" }}>
+        <div style={{
+          background: cardBg, borderRadius: "20px", border: `1px solid ${borderCol}`,
+          padding: "48px 32px", boxShadow: "0 10px 30px rgba(0,0,0,0.05)"
+        }}>
+          <div style={{ fontSize: "48px", marginBottom: "16px" }}>🔒</div>
+          <h2 style={{ margin: "0 0 10px", fontSize: "22px", fontWeight: "800", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+            Access Denied
+          </h2>
+          <p style={{ margin: 0, fontSize: "14px", color: textMuted, lineHeight: "1.6" }}>
+            Guests do not have access to organization analytics per security policy.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div style={{ textAlign: "center", padding: "60px 0", color: textMuted }}>
+        Loading organization analytics...
+      </div>
+    );
+  }
+
+  // Determine active view mode
+  const showEmployeeView = (isEmployee && activeVariant !== "org") || (activeVariant === "employee");
+
+  // Filter tasks for employee view
+  const userTasks = orgTasks.filter(t => t.assignee_id === currentUserId);
+  const sortedUserTasks = sortTasksByUrgency(userTasks);
+
+  // Org-wide calculations
+  const orgGoalCompletion = calculateGoalsProgress(orgGoals);
+  const now = new Date();
+  const overdueTasksCount = orgTasks.filter(t => !t.completed && t.deadline && new Date(t.deadline) < now).length;
+  const orgProductivityScore = calculateProductivityScore(orgTasks);
+
+  // Employee-scoped calculations
+  const personalStreak = calculateStreak(userTasks);
+  const personalProductivityScore = calculateProductivityScore(userTasks);
 
   return (
     <div style={{ maxWidth: "1100px", margin: "0 auto", width: "100%", animation: "fadeIn 0.35s ease" }}>
 
-      {/* Header */}
-      <div style={{ marginBottom: "28px" }}>
-        <h1 style={{
-          fontSize: "clamp(22px, 5vw, 28px)", fontWeight: "800", margin: "0 0 4px",
-          letterSpacing: "-0.6px", color: darkMode ? "#f1f5f9" : "#0f172a",
-        }}>Analytics</h1>
-        <p style={{ fontSize: "13px", color: darkMode ? "#64748b" : "#94a3b8", margin: 0 }}>
-          Visual breakdown of your goals and tasks
-        </p>
+      {/* Header & Role Variant Selector */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "28px", flexWrap: "wrap", gap: "16px" }}>
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "6px" }}>
+            <h1 style={{ margin: 0, fontSize: "clamp(22px, 5vw, 28px)", fontWeight: "800", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+              Analytics Dashboard
+            </h1>
+            <span style={{
+              padding: "4px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: "700",
+              background: "rgba(99,102,241,0.15)", color: "#818cf8", textTransform: "uppercase"
+            }}>
+              {showEmployeeView ? "Personal Employee View" : "Org-Wide Executive View"}
+            </span>
+          </div>
+          <p style={{ margin: 0, fontSize: "13px", color: textMuted }}>
+            {showEmployeeView
+              ? `Personal performance metrics for your assigned tasks in ${activeOrg?.name}`
+              : `Org-wide performance, department comparisons, and productivity scores for ${activeOrg?.name}`}
+          </p>
+        </div>
+
+        {/* Owner/Manager Toggle Button */}
+        {isOwnerOrManager && (
+          <button
+            onClick={() => setActiveVariant(showEmployeeView ? "org" : "employee")}
+            style={{
+              padding: "9px 16px", borderRadius: "10px", border: `1px solid ${borderCol}`,
+              background: darkMode ? "#1e293b" : "#ffffff", color: darkMode ? "#cbd5e1" : "#475569",
+              fontSize: "13px", fontWeight: "600", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px"
+            }}
+          >
+            {showEmployeeView ? "📊 Switch to Org Overview" : "👤 Switch to My Employee View"}
+          </button>
+        )}
       </div>
 
-      {/* Summary stats row */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "16px", marginBottom: "24px" }}>
-        {SUMMARY_STATS.map((s, i) => (
-          <div
-            key={i}
-            className="stagger-item"
-            style={{
-              borderRadius: "14px", padding: "0", overflow: "hidden",
-              background: darkMode ? "#1e293b" : "#ffffff",
-              boxShadow: darkMode ? "0 2px 12px rgba(0,0,0,0.35)" : "0 2px 12px rgba(0,0,0,0.06)",
-              border: darkMode ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(0,0,0,0.04)",
-              transition: "transform 0.2s ease, box-shadow 0.2s ease",
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-3px)"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; }}
-          >
-            <div style={{ height: "3px", background: `linear-gradient(90deg, ${s.accent}, ${s.accent}80)` }} />
-            <div style={{ padding: "18px 20px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "10px" }}>
-                <span style={{ fontSize: "14px" }}>{s.icon}</span>
-                <p style={{ fontSize: "11px", fontWeight: "700", letterSpacing: "0.07em", textTransform: "uppercase", color: darkMode ? "#64748b" : "#94a3b8", margin: 0 }}>
-                  {s.label}
-                </p>
+      {/* ========================================================= */}
+      {/* OWNER / MANAGER ORG-WIDE DASHBOARD (§8.1)                 */}
+      {/* ========================================================= */}
+      {!showEmployeeView && (
+        <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+
+          {/* Org-Wide KPI Summary Row */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "18px" }}>
+            {/* Org Goal Completion Rate */}
+            <div style={{ background: cardBg, borderRadius: "18px", border: `1px solid ${borderCol}`, padding: "22px", boxShadow: "0 4px 14px rgba(0,0,0,0.03)" }}>
+              <span style={{ fontSize: "11px", fontWeight: "700", textTransform: "uppercase", color: textMuted, letterSpacing: "0.05em" }}>
+                🎯 Org Goal Completion
+              </span>
+              <div style={{ fontSize: "32px", fontWeight: "800", color: "#6366f1", marginTop: "8px", marginBottom: "8px" }}>
+                {orgGoalCompletion}%
               </div>
-              <p style={{ fontSize: "28px", fontWeight: "800", margin: 0, letterSpacing: "-0.5px", color: darkMode ? "#f1f5f9" : "#0f172a" }}>
-                {s.value}
+              <p style={{ margin: 0, fontSize: "12px", color: textMuted }}>
+                Weighted rollup across {orgGoals.length} goal{orgGoals.length !== 1 ? "s" : ""}
+              </p>
+            </div>
+
+            {/* Overdue Task Count */}
+            <div style={{ background: cardBg, borderRadius: "18px", border: `1px solid ${borderCol}`, padding: "22px", boxShadow: "0 4px 14px rgba(0,0,0,0.03)" }}>
+              <span style={{ fontSize: "11px", fontWeight: "700", textTransform: "uppercase", color: textMuted, letterSpacing: "0.05em" }}>
+                ❗ Overdue Tasks (Org-Wide)
+              </span>
+              <div style={{ fontSize: "32px", fontWeight: "800", color: overdueTasksCount > 0 ? "#ef4444" : "#22c55e", marginTop: "8px", marginBottom: "8px" }}>
+                {overdueTasksCount}
+              </div>
+              <p style={{ margin: 0, fontSize: "12px", color: textMuted }}>
+                Tasks past deadline requiring attention
+              </p>
+            </div>
+
+            {/* Org Productivity Score */}
+            <div style={{ background: cardBg, borderRadius: "18px", border: `1px solid ${borderCol}`, padding: "22px", boxShadow: "0 4px 14px rgba(0,0,0,0.03)" }}>
+              <span style={{ fontSize: "11px", fontWeight: "700", textTransform: "uppercase", color: textMuted, letterSpacing: "0.05em" }}>
+                ⚡ Org Productivity Score
+              </span>
+              <div style={{
+                fontSize: "32px", fontWeight: "800", marginTop: "8px", marginBottom: "8px",
+                color: orgProductivityScore >= 75 ? "#22c55e" : orgProductivityScore >= 45 ? "#f59e0b" : "#ef4444"
+              }}>
+                {orgProductivityScore}/100
+              </div>
+              <p style={{ margin: 0, fontSize: "12px", color: textMuted }}>
+                Formula: (Done/Total * 100) - (Overdue * 5)
               </p>
             </div>
           </div>
-        ))}
-      </div>
 
-      {/* Goal selector */}
-      <div style={{ ...cardBase, padding: "18px 24px" }}>
-        <p style={sectionLabel}>
-          <span>🔍</span> Filter by Goal
-        </p>
-        <select
-          style={{
-            padding: "10px 14px", borderRadius: "10px",
-            border: darkMode ? "1px solid rgba(255,255,255,0.1)" : "1px solid #e2e8f0",
-            background: darkMode ? "#0f172a" : "#f8fafc",
-            color: darkMode ? "#e2e8f0" : "#0f172a",
-            outline: "none", cursor: "pointer", fontSize: "14px",
-            width: "100%", maxWidth: "360px",
-            fontFamily: "inherit",
-            transition: "border-color 0.15s ease, box-shadow 0.15s ease",
-          }}
-          onFocus={(e) => { e.target.style.borderColor = "#6366f1"; e.target.style.boxShadow = "0 0 0 3px rgba(99,102,241,0.15)"; }}
-          onBlur={(e) => { e.target.style.borderColor = darkMode ? "rgba(255,255,255,0.1)" : "#e2e8f0"; e.target.style.boxShadow = "none"; }}
-          value={selectedGoal}
-          onChange={(e) => setSelectedGoal(e.target.value)}
-        >
-          <option value="">All goals</option>
-          {goals.map((goal) => (
-            <option key={goal.id} value={goal.id}>{goal.title}</option>
-          ))}
-        </select>
-      </div>
-
-      {/* Goal Specific Progress */}
-      <div style={cardBase}>
-        <p style={sectionLabel}><span>📊</span> Goal Specific Progress</p>
-        {!selectedGoal ? (
-          <div style={{ padding: "32px", textAlign: "center" }}>
-            <div style={{ fontSize: "32px", marginBottom: "10px" }}>☝️</div>
-            <p style={{ fontSize: "14px", color: darkMode ? "#475569" : "#94a3b8", margin: 0 }}>
-              Select a goal above to view its task progress chart
+          {/* Department Comparison Bar Chart Card */}
+          <div style={{ background: cardBg, borderRadius: "20px", border: `1px solid ${borderCol}`, padding: "28px", boxShadow: "0 4px 20px rgba(0,0,0,0.03)" }}>
+            <h3 style={{ margin: "0 0 6px", fontSize: "18px", fontWeight: "800", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+              🏢 Department Completion Comparison
+            </h3>
+            <p style={{ margin: "0 0 24px", fontSize: "13px", color: textMuted }}>
+              Completion % per department using calculateDepartmentProgress rollup engine
             </p>
-          </div>
-        ) : (
-          <div className="chart-scroll">
-            <GoalChart tasks={filteredTasks} />
-          </div>
-        )}
-      </div>
 
-      {/* All Goals Progress */}
-      <div style={cardBase}>
-        <p style={sectionLabel}><span>🏆</span> All Goals Progress</p>
-        {goals.length === 0 ? (
-          <p style={{ fontSize: "14px", color: darkMode ? "#475569" : "#94a3b8", margin: 0 }}>No goals yet.</p>
-        ) : (
-          <div className="chart-scroll">
-            <GoalProgressChart goals={goals} tasks={tasks} />
-          </div>
-        )}
-      </div>
+            {departments.length === 0 ? (
+              <div style={{ padding: "30px", textAlign: "center", color: textMuted, fontSize: "13px" }}>
+                No departments created yet. Create departments under Projects to view comparison.
+              </div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+                {departments.map(dept => {
+                  const deptCompletion = calculateDepartmentProgress(dept.projects || []);
 
-      {/* Weekly Progress */}
-      <div style={cardBase}>
-        <p style={sectionLabel}><span>📅</span> Weekly Progress</p>
-        <div className="chart-scroll">
-          <WeeklyChart tasks={tasks} />
+                  return (
+                    <div key={dept.id}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px", fontSize: "14px" }}>
+                        <span style={{ fontWeight: "700", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+                          🏢 {dept.name}
+                        </span>
+                        <span style={{ fontWeight: "800", color: "#6366f1" }}>
+                          {deptCompletion}%
+                        </span>
+                      </div>
+
+                      <div style={{ height: "10px", background: darkMode ? "#0f172a" : "#e2e8f0", borderRadius: "10px", overflow: "hidden" }}>
+                        <div style={{
+                          height: "100%", width: `${Math.min(100, Math.max(0, deptCompletion))}%`,
+                          background: "linear-gradient(90deg, #6366f1, #8b5cf6)", borderRadius: "10px", transition: "width 0.4s ease"
+                        }} />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* ========================================================= */}
+      {/* EMPLOYEE ANALYTICS DASHBOARD (§8.2)                        */}
+      {/* ========================================================= */}
+      {showEmployeeView && (
+        <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+
+          {/* Personal Summary KPI Row */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "18px" }}>
+            {/* Personal Streak Counter */}
+            <div style={{ background: cardBg, borderRadius: "18px", border: `1px solid ${borderCol}`, padding: "22px", boxShadow: "0 4px 14px rgba(0,0,0,0.03)" }}>
+              <span style={{ fontSize: "11px", fontWeight: "700", textTransform: "uppercase", color: textMuted, letterSpacing: "0.05em" }}>
+                🔥 Personal Streak
+              </span>
+              <div style={{ fontSize: "32px", fontWeight: "800", color: "#f59e0b", marginTop: "8px", marginBottom: "8px" }}>
+                {personalStreak} Day{personalStreak !== 1 ? "s" : ""}
+              </div>
+              <p style={{ margin: 0, fontSize: "12px", color: textMuted }}>
+                Consecutive days with completed task activity
+              </p>
+            </div>
+
+            {/* Personal Productivity Score */}
+            <div style={{ background: cardBg, borderRadius: "18px", border: `1px solid ${borderCol}`, padding: "22px", boxShadow: "0 4px 14px rgba(0,0,0,0.03)" }}>
+              <span style={{ fontSize: "11px", fontWeight: "700", textTransform: "uppercase", color: textMuted, letterSpacing: "0.05em" }}>
+                ⚡ Personal Productivity Score
+              </span>
+              <div style={{
+                fontSize: "32px", fontWeight: "800", marginTop: "8px", marginBottom: "8px",
+                color: personalProductivityScore >= 75 ? "#22c55e" : personalProductivityScore >= 45 ? "#f59e0b" : "#ef4444"
+              }}>
+                {personalProductivityScore}/100
+              </div>
+              <p style={{ margin: 0, fontSize: "12px", color: textMuted }}>
+                Scoped to tasks assigned to you
+              </p>
+            </div>
+
+            {/* My Tasks Overview */}
+            <div style={{ background: cardBg, borderRadius: "18px", border: `1px solid ${borderCol}`, padding: "22px", boxShadow: "0 4px 14px rgba(0,0,0,0.03)" }}>
+              <span style={{ fontSize: "11px", fontWeight: "700", textTransform: "uppercase", color: textMuted, letterSpacing: "0.05em" }}>
+                📋 My Assigned Tasks
+              </span>
+              <div style={{ fontSize: "32px", fontWeight: "800", color: "#6366f1", marginTop: "8px", marginBottom: "8px" }}>
+                {userTasks.filter(t => t.completed).length}/{userTasks.length}
+              </div>
+              <p style={{ margin: 0, fontSize: "12px", color: textMuted }}>
+                Completed vs total assigned tasks
+              </p>
+            </div>
+          </div>
+
+          {/* Today's Assigned Tasks (Urgency Sorted) */}
+          <div style={{ background: cardBg, borderRadius: "20px", border: `1px solid ${borderCol}`, padding: "28px", boxShadow: "0 4px 20px rgba(0,0,0,0.03)" }}>
+            <h3 style={{ margin: "0 0 6px", fontSize: "18px", fontWeight: "800", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+              ⏳ Today's Assigned Tasks (Urgency Sorted)
+            </h3>
+            <p style={{ margin: "0 0 20px", fontSize: "13px", color: textMuted }}>
+              Sorted by Overdue &gt; Due Soon 48h &gt; Normal &gt; Completed
+            </p>
+
+            {sortedUserTasks.length === 0 ? (
+              <div style={{ padding: "30px", textAlign: "center", color: textMuted, fontSize: "13px" }}>
+                No tasks assigned to you yet.
+              </div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                {sortedUserTasks.map(task => {
+                  const prio = getTaskPriority(task);
+                  const statusLabel = prio === 1 ? "❗ Overdue" : prio === 2 ? "⏰ Due Soon" : task.completed ? "✓ Completed" : "📅 Normal";
+                  const statusColor = prio === 1 ? "#ef4444" : prio === 2 ? "#f59e0b" : task.completed ? "#22c55e" : "#6366f1";
+
+                  return (
+                    <div
+                      key={task.id}
+                      style={{
+                        padding: "14px 18px", borderRadius: "12px",
+                        background: darkMode ? "#0f172a" : "#f8fafc", border: `1px solid ${borderCol}`,
+                        display: "flex", justifyContent: "space-between", alignItems: "center", gap: "14px"
+                      }}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                        <span style={{ fontSize: "16px" }}>{task.completed ? "✅" : "⬜"}</span>
+                        <div>
+                          <h4 style={{
+                            margin: 0, fontSize: "14px", fontWeight: "700",
+                            color: task.completed ? textMuted : (darkMode ? "#f8fafc" : "#0f172a"),
+                            textDecoration: task.completed ? "line-through" : "none"
+                          }}>
+                            {task.title}
+                          </h4>
+                          {task.deadline && (
+                            <span style={{ fontSize: "12px", color: textMuted }}>
+                              Deadline: {new Date(task.deadline).toLocaleDateString()}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <span style={{
+                        padding: "4px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: "700",
+                        background: `${statusColor}20`, color: statusColor
+                      }}>
+                        {statusLabel}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

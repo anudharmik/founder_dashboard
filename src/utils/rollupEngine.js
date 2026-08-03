@@ -92,10 +92,20 @@ export async function recomputeGoalProgressAndRisk(goalId) {
 }
 
 /**
- * Computes Project Effective Progress (weighted average of goal effective progress)
+ * Returns the effective progress of a goal (respecting manual override if set)
+ */
+export function calculateEffectiveProgress(goal) {
+  if (!goal) return 0;
+  return goal.progress_override !== null && goal.progress_override !== undefined
+    ? Number(goal.progress_override)
+    : Number(goal.progress_computed || 0);
+}
+
+/**
+ * Computes Goal Progress (weighted average of goal effective progress across a list of goals)
  * Formula: sum(goal.weight * goal.effective_progress) / sum(goal.weight)
  */
-export function calculateProjectProgress(goalsList) {
+export function calculateGoalsProgress(goalsList) {
   if (!goalsList || goalsList.length === 0) return 0;
 
   let totalWeight = 0;
@@ -103,15 +113,21 @@ export function calculateProjectProgress(goalsList) {
 
   goalsList.forEach(g => {
     const weight = Number(g.weight) || 1;
-    const effectiveProgress = g.progress_override !== null && g.progress_override !== undefined
-      ? Number(g.progress_override)
-      : Number(g.progress_computed || 0);
+    const effectiveProgress = calculateEffectiveProgress(g);
 
     totalWeight += weight;
     weightedProgressSum += (weight * effectiveProgress);
   });
 
   return totalWeight > 0 ? Number((weightedProgressSum / totalWeight).toFixed(2)) : 0;
+}
+
+/**
+ * Computes Project Effective Progress (weighted average of goal effective progress)
+ * Formula: sum(goal.weight * goal.effective_progress) / sum(goal.weight)
+ */
+export function calculateProjectProgress(goalsList) {
+  return calculateGoalsProgress(goalsList);
 }
 
 /**
@@ -131,3 +147,58 @@ export function calculateDepartmentProgress(projectsList) {
 
   return Number((progressSum / projectsList.length).toFixed(2));
 }
+
+/**
+ * Productivity score formula: Clamp(0, 100, (completed/total * 100) - (overdue * 5))
+ */
+export function calculateProductivityScore(taskList) {
+  if (!taskList || !taskList.length) return 0;
+  const now = new Date();
+  const completed = taskList.filter((t) => Boolean(t.completed)).length;
+  const overdue = taskList.filter((t) => {
+    if (!t.deadline || Boolean(t.completed)) return false;
+    return new Date(t.deadline) < now;
+  }).length;
+  let score = (completed / taskList.length) * 100 - overdue * 5;
+  return Math.round(Math.max(0, Math.min(100, score)));
+}
+
+/**
+ * Personal streak counter: consecutive days with completed_at timestamp
+ */
+export function calculateStreak(taskList) {
+  const completedWithDate = (taskList || []).filter((t) => Boolean(t.completed) && t.completed_at);
+  if (!completedWithDate.length) return 0;
+  const dates = [...new Set(completedWithDate.map((t) =>
+    new Date(t.completed_at).toISOString().split("T")[0]
+  ))].sort().reverse();
+  let streak = 1;
+  for (let i = 0; i < dates.length - 1; i++) {
+    const diff = (new Date(dates[i]) - new Date(dates[i + 1])) / (1000 * 60 * 60 * 24);
+    if (diff === 1) streak++;
+    else break;
+  }
+  return streak;
+}
+
+/**
+ * Urgency sort priority (reused in /tasks and /analytics):
+ * Priority 1: Overdue (incomplete, deadline < today)
+ * Priority 2: Due Soon (incomplete, deadline within 48h)
+ * Priority 3: Normal (incomplete, deadline > 48h or no deadline)
+ * Priority 4: Completed
+ */
+export function getTaskPriority(task) {
+  const now = new Date();
+  if (task.completed) return 4;
+  if (!task.deadline) return 3;
+  const diff = (new Date(task.deadline) - now) / (1000 * 60 * 60 * 24);
+  if (diff < 0) return 1;
+  if (diff <= 2) return 2;
+  return 3;
+}
+
+export function sortTasksByUrgency(taskList) {
+  return [...(taskList || [])].sort((a, b) => getTaskPriority(a) - getTaskPriority(b));
+}
+
