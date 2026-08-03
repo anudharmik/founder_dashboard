@@ -197,7 +197,15 @@ export default function Teams({ darkMode }) {
 
       {/* Grid of Teams */}
       {loading ? (
-        <p style={{ color: darkMode ? "#94a3b8" : "#64748b" }}>Loading teams...</p>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "20px" }}>
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} style={cardStyle}>
+              <div className={darkMode ? "skeleton-dark" : "skeleton"} style={{ height: 22, width: "55%", marginBottom: 12, borderRadius: 6 }} />
+              <div className={darkMode ? "skeleton-dark" : "skeleton"} style={{ height: 14, width: "35%", marginBottom: 20, borderRadius: 6 }} />
+              <div className={darkMode ? "skeleton-dark" : "skeleton"} style={{ height: 32, borderRadius: 8 }} />
+            </div>
+          ))}
+        </div>
       ) : teams.length === 0 ? (
         <div style={{ ...cardStyle, textAlign: "center", padding: "48px 24px" }}>
           <span style={{ fontSize: "36px", display: "block", marginBottom: "12px" }}>👥</span>

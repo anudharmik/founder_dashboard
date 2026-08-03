@@ -58,8 +58,18 @@ export default function DepartmentDetail({ user, darkMode }) {
 
   if (loading) {
     return (
-      <div style={{ padding: "32px", maxWidth: "1000px", margin: "0 auto" }}>
-        <p style={{ color: darkMode ? "#94a3b8" : "#64748b" }}>Loading department details...</p>
+      <div style={{ padding: "32px", maxWidth: "1100px", margin: "0 auto" }}>
+        <div className={darkMode ? "skeleton-dark" : "skeleton"} style={{ height: 28, width: 220, marginBottom: 20, borderRadius: 6 }} />
+        <div className={darkMode ? "skeleton-dark" : "skeleton"} style={{ height: 140, borderRadius: 16, marginBottom: 28 }} />
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "20px" }}>
+          {[1, 2, 3].map(i => (
+            <div key={i} style={cardStyle}>
+              <div className={darkMode ? "skeleton-dark" : "skeleton"} style={{ height: 20, width: "60%", marginBottom: 12, borderRadius: 6 }} />
+              <div className={darkMode ? "skeleton-dark" : "skeleton"} style={{ height: 14, width: "80%", marginBottom: 16, borderRadius: 6 }} />
+              <div className={darkMode ? "skeleton-dark" : "skeleton"} style={{ height: 8, borderRadius: 10 }} />
+            </div>
+          ))}
+        </div>
       </div>
     );
   }

@@ -245,8 +245,14 @@ export default function Projects({ darkMode }) {
 
       {/* Projects Grid */}
       {loading ? (
-        <div style={{ textAlign: "center", padding: "60px 0", color: textMuted }}>
-          Loading projects...
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "20px" }}>
+          {[1, 2, 3, 4, 5, 6].map(i => (
+            <div key={i} style={{ padding: "24px", borderRadius: "16px", background: cardBg, border: `1px solid ${borderCol}` }}>
+              <div className={darkMode ? "skeleton-dark" : "skeleton"} style={{ height: 20, width: "65%", marginBottom: 12, borderRadius: 6 }} />
+              <div className={darkMode ? "skeleton-dark" : "skeleton"} style={{ height: 14, width: "85%", marginBottom: 20, borderRadius: 6 }} />
+              <div className={darkMode ? "skeleton-dark" : "skeleton"} style={{ height: 8, borderRadius: 10 }} />
+            </div>
+          ))}
         </div>
       ) : filteredProjects.length === 0 ? (
         <div style={{

@@ -15,6 +15,7 @@ import Departments from "./pages/Departments";
 import DepartmentDetail from "./pages/DepartmentDetail";
 import Teams from "./pages/Teams";
 import OrgSettings from "./pages/OrgSettings";
+import Billing from "./pages/Billing";
 import ResetPassword from "./pages/ResetPassword";
 import ReminderModal from "./components/reminder/ReminderModal";
 import { OrgProvider, useOrg } from "./context/OrgContext";
@@ -335,6 +336,7 @@ function MainAppContent({ user, darkMode, setDarkMode }) {
                 <Route path="/tasks" element={<Tasks user={user} tasks={tasks} goals={goals} toggleTask={toggleTask} darkMode={darkMode} loading={loading} />} />
                 <Route path="/analytics" element={<Analytics user={user} goals={goals} tasks={tasks} darkMode={darkMode} loading={loading} />} />
                 <Route path="/settings/org" element={<OrgSettings user={user} darkMode={darkMode} />} />
+                <Route path="/settings/billing" element={<Billing darkMode={darkMode} />} />
               </Routes>
             </AppContent>
           </div>
