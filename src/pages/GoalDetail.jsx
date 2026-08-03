@@ -57,8 +57,128 @@ export default function GoalDetail({ darkMode }) {
   const [taskRequiresApproval, setTaskRequiresApproval] = useState(false);
   const [submittingTask, setSubmittingTask] = useState(false);
 
+  // AI Task Proposal Generation State
+  const [aiProposals, setAiProposals] = useState([]);
+  const [aiProposalsLoading, setAiProposalsLoading] = useState(false);
+  const [showProposalsModal, setShowProposalsModal] = useState(false);
+
   const canManageGoal = userRole === 'owner' || userRole === 'manager';
   const isEmployee = userRole === 'employee';
+
+  async function handleSuggestTasks() {
+    if (!canManageGoal) return;
+    setAiProposalsLoading(true);
+    try {
+      const existingTitles = tasks.map(t => t.title);
+      const membersContext = membersList.map(m => ({ user_id: m.user_id, role: m.role }));
+
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ai-task-proposals`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          goalTitle: goal.title,
+          goalDescription: goal.description,
+          existingTaskTitles: existingTitles,
+          orgMembers: membersContext
+        })
+      });
+
+      if (!res.ok) throw new Error("Failed to fetch task proposals");
+
+      const data = await res.json();
+      const formatted = (data.proposals || []).map(p => ({
+        title: p.title || "",
+        description: p.description || "",
+        deadline: p.suggestedDeadline || "",
+        assignee_id: p.suggestedAssigneeId || currentUserId,
+        weight: 1
+      }));
+
+      setAiProposals(formatted);
+      setShowProposalsModal(true);
+
+      if (formatted.length === 0) {
+        toast("No task proposals returned.", { icon: "ℹ️" });
+      } else {
+        toast.success(`Generated ${formatted.length} proposed tasks for review!`);
+      }
+    } catch (err) {
+      console.error("AI Task Proposals Error:", err);
+      toast.error("Failed to generate task proposals. Please try again.");
+    } finally {
+      setAiProposalsLoading(false);
+    }
+  }
+
+  function handleUpdateProposalField(index, field, value) {
+    setAiProposals(prev => {
+      const copy = [...prev];
+      copy[index] = { ...copy[index], [field]: value };
+      return copy;
+    });
+  }
+
+  function handleRejectProposal(index) {
+    setAiProposals(prev => prev.filter((_, i) => i !== index));
+    toast("Task proposal discarded", { icon: "🗑️" });
+  }
+
+  function handleDiscardAllProposals() {
+    setAiProposals([]);
+    setShowProposalsModal(false);
+    toast("All task proposals discarded", { icon: "🗑️" });
+  }
+
+  async function handleAcceptProposal(index) {
+    const prop = aiProposals[index];
+    if (!prop || !prop.title.trim()) {
+      toast.error("Task title cannot be empty");
+      return;
+    }
+
+    const assignedUserId = prop.assignee_id || currentUserId;
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      const { data: newTask, error: taskErr } = await supabase
+        .from('tasks')
+        .insert({
+          org_id: activeOrg.id,
+          goal_id: goal.id,
+          title: prop.title.trim(),
+          description: prop.description?.trim() || null,
+          weight: Number(prop.weight) || 1,
+          deadline: prop.deadline || null,
+          assignee_id: assignedUserId,
+          assigner_id: user?.id,
+          reviewer_id: user?.id,
+          approval_status: 'not_required',
+          ai_generated: true,
+          completed: false
+        })
+        .select()
+        .single();
+
+      if (taskErr) {
+        toast.error(taskErr.message || "Failed to create task");
+      } else {
+        await logActivity(activeOrg.id, 'task', newTask.id, 'created', { title: newTask.title, goal_id: goal.id, assignee_id: assignedUserId, ai_generated: true });
+        await logActivity(activeOrg.id, 'task', newTask.id, 'assigned', { assignee_id: assignedUserId });
+        await recomputeGoalProgressAndRisk(goal.id);
+
+        toast.success(`Task "${newTask.title}" accepted & created!`);
+
+        const updated = aiProposals.filter((_, i) => i !== index);
+        setAiProposals(updated);
+        if (updated.length === 0) setShowProposalsModal(false);
+
+        loadData();
+      }
+    } catch (err) {
+      toast.error("Error creating accepted task");
+    }
+  }
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -594,18 +714,37 @@ export default function GoalDetail({ darkMode }) {
           </p>
         </div>
 
-        {canCreateTask && (
-          <button
-            onClick={() => setShowTaskModal(true)}
-            style={{
-              padding: "10px 20px", borderRadius: "10px", border: "none", cursor: "pointer",
-              background: "linear-gradient(135deg, #6366f1, #8b5cf6)", color: "white",
-              fontWeight: "700", fontSize: "14px", boxShadow: "0 4px 12px rgba(99,102,241,0.3)"
-            }}
-          >
-            + Add Task
-          </button>
-        )}
+        <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+          {canManageGoal && (
+            <button
+              onClick={handleSuggestTasks}
+              disabled={aiProposalsLoading}
+              style={{
+                padding: "10px 18px", borderRadius: "10px", border: "1px solid rgba(139,92,246,0.4)",
+                background: darkMode ? "rgba(139,92,246,0.15)" : "#f3e8ff",
+                color: darkMode ? "#c084fc" : "#7e22ce",
+                fontWeight: "700", fontSize: "13.5px", cursor: aiProposalsLoading ? "not-allowed" : "pointer",
+                display: "flex", alignItems: "center", gap: "6px", opacity: aiProposalsLoading ? 0.7 : 1,
+                transition: "all 0.15s ease"
+              }}
+            >
+              {aiProposalsLoading ? <span className="spinner" /> : "✨"} Suggest Tasks (AI)
+            </button>
+          )}
+
+          {canCreateTask && (
+            <button
+              onClick={() => setShowTaskModal(true)}
+              style={{
+                padding: "10px 20px", borderRadius: "10px", border: "none", cursor: "pointer",
+                background: "linear-gradient(135deg, #6366f1, #8b5cf6)", color: "white",
+                fontWeight: "700", fontSize: "14px", boxShadow: "0 4px 12px rgba(99,102,241,0.3)"
+              }}
+            >
+              + Add Task
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Tasks List */}
@@ -1058,6 +1197,186 @@ export default function GoalDetail({ darkMode }) {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* AI Task Proposals Review Modal */}
+      {showProposalsModal && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 9999, background: "rgba(0,0,0,0.6)",
+          backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px"
+        }}>
+          <div style={{
+            background: cardBg, borderRadius: "20px", border: `1px solid ${borderCol}`,
+            width: "100%", maxWidth: "680px", maxHeight: "90vh", overflowY: "auto", padding: "28px", boxShadow: "0 20px 40px rgba(0,0,0,0.3)"
+          }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+              <div>
+                <h2 style={{ margin: "0 0 4px", fontSize: "20px", fontWeight: "800", color: darkMode ? "#f8fafc" : "#0f172a", display: "flex", alignItems: "center", gap: "8px" }}>
+                  ✨ Review AI Task Proposals
+                </h2>
+                <p style={{ margin: 0, fontSize: "13px", color: textMuted }}>
+                  Edit proposals below. Nothing is saved to the database until you click <strong>Accept</strong>.
+                </p>
+              </div>
+
+              <button
+                onClick={handleDiscardAllProposals}
+                style={{
+                  padding: "6px 14px", borderRadius: "8px", border: `1px solid ${borderCol}`,
+                  background: darkMode ? "#0f172a" : "#f8fafc", color: darkMode ? "#f87171" : "#dc2626",
+                  fontSize: "12px", fontWeight: "600", cursor: "pointer"
+                }}
+              >
+                Discard All
+              </button>
+            </div>
+
+            {aiProposals.length === 0 ? (
+              <div style={{ padding: "40px 20px", textAlign: "center", color: textMuted, fontSize: "14px" }}>
+                No task proposals available.
+              </div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                {aiProposals.map((prop, idx) => (
+                  <div
+                    key={idx}
+                    style={{
+                      padding: "20px", borderRadius: "14px",
+                      background: darkMode ? "#0f172a" : "#f8fafc", border: `1px solid ${borderCol}`,
+                      display: "flex", flexDirection: "column", gap: "12px"
+                    }}
+                  >
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span style={{
+                        padding: "3px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: "700",
+                        background: "rgba(139,92,246,0.15)", color: "#c084fc", textTransform: "uppercase"
+                      }}>
+                        ✨ Proposed Task #{idx + 1}
+                      </span>
+
+                      <div style={{ display: "flex", gap: "8px" }}>
+                        <button
+                          type="button"
+                          onClick={() => handleRejectProposal(idx)}
+                          style={{
+                            padding: "6px 12px", borderRadius: "8px", border: `1px solid ${borderCol}`,
+                            background: "transparent", color: darkMode ? "#f87171" : "#dc2626",
+                            fontSize: "12px", fontWeight: "600", cursor: "pointer"
+                          }}
+                        >
+                          ✕ Reject
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleAcceptProposal(idx)}
+                          style={{
+                            padding: "6px 16px", borderRadius: "8px", border: "none",
+                            background: "#22c55e", color: "white",
+                            fontSize: "12px", fontWeight: "700", cursor: "pointer"
+                          }}
+                        >
+                          ✓ Accept & Create
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Title */}
+                    <div>
+                      <label style={{ display: "block", marginBottom: "4px", fontSize: "12px", fontWeight: "600", color: textMuted }}>
+                        Title
+                      </label>
+                      <input
+                        type="text"
+                        value={prop.title}
+                        onChange={(e) => handleUpdateProposalField(idx, "title", e.target.value)}
+                        style={{
+                          width: "100%", padding: "9px 12px", borderRadius: "8px",
+                          border: `1px solid ${borderCol}`, background: darkMode ? "#1e293b" : "#ffffff",
+                          color: darkMode ? "#f8fafc" : "#0f172a", fontSize: "14px", outline: "none", boxSizing: "border-box"
+                        }}
+                      />
+                    </div>
+
+                    {/* Description */}
+                    <div>
+                      <label style={{ display: "block", marginBottom: "4px", fontSize: "12px", fontWeight: "600", color: textMuted }}>
+                        Description
+                      </label>
+                      <textarea
+                        rows={2}
+                        value={prop.description}
+                        onChange={(e) => handleUpdateProposalField(idx, "description", e.target.value)}
+                        style={{
+                          width: "100%", padding: "9px 12px", borderRadius: "8px",
+                          border: `1px solid ${borderCol}`, background: darkMode ? "#1e293b" : "#ffffff",
+                          color: darkMode ? "#f8fafc" : "#0f172a", fontSize: "13px", outline: "none", boxSizing: "border-box",
+                          fontFamily: "inherit", resize: "vertical"
+                        }}
+                      />
+                    </div>
+
+                    {/* Deadline, Assignee, Weight Row */}
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 80px", gap: "10px" }}>
+                      <div>
+                        <label style={{ display: "block", marginBottom: "4px", fontSize: "12px", fontWeight: "600", color: textMuted }}>
+                          Suggested Deadline
+                        </label>
+                        <input
+                          type="date"
+                          value={prop.deadline}
+                          onChange={(e) => handleUpdateProposalField(idx, "deadline", e.target.value)}
+                          style={{
+                            width: "100%", padding: "8px 10px", borderRadius: "8px",
+                            border: `1px solid ${borderCol}`, background: darkMode ? "#1e293b" : "#ffffff",
+                            color: darkMode ? "#f8fafc" : "#0f172a", fontSize: "13px", outline: "none", boxSizing: "border-box"
+                          }}
+                        />
+                      </div>
+
+                      <div>
+                        <label style={{ display: "block", marginBottom: "4px", fontSize: "12px", fontWeight: "600", color: textMuted }}>
+                          Assignee
+                        </label>
+                        <select
+                          value={prop.assignee_id}
+                          onChange={(e) => handleUpdateProposalField(idx, "assignee_id", e.target.value)}
+                          style={{
+                            width: "100%", padding: "8px 10px", borderRadius: "8px",
+                            border: `1px solid ${borderCol}`, background: darkMode ? "#1e293b" : "#ffffff",
+                            color: darkMode ? "#f8fafc" : "#0f172a", fontSize: "13px", outline: "none", boxSizing: "border-box"
+                          }}
+                        >
+                          <option value="">-- Select Member --</option>
+                          {membersList.map(m => (
+                            <option key={m.id} value={m.user_id}>{m.user_id.slice(0, 8)}... ({m.role})</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label style={{ display: "block", marginBottom: "4px", fontSize: "12px", fontWeight: "600", color: textMuted }}>
+                          Weight
+                        </label>
+                        <input
+                          type="number"
+                          step="0.1"
+                          min="0.1"
+                          value={prop.weight}
+                          onChange={(e) => handleUpdateProposalField(idx, "weight", e.target.value)}
+                          style={{
+                            width: "100%", padding: "8px 10px", borderRadius: "8px",
+                            border: `1px solid ${borderCol}`, background: darkMode ? "#1e293b" : "#ffffff",
+                            color: darkMode ? "#f8fafc" : "#0f172a", fontSize: "13px", outline: "none", boxSizing: "border-box"
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}
