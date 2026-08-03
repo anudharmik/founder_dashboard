@@ -1,11 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../supabaseClient';
 import GoalCard from '../components/GoalCard';
-import { useRef } from 'react';
 import { useLocation } from "react-router-dom";
+import { useOrg } from "../context/OrgContext";
 import toast from "react-hot-toast";
 
 export default function Goals({ user, goals, tasks, projects, setTasks, fetchGoals, fetchTasks, toggleTask, updateTask, updateGoal, darkMode, loading, aiInsights = { focusToday: [] } }) {
+  const { userRole, canManageGoals } = useOrg() || {};
+  const canManage = canManageGoals ?? (userRole === 'owner' || userRole === 'manager');
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -24,6 +26,10 @@ export default function Goals({ user, goals, tasks, projects, setTasks, fetchGoa
 
   async function handleSubmit(e) {
     e.preventDefault();
+    if (!canManage) {
+      toast.error("Permission denied: Only Owners and Managers can create goals");
+      return;
+    }
     if (!user) { alert("you must be logged in"); return; }
 
     const { error } = await supabase.from("goals").insert([{
@@ -133,46 +139,48 @@ export default function Goals({ user, goals, tasks, projects, setTasks, fetchGoa
         )}
       </div>
 
-      {/* Add goal form */}
-      <div style={{
-        marginBottom: "28px", padding: "20px 24px",
-        background: darkMode ? "#1e293b" : "#f8fafc",
-        borderRadius: "14px",
-        border: darkMode ? "1px solid rgba(255,255,255,0.07)" : "1px solid #e2e8f0",
-      }}>
-        <p style={{ margin: "0 0 14px", fontSize: "12px", fontWeight: "700", letterSpacing: "0.07em", textTransform: "uppercase", color: darkMode ? "#64748b" : "#94a3b8" }}>
-          New Goal
-        </p>
-        <form onSubmit={handleSubmit} style={{ display: "flex", gap: "10px", flexWrap: "wrap", alignItems: "center" }}>
-          <input
-            style={inputStyle} ref={taskInputRef} placeholder="Goal title"
-            value={title} onChange={(e) => setTitle(e.target.value)}
-            required
-            onFocus={(e) => { e.target.style.borderColor = "#6366f1"; e.target.style.boxShadow = "0 0 0 3px rgba(99,102,241,0.15)"; }}
-            onBlur={(e) => { e.target.style.borderColor = darkMode ? "rgba(255,255,255,0.1)" : "#e2e8f0"; e.target.style.boxShadow = "none"; }}
-          />
-          <input
-            style={inputStyle} placeholder="Description (optional)"
-            value={description} onChange={(e) => setDescription(e.target.value)}
-            onFocus={(e) => { e.target.style.borderColor = "#6366f1"; e.target.style.boxShadow = "0 0 0 3px rgba(99,102,241,0.15)"; }}
-            onBlur={(e) => { e.target.style.borderColor = darkMode ? "rgba(255,255,255,0.1)" : "#e2e8f0"; e.target.style.boxShadow = "none"; }}
-          />
-          <button
-            type="submit"
-            style={{
-              padding: "11px 22px", borderRadius: "10px", border: "none", cursor: "pointer",
-              background: "linear-gradient(135deg, #6366f1, #8b5cf6)", color: "white",
-              fontWeight: "700", fontSize: "14px", transition: "all 0.18s ease",
-              boxShadow: "0 4px 12px rgba(99,102,241,0.35)", whiteSpace: "nowrap",
-              fontFamily: "inherit",
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = "0 6px 18px rgba(99,102,241,0.45)"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 12px rgba(99,102,241,0.35)"; }}
-          >
-            + Add Goal
-          </button>
-        </form>
-      </div>
+      {/* Add goal form (Owner/Manager only) */}
+      {canManage && (
+        <div style={{
+          marginBottom: "28px", padding: "20px 24px",
+          background: darkMode ? "#1e293b" : "#f8fafc",
+          borderRadius: "14px",
+          border: darkMode ? "1px solid rgba(255,255,255,0.07)" : "1px solid #e2e8f0",
+        }}>
+          <p style={{ margin: "0 0 14px", fontSize: "12px", fontWeight: "700", letterSpacing: "0.07em", textTransform: "uppercase", color: darkMode ? "#64748b" : "#94a3b8" }}>
+            New Goal
+          </p>
+          <form onSubmit={handleSubmit} style={{ display: "flex", gap: "10px", flexWrap: "wrap", alignItems: "center" }}>
+            <input
+              style={inputStyle} ref={taskInputRef} placeholder="Goal title"
+              value={title} onChange={(e) => setTitle(e.target.value)}
+              required
+              onFocus={(e) => { e.target.style.borderColor = "#6366f1"; e.target.style.boxShadow = "0 0 0 3px rgba(99,102,241,0.15)"; }}
+              onBlur={(e) => { e.target.style.borderColor = darkMode ? "rgba(255,255,255,0.1)" : "#e2e8f0"; e.target.style.boxShadow = "none"; }}
+            />
+            <input
+              style={inputStyle} placeholder="Description (optional)"
+              value={description} onChange={(e) => setDescription(e.target.value)}
+              onFocus={(e) => { e.target.style.borderColor = "#6366f1"; e.target.style.boxShadow = "0 0 0 3px rgba(99,102,241,0.15)"; }}
+              onBlur={(e) => { e.target.style.borderColor = darkMode ? "rgba(255,255,255,0.1)" : "#e2e8f0"; e.target.style.boxShadow = "none"; }}
+            />
+            <button
+              type="submit"
+              style={{
+                padding: "11px 22px", borderRadius: "10px", border: "none", cursor: "pointer",
+                background: "linear-gradient(135deg, #6366f1, #8b5cf6)", color: "white",
+                fontWeight: "700", fontSize: "14px", transition: "all 0.18s ease",
+                boxShadow: "0 4px 12px rgba(99,102,241,0.35)", whiteSpace: "nowrap",
+                fontFamily: "inherit",
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = "0 6px 18px rgba(99,102,241,0.45)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 12px rgba(99,102,241,0.35)"; }}
+            >
+              + Add Goal
+            </button>
+          </form>
+        </div>
+      )}
 
       {/* Filter bar */}
       {projects.length > 0 && (
