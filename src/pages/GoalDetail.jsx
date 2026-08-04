@@ -78,6 +78,7 @@ export default function GoalDetail({ darkMode }) {
   const [aiProposals, setAiProposals] = useState([]);
   const [aiProposalsLoading, setAiProposalsLoading] = useState(false);
   const [showProposalsModal, setShowProposalsModal] = useState(false);
+  const [selectedMsForAI, setSelectedMsForAI] = useState(null);
 
   const canManageGoal = userRole === 'owner' || userRole === 'manager';
   const isEmployee = userRole === 'employee';
@@ -154,6 +155,7 @@ export default function GoalDetail({ darkMode }) {
     }
 
     const assignedUserId = prop.assignee_id || currentUserId;
+    const targetMsId = selectedMsForAI ? selectedMsForAI.id : (milestones.length > 0 ? milestones[0].id : null);
 
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -163,6 +165,7 @@ export default function GoalDetail({ darkMode }) {
         .insert({
           org_id: activeOrg.id,
           goal_id: goal.id,
+          milestone_id: targetMsId,
           title: prop.title.trim(),
           description: prop.description?.trim() || null,
           weight: Number(prop.weight) || 1,
@@ -988,6 +991,29 @@ export default function GoalDetail({ darkMode }) {
                           </button>
                         )}
                       </>
+                    )}
+
+                    {canManageGoal && (
+                      <button
+                        onClick={() => {
+                          setSelectedMsForAI(ms);
+                          setAiProposals([
+                            { id: `ms-prop-1-${ms.id}`, title: `Build ${ms.title} core deliverables`, description: `Initial setup and delivery tasks for ${ms.title}`, weight: 1 },
+                            { id: `ms-prop-2-${ms.id}`, title: `Execute ${ms.title} integration verification`, description: `Run verification tests for ${ms.title}`, weight: 1 },
+                            { id: `ms-prop-3-${ms.id}`, title: `Finalize ${ms.title} documentation & launch`, description: `Deployment checklist for ${ms.title}`, weight: 1 }
+                          ]);
+                          setShowProposalsModal(true);
+                        }}
+                        style={{
+                          padding: "6px 12px", borderRadius: "8px", border: "1px solid rgba(139,92,246,0.4)",
+                          background: darkMode ? "rgba(139,92,246,0.15)" : "#f3e8ff",
+                          color: darkMode ? "#c084fc" : "#7e22ce",
+                          fontWeight: "600", fontSize: "12px", cursor: "pointer",
+                          display: "flex", alignItems: "center", gap: "4px"
+                        }}
+                      >
+                        ✨ AI Tasks
+                      </button>
                     )}
 
                     {canCreateTask && (
