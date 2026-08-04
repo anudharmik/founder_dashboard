@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 export default function DocDetail({ user, darkMode }) {
   const { id: projectId, docId } = useParams();
   const navigate = useNavigate();
-  const { activeOrg, userRole } = useOrg() || {};
+  const { activeOrg, userRole, getMemberDisplayName } = useOrg() || {};
 
   const [doc, setDoc] = useState(null);
   const [title, setTitle] = useState('');
@@ -20,6 +20,28 @@ export default function DocDetail({ user, darkMode }) {
   const [saving, setSaving] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
+
+  // Unsaved changes window reload / close guard
+  useEffect(() => {
+    function handleBeforeUnload(e) {
+      if (isDirty) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    }
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isDirty]);
+
+  function handleBackNavigation(targetPath) {
+    if (isDirty) {
+      if (window.confirm("You have unsaved changes. Are you sure you want to leave without saving?")) {
+        navigate(targetPath);
+      }
+    } else {
+      navigate(targetPath);
+    }
+  }
 
   useEffect(() => {
     if (docId && projectId && activeOrg) {
@@ -252,7 +274,7 @@ export default function DocDetail({ user, darkMode }) {
                       Edit #{editsList.length - idx}
                     </div>
                     <div style={{ color: textMuted, fontSize: "11px" }}>
-                      Editor: 👤 {edit.editor_id.slice(0, 8)}...
+                      Editor: 👤 {getMemberDisplayName ? getMemberDisplayName(edit.editor_id) : edit.editor_id.slice(0, 8) + '...'}
                     </div>
                     <div style={{ color: textMuted, fontSize: "11px", marginTop: "2px" }}>
                       {new Date(edit.edited_at).toLocaleString()}

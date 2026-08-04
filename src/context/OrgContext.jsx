@@ -96,7 +96,9 @@ export function OrgProvider({ children, user }) {
     }
   }
 
-  // Fetch all members for an active organization
+  const [profilesMap, setProfilesMap] = useState({});
+
+  // Fetch all members for an active organization & their profiles
   async function fetchOrgMembers(orgId) {
     if (!orgId) return;
     try {
@@ -107,9 +109,24 @@ export function OrgProvider({ children, user }) {
 
       if (!error && data) {
         setOrgMembers(data);
+
+        // Fetch profiles for member user_ids
+        const userIds = data.map(m => m.user_id).filter(Boolean);
+        if (userIds.length > 0) {
+          const { data: profs } = await supabase
+            .from('profiles')
+            .select('*')
+            .in('id', userIds);
+
+          if (profs) {
+            const pMap = {};
+            profs.forEach(p => { pMap[p.id] = p; });
+            setProfilesMap(pMap);
+          }
+        }
       }
     } catch (err) {
-      console.error("Failed to fetch org members:", err);
+      console.error("Failed to fetch org members & profiles:", err);
     }
   }
 
@@ -122,6 +139,15 @@ export function OrgProvider({ children, user }) {
       localStorage.setItem('active_org_id', target.id);
       fetchOrgMembers(target.id);
     }
+  }
+
+  // Helper to resolve display name (Full Name -> Email -> Truncated UUID)
+  function getMemberDisplayName(userId) {
+    if (!userId) return 'Unassigned';
+    const prof = profilesMap[userId];
+    if (prof && prof.full_name) return prof.full_name;
+    if (user && user.id === userId && user.email) return user.email;
+    return `${userId.slice(0, 8)}...`;
   }
 
   // Helper flags matching RBAC matrix (§5.2)
@@ -163,6 +189,8 @@ export function OrgProvider({ children, user }) {
     canAssignWork,
     canApproveTask,
     canRequestAITasks,
+    profilesMap,
+    getMemberDisplayName
   };
 
   return <OrgContext.Provider value={value}>{children}</OrgContext.Provider>;

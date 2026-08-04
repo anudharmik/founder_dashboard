@@ -6,7 +6,7 @@ import { useOrg } from "../context/OrgContext";
 import toast from "react-hot-toast";
 
 export default function Goals({ user, goals, tasks, projects, setTasks, fetchGoals, fetchTasks, toggleTask, updateTask, updateGoal, darkMode, loading, aiInsights = { focusToday: [] } }) {
-  const { userRole, canManageGoals } = useOrg() || {};
+  const { activeOrg, userRole, canManageGoals } = useOrg() || {};
   const canManage = canManageGoals ?? (userRole === 'owner' || userRole === 'manager');
 
   const [title, setTitle] = useState("");
@@ -30,28 +30,40 @@ export default function Goals({ user, goals, tasks, projects, setTasks, fetchGoa
       toast.error("Permission denied: Only Owners and Managers can create goals");
       return;
     }
-    if (!user) { alert("you must be logged in"); return; }
+    if (!user || !activeOrg) { alert("You must be logged in and have an active organization"); return; }
 
     const { error } = await supabase.from("goals").insert([{
-      title, description, progress: 0, status: "active",
-      user_id: user.id, project_id: selectedProject || null
+      org_id: activeOrg.id,
+      project_id: selectedProject || null,
+      title: title.trim(),
+      description: description.trim() || null,
+      weight: 1,
+      created_by: user.id
     }]);
 
     if (!error) {
       setTitle(""); setDescription(""); fetchGoals(); setSelectedProject("");
       toast.success("Goal added successfully");
     } else {
-      toast.error("Failed to add goal");
+      console.error("Insert Goal Error:", error);
+      toast.error(error.message || "Failed to add goal");
     }
   }
 
   async function addTask(goalId) {
     const title = taskInputs[goalId];
     const deadline = deadlineInputs[goalId];
-    if (!title) return;
+    if (!title || !activeOrg) return;
 
     const { error } = await supabase.from("tasks").insert([{
-      title, goal_id: goalId, completed: false, user_id: user.id, deadline: deadline || null
+      org_id: activeOrg.id,
+      goal_id: goalId,
+      title: title.trim(),
+      assignee_id: user.id,
+      assigner_id: user.id,
+      weight: 1,
+      completed: false,
+      deadline: deadline || null
     }]);
 
     if (!error) {
@@ -60,7 +72,8 @@ export default function Goals({ user, goals, tasks, projects, setTasks, fetchGoa
       fetchTasks();
       toast.success("Task added successfully");
     } else {
-      toast.error("Failed to add task");
+      console.error("Insert Task Error:", error);
+      toast.error(error.message || "Failed to add task");
     }
   }
 

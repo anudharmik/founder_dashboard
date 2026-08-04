@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
+import { useOrg } from '../context/OrgContext';
 import toast from 'react-hot-toast';
 
 export default function TaskDetailModal({ task, isOpen, onClose, darkMode, activeOrg, userRole, onTaskUpdate }) {
+  const { getMemberDisplayName } = useOrg() || {};
   const [subtasks, setSubtasks] = useState([]);
   const [newSubtaskTitle, setNewSubtaskTitle] = useState("");
   const [newSubtaskWeight, setNewSubtaskWeight] = useState(1);
@@ -29,11 +31,11 @@ export default function TaskDetailModal({ task, isOpen, onClose, darkMode, activ
         .eq('task_id', task.id)
         .order('created_at', { ascending: true });
 
-      if (!error) {
-        setSubtasks(data || []);
+      if (!error && data) {
+        setSubtasks(data);
       }
     } catch (err) {
-      console.error("Error loading subtasks:", err);
+      console.error("Failed to load subtasks:", err);
     }
   }
 
@@ -387,7 +389,7 @@ export default function TaskDetailModal({ task, isOpen, onClose, darkMode, activ
                     >
                       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "6px", fontSize: "12px" }}>
                         <span style={{ fontWeight: "700", color: darkMode ? "#cbd5e1" : "#334155" }}>
-                          👤 {c.author_id ? c.author_id.slice(0, 8) + "..." : "Author"}
+                          👤 {c.author_id ? (getMemberDisplayName ? getMemberDisplayName(c.author_id) : c.author_id.slice(0, 8) + "...") : "Author"}
                         </span>
                         <span style={{ color: textMuted }}>
                           {new Date(c.created_at).toLocaleString()}

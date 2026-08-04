@@ -6,7 +6,7 @@ import OrgPermissions from './OrgPermissions';
 import toast from 'react-hot-toast';
 
 export default function OrgSettings({ user, darkMode }) {
-  const { activeOrg, userRole, orgMembers, isOwner, isManager, refreshOrgData, fetchOrgMembers } = useOrg();
+  const { activeOrg, userRole, orgMembers, isOwner, isManager, refreshOrgData, fetchOrgMembers, getMemberDisplayName } = useOrg();
   const [activeSettingsTab, setActiveSettingsTab] = useState('members'); // 'members' | 'permissions'
   const [membersList, setMembersList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -349,7 +349,9 @@ export default function OrgSettings({ user, darkMode }) {
                 {membersList.map((m) => (
                   <tr key={m.id} style={{ borderBottom: darkMode ? "1px solid rgba(255,255,255,0.04)" : "1px solid #f1f5f9" }}>
                     <td style={{ padding: "14px 16px", color: darkMode ? "#f1f5f9" : "#0f172a" }}>
-                      <div style={{ fontWeight: "600" }}>{m.user_id === user?.id ? `${user?.email} (You)` : m.user_id}</div>
+                      <div style={{ fontWeight: "600" }}>
+                        {getMemberDisplayName(m.user_id)}{m.user_id === user?.id ? " (You)" : ""}
+                      </div>
                     </td>
                     <td style={{ padding: "14px 16px" }}>
                       {isOwner ? (

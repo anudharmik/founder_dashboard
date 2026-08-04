@@ -4,7 +4,7 @@ import { supabase } from '../supabaseClient';
 import toast from 'react-hot-toast';
 
 export default function OrgPermissions({ user, darkMode }) {
-  const { activeOrg, userRole } = useOrg() || {};
+  const { activeOrg, userRole, getMemberDisplayName } = useOrg() || {};
   const [grants, setGrants] = useState([]);
   const [members, setMembers] = useState([]);
   const [departments, setDepartments] = useState([]);
@@ -186,7 +186,7 @@ export default function OrgPermissions({ user, darkMode }) {
           <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "13px" }}>
             <thead>
               <tr style={{ background: darkMode ? "rgba(255,255,255,0.02)" : "#f8fafc", borderBottom: `1px solid ${borderCol}` }}>
-                <th style={{ padding: "14px 18px", color: textMuted }}>USER ID</th>
+                <th style={{ padding: "14px 18px", color: textMuted }}>MEMBER NAME / EMAIL</th>
                 <th style={{ padding: "14px 18px", color: textMuted }}>SCOPE TYPE</th>
                 <th style={{ padding: "14px 18px", color: textMuted }}>TARGET ENTITY</th>
                 <th style={{ padding: "14px 18px", color: textMuted }}>SCOPED ROLE</th>
@@ -198,7 +198,7 @@ export default function OrgPermissions({ user, darkMode }) {
               {grants.map((g) => (
                 <tr key={g.id} style={{ borderBottom: `1px solid ${borderCol}` }}>
                   <td style={{ padding: "14px 18px", fontWeight: "600", color: darkMode ? "#f8fafc" : "#0f172a" }}>
-                    👤 {g.user_id.slice(0, 8)}...
+                    👤 {getMemberDisplayName(g.user_id)}
                   </td>
                   <td style={{ padding: "14px 18px" }}>
                     <span style={{
@@ -278,7 +278,7 @@ export default function OrgPermissions({ user, darkMode }) {
                   <option value="">-- Choose Member --</option>
                   {members.map(m => (
                     <option key={m.id} value={m.user_id}>
-                      {m.user_id.slice(0, 8)}... ({m.role})
+                      {getMemberDisplayName(m.user_id)} ({m.role})
                     </option>
                   ))}
                 </select>

@@ -21,6 +21,7 @@ import Billing from "./pages/Billing";
 import ResetPassword from "./pages/ResetPassword";
 import ReminderModal from "./components/reminder/ReminderModal";
 import CreateOrgOnboarding from "./components/CreateOrgOnboarding";
+import UserProfileOnboarding from "./components/UserProfileOnboarding";
 import { OrgProvider, useOrg } from "./context/OrgContext";
 import { Toaster } from "react-hot-toast";
 
@@ -29,7 +30,13 @@ function AppContent({ children }) {
 
   useEffect(() => {
     function handleKeyDown(e) {
-      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") {
+      if (
+        e.target.tagName === "INPUT" ||
+        e.target.tagName === "TEXTAREA" ||
+        e.target.isContentEditable ||
+        e.target.closest('[contenteditable="true"]') ||
+        e.target.closest('.ProseMirror')
+      ) {
         return;
       }
 
@@ -364,11 +371,31 @@ function MainAppContent({ user, darkMode, setDarkMode }) {
 export default function App() {
   const [user, setUser] = useState(null);
   const [darkMode, setDarkMode] = useState(false);
+  const [needsProfileOnboarding, setNeedsProfileOnboarding] = useState(false);
 
   useEffect(() => {
+    async function checkProfile(u) {
+      if (!u) {
+        setNeedsProfileOnboarding(false);
+        return;
+      }
+      try {
+        const { data } = await supabase.from('profiles').select('id').eq('id', u.id).single();
+        if (!data) {
+          setNeedsProfileOnboarding(true);
+        } else {
+          setNeedsProfileOnboarding(false);
+        }
+      } catch (err) {
+        setNeedsProfileOnboarding(true);
+      }
+    }
+
     const getSession = async () => {
       const { data } = await supabase.auth.getSession();
-      setUser(data.session?.user || null);
+      const u = data.session?.user || null;
+      setUser(u);
+      checkProfile(u);
     };
 
     getSession();
@@ -376,7 +403,9 @@ export default function App() {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user || null);
+      const u = session?.user || null;
+      setUser(u);
+      checkProfile(u);
     });
 
     return () => subscription.unsubscribe();
@@ -394,6 +423,13 @@ export default function App() {
 
   return (
     <OrgProvider user={user}>
+      {needsProfileOnboarding && (
+        <UserProfileOnboarding
+          user={user}
+          darkMode={darkMode}
+          onComplete={() => setNeedsProfileOnboarding(false)}
+        />
+      )}
       <MainAppContent user={user} darkMode={darkMode} setDarkMode={setDarkMode} />
     </OrgProvider>
   );
