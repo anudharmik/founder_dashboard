@@ -11,6 +11,9 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.98.0",
+    "@tiptap/pm": "^3.29.2",
+    "@tiptap/react": "^3.29.2",
+    "@tiptap/starter-kit": "^3.29.2",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",

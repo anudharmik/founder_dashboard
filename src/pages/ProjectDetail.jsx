@@ -304,31 +304,45 @@ export default function ProjectDetail({ darkMode }) {
             })()}
           </div>
 
-          {/* Manager / Owner Action Buttons */}
-          {canManage && (
-            <div style={{ display: "flex", gap: "10px" }}>
-              <button
-                onClick={() => setShowEditProjModal(true)}
-                style={{
-                  padding: "9px 16px", borderRadius: "10px", border: `1px solid ${borderCol}`,
-                  background: darkMode ? "#0f172a" : "#f8fafc", color: darkMode ? "#f8fafc" : "#0f172a",
-                  fontWeight: "600", fontSize: "13px", cursor: "pointer"
-                }}
-              >
-                ✏️ Edit Project
-              </button>
-              <button
-                onClick={handleDeleteProject}
-                style={{
-                  padding: "9px 16px", borderRadius: "10px", border: "none",
-                  background: "rgba(239,68,68,0.15)", color: "#f87171",
-                  fontWeight: "600", fontSize: "13px", cursor: "pointer"
-                }}
-              >
-                🗑️ Delete
-              </button>
-            </div>
-          )}
+          {/* Action Buttons */}
+          <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+            <button
+              onClick={() => navigate(`/projects/${project.id}/docs`)}
+              style={{
+                padding: "9px 18px", borderRadius: "10px", border: "1px solid rgba(99,102,241,0.4)",
+                background: darkMode ? "rgba(99,102,241,0.15)" : "#e0e7ff",
+                color: "#6366f1", fontWeight: "700", fontSize: "13.5px", cursor: "pointer",
+                display: "flex", alignItems: "center", gap: "6px", transition: "all 0.15s ease"
+              }}
+            >
+              📄 Project Docs
+            </button>
+
+            {canManage && (
+              <>
+                <button
+                  onClick={() => setShowEditProjModal(true)}
+                  style={{
+                    padding: "9px 16px", borderRadius: "10px", border: `1px solid ${borderCol}`,
+                    background: darkMode ? "#0f172a" : "#f8fafc", color: darkMode ? "#f8fafc" : "#0f172a",
+                    fontWeight: "600", fontSize: "13px", cursor: "pointer"
+                  }}
+                >
+                  ✏️ Edit Project
+                </button>
+                <button
+                  onClick={handleDeleteProject}
+                  style={{
+                    padding: "9px 16px", borderRadius: "10px", border: "1px solid rgba(239,68,68,0.3)",
+                    background: "rgba(239,68,68,0.1)", color: "#f87171",
+                    fontWeight: "600", fontSize: "13px", cursor: "pointer"
+                  }}
+                >
+                  🗑️ Delete
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </div>
 
