@@ -57,6 +57,23 @@ export default function GoalDetail({ darkMode }) {
   const [taskRequiresApproval, setTaskRequiresApproval] = useState(false);
   const [submittingTask, setSubmittingTask] = useState(false);
 
+  // Milestones State
+  const [milestones, setMilestones] = useState([]);
+  const [showMsModal, setShowMsModal] = useState(false);
+  const [msTitle, setMsTitle] = useState("");
+  const [msDesc, setMsDesc] = useState("");
+  const [msWeight, setMsWeight] = useState(1);
+  const [submittingMs, setSubmittingMs] = useState(false);
+
+  // Milestone Override State
+  const [showMsOverrideModal, setShowMsOverrideModal] = useState(false);
+  const [selectedMsForOverride, setSelectedMsForOverride] = useState(null);
+  const [msOverrideInput, setMsOverrideInput] = useState("");
+  const [submittingMsOverride, setSubmittingMsOverride] = useState(false);
+
+  // Selected Milestone for Task Creation
+  const [selectedMsForTask, setSelectedMsForTask] = useState(null);
+
   // AI Task Proposal Generation State
   const [aiProposals, setAiProposals] = useState([]);
   const [aiProposalsLoading, setAiProposalsLoading] = useState(false);
@@ -230,10 +247,20 @@ export default function GoalDetail({ darkMode }) {
         if (projData) setProject(projData);
       }
 
-      // 3. Fetch tasks for this goal
+      // 3. Fetch Milestones for this goal
+      const { data: msData } = await supabase
+        .from('milestones')
+        .select('*')
+        .eq('goal_id', id)
+        .eq('org_id', activeOrg.id)
+        .order('created_at', { ascending: true });
+
+      setMilestones(msData || []);
+
+      // 4. Fetch tasks with subtasks for this goal
       const { data: tasksData, error: tasksErr } = await supabase
         .from('tasks')
-        .select('*')
+        .select('*, subtasks(*)')
         .eq('goal_id', id)
         .eq('org_id', activeOrg.id)
         .order('created_at', { ascending: false });
@@ -358,6 +385,115 @@ export default function GoalDetail({ darkMode }) {
     }
   }
 
+  // Milestone Handlers
+  async function handleCreateMilestone(e) {
+    e.preventDefault();
+    if (!canManageGoal) {
+      toast.error("Permission denied: Only Owner/Manager roles can create milestones.");
+      return;
+    }
+    if (!msTitle.trim()) return;
+
+    setSubmittingMs(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      const { data, error } = await supabase
+        .from('milestones')
+        .insert({
+          org_id: activeOrg.id,
+          goal_id: goal.id,
+          title: msTitle.trim(),
+          description: msDesc.trim() || null,
+          weight: Number(msWeight) || 1,
+          created_by: user?.id
+        })
+        .select()
+        .single();
+
+      if (error) {
+        toast.error(error.message || "Failed to create milestone");
+      } else {
+        toast.success("Milestone created!");
+        setShowMsModal(false);
+        setMsTitle("");
+        setMsDesc("");
+        setMsWeight(1);
+        await recomputeGoalProgressAndRisk(goal.id);
+        loadData();
+      }
+    } catch (err) {
+      toast.error("Error creating milestone");
+    } finally {
+      setSubmittingMs(false);
+    }
+  }
+
+  async function handleSetMilestoneOverride(e) {
+    e.preventDefault();
+    if (!canManageGoal || !selectedMsForOverride) return;
+
+    const numVal = Number(msOverrideInput);
+    if (isNaN(numVal) || numVal < 0 || numVal > 100) {
+      toast.error("Please enter a valid override percentage (0 - 100)");
+      return;
+    }
+
+    setSubmittingMsOverride(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      const prevVal = selectedMsForOverride.progress_override !== null ? selectedMsForOverride.progress_override : selectedMsForOverride.progress_computed;
+
+      const { error } = await supabase
+        .from('milestones')
+        .update({
+          progress_override: numVal,
+          progress_override_by: user?.id,
+          progress_override_at: new Date().toISOString(),
+          progress_override_previous: prevVal
+        })
+        .eq('id', selectedMsForOverride.id);
+
+      if (error) {
+        toast.error(error.message || "Failed to set milestone override");
+      } else {
+        toast.success("Milestone override saved!");
+        setShowMsOverrideModal(false);
+        await recomputeGoalProgressAndRisk(goal.id);
+        loadData();
+      }
+    } catch (err) {
+      toast.error("Error setting milestone override");
+    } finally {
+      setSubmittingMsOverride(false);
+    }
+  }
+
+  async function handleClearMilestoneOverride(milestone) {
+    if (!canManageGoal || !milestone) return;
+
+    try {
+      const { error } = await supabase
+        .from('milestones')
+        .update({
+          progress_override: null,
+          progress_override_by: null,
+          progress_override_at: null,
+          progress_override_previous: milestone.progress_override
+        })
+        .eq('id', milestone.id);
+
+      if (error) {
+        toast.error(error.message || "Failed to clear override");
+      } else {
+        toast.success("Milestone override cleared!");
+        await recomputeGoalProgressAndRisk(goal.id);
+        loadData();
+      }
+    } catch (err) {
+      toast.error("Error clearing milestone override");
+    }
+  }
+
   // Create Task
   async function handleCreateTask(e) {
     e.preventDefault();
@@ -377,12 +513,14 @@ export default function GoalDetail({ darkMode }) {
       const { data: { user } } = await supabase.auth.getUser();
 
       const approvalStatus = taskRequiresApproval ? 'pending' : 'not_required';
+      const targetMilestoneId = selectedMsForTask ? selectedMsForTask.id : (milestones.length > 0 ? milestones[0].id : null);
 
       const { data: newTask, error: taskErr } = await supabase
         .from('tasks')
         .insert({
           org_id: activeOrg.id,
           goal_id: goal.id,
+          milestone_id: targetMilestoneId,
           title: taskTitle.trim(),
           description: taskDesc.trim() || null,
           weight: Number(taskWeight) || 1,
@@ -703,24 +841,37 @@ export default function GoalDetail({ darkMode }) {
         )}
       </div>
 
-      {/* Tasks Section */}
+      {/* Milestones Hierarchy Section */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
         <div>
           <h2 style={{ margin: "0 0 4px", fontSize: "20px", fontWeight: "700", color: darkMode ? "#f8fafc" : "#0f172a" }}>
-            Tasks under this Goal
+            🚀 Milestones & Execution Breakdown
           </h2>
           <p style={{ margin: 0, fontSize: "13px", color: textMuted }}>
-            {tasks.length} Task{tasks.length !== 1 ? "s" : ""} registered
+            {milestones.length} Milestone{milestones.length !== 1 ? "s" : ""} defined • {tasks.length} Total Task{tasks.length !== 1 ? "s" : ""}
           </p>
         </div>
 
         <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
           {canManageGoal && (
             <button
+              onClick={() => setShowMsModal(true)}
+              style={{
+                padding: "9px 18px", borderRadius: "10px", border: "none", cursor: "pointer",
+                background: "linear-gradient(135deg, #10b981, #059669)", color: "white",
+                fontWeight: "700", fontSize: "13.5px", boxShadow: "0 4px 12px rgba(16,185,129,0.3)"
+              }}
+            >
+              + Add Milestone
+            </button>
+          )}
+
+          {canManageGoal && (
+            <button
               onClick={handleSuggestTasks}
               disabled={aiProposalsLoading}
               style={{
-                padding: "10px 18px", borderRadius: "10px", border: "1px solid rgba(139,92,246,0.4)",
+                padding: "9px 16px", borderRadius: "10px", border: "1px solid rgba(139,92,246,0.4)",
                 background: darkMode ? "rgba(139,92,246,0.15)" : "#f3e8ff",
                 color: darkMode ? "#c084fc" : "#7e22ce",
                 fontWeight: "700", fontSize: "13.5px", cursor: aiProposalsLoading ? "not-allowed" : "pointer",
@@ -728,24 +879,210 @@ export default function GoalDetail({ darkMode }) {
                 transition: "all 0.15s ease"
               }}
             >
-              {aiProposalsLoading ? <span className="spinner" /> : "✨"} Suggest Tasks (AI)
-            </button>
-          )}
-
-          {canCreateTask && (
-            <button
-              onClick={() => setShowTaskModal(true)}
-              style={{
-                padding: "10px 20px", borderRadius: "10px", border: "none", cursor: "pointer",
-                background: "linear-gradient(135deg, #6366f1, #8b5cf6)", color: "white",
-                fontWeight: "700", fontSize: "14px", boxShadow: "0 4px 12px rgba(99,102,241,0.3)"
-              }}
-            >
-              + Add Task
+              {aiProposalsLoading ? <span className="spinner" /> : "✨"} AI Suggest Tasks
             </button>
           )}
         </div>
       </div>
+
+      {/* Render Milestones */}
+      {milestones.length === 0 ? (
+        <div style={{
+          textAlign: "center", padding: "48px 20px", background: cardBg, borderRadius: "16px",
+          border: `1px dashed ${borderCol}`, marginBottom: "24px"
+        }}>
+          <div style={{ fontSize: "36px", marginBottom: "10px" }}>🏁</div>
+          <h3 style={{ margin: "0 0 6px", fontSize: "16px", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+            No milestones added to this goal yet
+          </h3>
+          <p style={{ margin: "0 0 16px", fontSize: "13px", color: textMuted }}>
+            Milestones group tasks into key delivery targets. Add a milestone to organize work items.
+          </p>
+          {canManageGoal && (
+            <button
+              onClick={() => setShowMsModal(true)}
+              style={{
+                padding: "9px 18px", borderRadius: "8px", border: "none", cursor: "pointer",
+                background: "#10b981", color: "white", fontWeight: "600", fontSize: "13px"
+              }}
+            >
+              + Add First Milestone
+            </button>
+          )}
+        </div>
+      ) : (
+        <div style={{ display: "flex", flexDirection: "column", gap: "20px", marginBottom: "32px" }}>
+          {milestones.map((ms) => {
+            const msTasks = tasks.filter(t => t.milestone_id === ms.id);
+            const msHasOverride = ms.progress_override !== null && ms.progress_override !== undefined;
+            const msEffProgress = msHasOverride ? Number(ms.progress_override) : Number(ms.progress_computed || 0);
+
+            return (
+              <div
+                key={ms.id}
+                style={{
+                  background: cardBg, borderRadius: "18px", border: `1px solid ${borderCol}`,
+                  padding: "24px", boxShadow: "0 4px 20px rgba(0,0,0,0.04)"
+                }}
+              >
+                {/* Milestone Header */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "12px", marginBottom: "16px" }}>
+                  <div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
+                      <span style={{
+                        padding: "3px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: "700",
+                        background: "rgba(16,185,129,0.15)", color: "#10b981", textTransform: "uppercase"
+                      }}>
+                        🏁 Milestone
+                      </span>
+                      <span style={{ fontSize: "12px", color: textMuted }}>Weight: {ms.weight || 1}</span>
+                      <span style={{
+                        padding: "2px 8px", borderRadius: "12px", fontSize: "11px", fontWeight: "600",
+                        background: ms.risk_flag === 'overdue' ? 'rgba(239,68,68,0.2)' : ms.risk_flag === 'at_risk' ? 'rgba(245,158,11,0.2)' : 'rgba(34,197,94,0.15)',
+                        color: ms.risk_flag === 'overdue' ? '#f87171' : ms.risk_flag === 'at_risk' ? '#f59e0b' : '#4ade80'
+                      }}>
+                        Risk: {ms.risk_flag || 'none'}
+                      </span>
+                      {msHasOverride && (
+                        <span style={{ padding: "2px 8px", borderRadius: "12px", fontSize: "11px", fontWeight: "700", background: "rgba(245,158,11,0.2)", color: "#f59e0b" }}>
+                          ⚡ Override: {ms.progress_override}%
+                        </span>
+                      )}
+                    </div>
+                    <h3 style={{ margin: 0, fontSize: "18px", fontWeight: "800", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+                      {ms.title}
+                    </h3>
+                    {ms.description && (
+                      <p style={{ margin: "4px 0 0", fontSize: "13px", color: textMuted }}>{ms.description}</p>
+                    )}
+                  </div>
+
+                  <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                    {canManageGoal && (
+                      <>
+                        <button
+                          onClick={() => {
+                            setSelectedMsForOverride(ms);
+                            setMsOverrideInput(ms.progress_override !== null ? String(ms.progress_override) : "");
+                            setShowMsOverrideModal(true);
+                          }}
+                          style={{
+                            padding: "6px 12px", borderRadius: "8px", border: `1px solid ${borderCol}`,
+                            background: darkMode ? "#0f172a" : "#f8fafc", color: "#f59e0b",
+                            fontWeight: "600", fontSize: "12px", cursor: "pointer"
+                          }}
+                        >
+                          ⚡ Override
+                        </button>
+
+                        {msHasOverride && (
+                          <button
+                            onClick={() => handleClearMilestoneOverride(ms)}
+                            style={{
+                              padding: "6px 12px", borderRadius: "8px", border: `1px solid ${borderCol}`,
+                              background: darkMode ? "#0f172a" : "#f8fafc", color: "#f87171",
+                              fontWeight: "600", fontSize: "12px", cursor: "pointer"
+                            }}
+                          >
+                            Clear
+                          </button>
+                        )}
+                      </>
+                    )}
+
+                    {canCreateTask && (
+                      <button
+                        onClick={() => {
+                          setSelectedMsForTask(ms);
+                          setShowTaskModal(true);
+                        }}
+                        style={{
+                          padding: "6px 12px", borderRadius: "8px", border: "none",
+                          background: "#6366f1", color: "white", fontWeight: "600", fontSize: "12px", cursor: "pointer"
+                        }}
+                      >
+                        + Task
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Milestone Progress Bar */}
+                <div style={{ marginBottom: "16px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", fontWeight: "700", marginBottom: "4px" }}>
+                    <span style={{ color: textMuted }}>Milestone Progress</span>
+                    <span style={{ color: msHasOverride ? "#f59e0b" : "#10b981" }}>{Math.round(msEffProgress)}%</span>
+                  </div>
+                  <div style={{ height: "8px", background: darkMode ? "#0f172a" : "#e2e8f0", borderRadius: "6px", overflow: "hidden" }}>
+                    <div style={{
+                      height: "100%", width: `${Math.min(100, Math.max(0, msEffProgress))}%`,
+                      background: msHasOverride ? "linear-gradient(90deg, #f59e0b, #d97706)" : "linear-gradient(90deg, #10b981, #059669)",
+                      borderRadius: "6px", transition: "width 0.25s ease"
+                    }} />
+                  </div>
+                </div>
+
+                {/* Tasks List under Milestone */}
+                {msTasks.length === 0 ? (
+                  <div style={{ padding: "14px", borderRadius: "10px", background: darkMode ? "#0f172a" : "#f8fafc", fontSize: "12.5px", color: textMuted, textAlign: "center" }}>
+                    No tasks assigned to this milestone yet. Click "+ Task" above to add one.
+                  </div>
+                ) : (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                    {msTasks.map(t => {
+                      const completedSubtasksCount = (t.subtasks || []).filter(s => s.completed).length;
+                      const totalSubtasksCount = (t.subtasks || []).length;
+
+                      return (
+                        <div
+                          key={t.id}
+                          onClick={() => setSelectedTask(t)}
+                          style={{
+                            padding: "12px 16px", borderRadius: "12px",
+                            background: darkMode ? "#0f172a" : "#f8fafc",
+                            border: `1px solid ${borderCol}`, display: "flex", justifyContent: "space-between",
+                            alignItems: "center", cursor: "pointer", transition: "all 0.15s ease"
+                          }}
+                        >
+                          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                            <span style={{ fontSize: "16px" }}>{t.completed ? "✅" : "📋"}</span>
+                            <div>
+                              <div style={{ fontWeight: "700", fontSize: "14px", color: t.completed ? textMuted : (darkMode ? "#f8fafc" : "#0f172a"), textDecoration: t.completed ? "line-through" : "none" }}>
+                                {t.title}
+                              </div>
+                              <div style={{ fontSize: "11px", color: textMuted, display: "flex", gap: "10px", marginTop: "2px" }}>
+                                <span>Weight: {t.weight || 1}</span>
+                                {totalSubtasksCount > 0 && (
+                                  <span style={{ color: "#6366f1", fontWeight: "600" }}>
+                                    ☑️ Subtasks: {completedSubtasksCount}/{totalSubtasksCount}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedTask(t);
+                            }}
+                            style={{
+                              padding: "4px 10px", borderRadius: "6px", border: `1px solid ${borderCol}`,
+                              background: "transparent", color: textMuted, fontSize: "12px", cursor: "pointer"
+                            }}
+                          >
+                            View Details
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* Tasks List */}
       {tasks.length === 0 ? (
@@ -1194,6 +1531,175 @@ export default function GoalDetail({ darkMode }) {
                   }}
                 >
                   {submittingEdit ? "Saving..." : "Save Changes"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Create Milestone Modal */}
+      {showMsModal && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 9999, background: "rgba(0,0,0,0.65)",
+          backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px"
+        }}>
+          <div style={{
+            background: cardBg, borderRadius: "20px", border: `1px solid ${borderCol}`,
+            width: "100%", maxWidth: "500px", padding: "28px", boxShadow: "0 20px 40px rgba(0,0,0,0.3)"
+          }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+              <h2 style={{ margin: 0, fontSize: "20px", fontWeight: "800", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+                Add New Milestone
+              </h2>
+              <button onClick={() => setShowMsModal(false)} style={{ background: "none", border: "none", color: textMuted, fontSize: "20px", cursor: "pointer" }}>✕</button>
+            </div>
+
+            <form onSubmit={handleCreateMilestone}>
+              <div style={{ marginBottom: "16px" }}>
+                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: darkMode ? "#cbd5e1" : "#334155" }}>
+                  Milestone Title *
+                </label>
+                <input
+                  required
+                  value={msTitle}
+                  onChange={(e) => setMsTitle(e.target.value)}
+                  placeholder="e.g. Phase 1 Core Infrastructure"
+                  style={{
+                    width: "100%", padding: "11px 14px", borderRadius: "10px",
+                    border: `1px solid ${borderCol}`, background: darkMode ? "#0f172a" : "#f8fafc",
+                    color: darkMode ? "#f8fafc" : "#0f172a", outline: "none", fontSize: "14px", boxSizing: "border-box"
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: "16px" }}>
+                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: darkMode ? "#cbd5e1" : "#334155" }}>
+                  Weight (Numeric, default 1)
+                </label>
+                <input
+                  type="number"
+                  step="0.1"
+                  min="0.1"
+                  value={msWeight}
+                  onChange={(e) => setMsWeight(e.target.value)}
+                  style={{
+                    width: "100%", padding: "11px 14px", borderRadius: "10px",
+                    border: `1px solid ${borderCol}`, background: darkMode ? "#0f172a" : "#f8fafc",
+                    color: darkMode ? "#f8fafc" : "#0f172a", outline: "none", fontSize: "14px", boxSizing: "border-box"
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: "24px" }}>
+                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: darkMode ? "#cbd5e1" : "#334155" }}>
+                  Description
+                </label>
+                <textarea
+                  rows={3}
+                  value={msDesc}
+                  onChange={(e) => setMsDesc(e.target.value)}
+                  placeholder="Summary of milestone deliverables..."
+                  style={{
+                    width: "100%", padding: "11px 14px", borderRadius: "10px",
+                    border: `1px solid ${borderCol}`, background: darkMode ? "#0f172a" : "#f8fafc",
+                    color: darkMode ? "#f8fafc" : "#0f172a", outline: "none", fontSize: "14px", boxSizing: "border-box",
+                    fontFamily: "inherit", resize: "vertical"
+                  }}
+                />
+              </div>
+
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px" }}>
+                <button
+                  type="button"
+                  onClick={() => setShowMsModal(false)}
+                  style={{
+                    padding: "10px 18px", borderRadius: "10px", border: `1px solid ${borderCol}`,
+                    background: "none", color: darkMode ? "#cbd5e1" : "#475569", fontWeight: "600", cursor: "pointer"
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={submittingMs}
+                  style={{
+                    padding: "10px 22px", borderRadius: "10px", border: "none",
+                    background: "linear-gradient(135deg, #10b981, #059669)", color: "white",
+                    fontWeight: "700", cursor: "pointer", opacity: submittingMs ? 0.6 : 1
+                  }}
+                >
+                  {submittingMs ? "Creating..." : "Create Milestone"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Set Milestone Override Modal */}
+      {showMsOverrideModal && selectedMsForOverride && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 9999, background: "rgba(0,0,0,0.65)",
+          backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px"
+        }}>
+          <div style={{
+            background: cardBg, borderRadius: "20px", border: `1px solid ${borderCol}`,
+            width: "100%", maxWidth: "450px", padding: "28px", boxShadow: "0 20px 40px rgba(0,0,0,0.3)"
+          }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+              <h3 style={{ margin: 0, fontSize: "18px", fontWeight: "800", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+                ⚡ Milestone Manual Override
+              </h3>
+              <button onClick={() => setShowMsOverrideModal(false)} style={{ background: "none", border: "none", color: textMuted, fontSize: "20px", cursor: "pointer" }}>✕</button>
+            </div>
+
+            <p style={{ fontSize: "13px", color: textMuted, marginBottom: "20px" }}>
+              Set explicit progress override for <strong>{selectedMsForOverride.title}</strong>.
+            </p>
+
+            <form onSubmit={handleSetMilestoneOverride}>
+              <div style={{ marginBottom: "20px" }}>
+                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: darkMode ? "#cbd5e1" : "#334155" }}>
+                  Override Percentage (0 - 100) *
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  required
+                  value={msOverrideInput}
+                  onChange={(e) => setMsOverrideInput(e.target.value)}
+                  placeholder="e.g. 75"
+                  style={{
+                    width: "100%", padding: "11px 14px", borderRadius: "10px",
+                    border: `1px solid ${borderCol}`, background: darkMode ? "#0f172a" : "#f8fafc",
+                    color: darkMode ? "#f8fafc" : "#0f172a", outline: "none", fontSize: "14px", boxSizing: "border-box"
+                  }}
+                />
+              </div>
+
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px" }}>
+                <button
+                  type="button"
+                  onClick={() => setShowMsOverrideModal(false)}
+                  style={{
+                    padding: "10px 18px", borderRadius: "10px", border: `1px solid ${borderCol}`,
+                    background: "none", color: darkMode ? "#cbd5e1" : "#475569", fontWeight: "600", cursor: "pointer"
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={submittingMsOverride}
+                  style={{
+                    padding: "10px 22px", borderRadius: "10px", border: "none",
+                    background: "#f59e0b", color: "white", fontWeight: "700", cursor: "pointer",
+                    opacity: submittingMsOverride ? 0.6 : 1
+                  }}
+                >
+                  {submittingMsOverride ? "Saving..." : "Save Override"}
                 </button>
               </div>
             </form>

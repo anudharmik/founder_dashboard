@@ -3,18 +3,94 @@ import { supabase } from '../supabaseClient';
 import toast from 'react-hot-toast';
 
 export default function TaskDetailModal({ task, isOpen, onClose, darkMode, activeOrg, userRole, onTaskUpdate }) {
+  const [subtasks, setSubtasks] = useState([]);
+  const [newSubtaskTitle, setNewSubtaskTitle] = useState("");
+  const [newSubtaskWeight, setNewSubtaskWeight] = useState(1);
+  const [submittingSubtask, setSubmittingSubtask] = useState(false);
   const [comments, setComments] = useState([]);
   const [activities, setActivities] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [loadingComments, setLoadingComments] = useState(true);
   const [submittingComment, setSubmittingComment] = useState(false);
-  const [activeTab, setActiveTab] = useState("comments"); // "comments" | "activity"
+  const [activeTab, setActiveTab] = useState("subtasks"); // "subtasks" | "comments" | "activity"
 
   useEffect(() => {
     if (isOpen && task && activeOrg) {
+      loadSubtasks();
       loadCommentsAndActivity();
     }
   }, [isOpen, task, activeOrg]);
+
+  async function loadSubtasks() {
+    try {
+      const { data, error } = await supabase
+        .from('subtasks')
+        .select('*')
+        .eq('task_id', task.id)
+        .order('created_at', { ascending: true });
+
+      if (!error) {
+        setSubtasks(data || []);
+      }
+    } catch (err) {
+      console.error("Error loading subtasks:", err);
+    }
+  }
+
+  async function handleToggleSubtask(subtaskId, currentStatus) {
+    try {
+      const { error } = await supabase
+        .from('subtasks')
+        .update({
+          completed: !currentStatus,
+          completed_at: !currentStatus ? new Date().toISOString() : null
+        })
+        .eq('id', subtaskId);
+
+      if (error) {
+        toast.error(error.message || "Failed to update subtask");
+        return;
+      }
+
+      await loadSubtasks();
+      if (onTaskUpdate) onTaskUpdate();
+    } catch (err) {
+      toast.error("Error updating subtask");
+    }
+  }
+
+  async function handleAddSubtask(e) {
+    e.preventDefault();
+    if (!newSubtaskTitle.trim()) return;
+
+    setSubmittingSubtask(true);
+    try {
+      const { error } = await supabase
+        .from('subtasks')
+        .insert({
+          org_id: activeOrg.id,
+          task_id: task.id,
+          title: newSubtaskTitle.trim(),
+          weight: Number(newSubtaskWeight) || 1,
+          completed: false
+        });
+
+      if (error) {
+        toast.error(error.message || "Failed to add subtask");
+        return;
+      }
+
+      toast.success("Subtask added!");
+      setNewSubtaskTitle("");
+      setNewSubtaskWeight(1);
+      await loadSubtasks();
+      if (onTaskUpdate) onTaskUpdate();
+    } catch (err) {
+      toast.error("Error adding subtask");
+    } finally {
+      setSubmittingSubtask(false);
+    }
+  }
 
   async function loadCommentsAndActivity() {
     setLoadingComments(true);
@@ -169,6 +245,17 @@ export default function TaskDetailModal({ task, isOpen, onClose, darkMode, activ
           {/* Navigation Tabs */}
           <div style={{ display: "flex", gap: "12px", marginTop: "18px", borderBottom: `1px solid ${borderCol}` }}>
             <button
+              onClick={() => setActiveTab("subtasks")}
+              style={{
+                padding: "8px 16px", background: "none", border: "none",
+                borderBottom: activeTab === "subtasks" ? "2px solid #6366f1" : "2px solid transparent",
+                color: activeTab === "subtasks" ? "#6366f1" : textMuted,
+                fontWeight: activeTab === "subtasks" ? "700" : "500", fontSize: "13px", cursor: "pointer"
+              }}
+            >
+              ☑️ Subtasks Checklist ({subtasks.filter(s => s.completed).length}/{subtasks.length})
+            </button>
+            <button
               onClick={() => setActiveTab("comments")}
               style={{
                 padding: "8px 16px", background: "none", border: "none",
@@ -195,7 +282,88 @@ export default function TaskDetailModal({ task, isOpen, onClose, darkMode, activ
 
         {/* Tab Body */}
         <div style={{ flex: 1, padding: "20px 28px", overflowY: "auto", display: "flex", flexDirection: "column" }}>
-          {loadingComments ? (
+          {activeTab === "subtasks" ? (
+            <div style={{ display: "flex", flexDirection: "column", height: "100%", justifyContent: "space-between" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "20px" }}>
+                {subtasks.length === 0 ? (
+                  <div style={{ textAlign: "center", padding: "30px 0", color: textMuted, fontSize: "13px" }}>
+                    No subtasks added yet. Break this task down into checklist items below!
+                  </div>
+                ) : (
+                  subtasks.map(s => (
+                    <div
+                      key={s.id}
+                      onClick={() => handleToggleSubtask(s.id, s.completed)}
+                      style={{
+                        padding: "12px 16px", borderRadius: "10px",
+                        background: darkMode ? "#0f172a" : "#f8fafc",
+                        border: `1px solid ${borderCol}`, display: "flex", alignItems: "center", justifyContent: "space-between",
+                        cursor: "pointer", transition: "all 0.15s ease"
+                      }}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                        <input
+                          type="checkbox"
+                          checked={Boolean(s.completed)}
+                          onChange={() => {}} // handled by parent onClick
+                          style={{ width: "16px", height: "16px", cursor: "pointer" }}
+                        />
+                        <span style={{
+                          fontSize: "14px", fontWeight: "600",
+                          color: s.completed ? textMuted : (darkMode ? "#f8fafc" : "#0f172a"),
+                          textDecoration: s.completed ? "line-through" : "none"
+                        }}>
+                          {s.title}
+                        </span>
+                      </div>
+                      <span style={{ fontSize: "12px", color: textMuted, background: darkMode ? "rgba(255,255,255,0.05)" : "#e2e8f0", padding: "2px 8px", borderRadius: "6px" }}>
+                        Weight: {s.weight || 1}
+                      </span>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              {/* Add Subtask Form */}
+              <form onSubmit={handleAddSubtask} style={{ marginTop: "auto", display: "flex", gap: "10px" }}>
+                <input
+                  type="text"
+                  value={newSubtaskTitle}
+                  onChange={(e) => setNewSubtaskTitle(e.target.value)}
+                  placeholder="New subtask title..."
+                  required
+                  style={{
+                    flex: 1, padding: "10px 14px", borderRadius: "8px",
+                    border: `1px solid ${borderCol}`, background: darkMode ? "#0f172a" : "#f8fafc",
+                    color: darkMode ? "#f8fafc" : "#0f172a", outline: "none", fontSize: "13px"
+                  }}
+                />
+                <input
+                  type="number"
+                  min="1"
+                  value={newSubtaskWeight}
+                  onChange={(e) => setNewSubtaskWeight(e.target.value)}
+                  placeholder="Weight"
+                  style={{
+                    width: "70px", padding: "10px 10px", borderRadius: "8px",
+                    border: `1px solid ${borderCol}`, background: darkMode ? "#0f172a" : "#f8fafc",
+                    color: darkMode ? "#f8fafc" : "#0f172a", outline: "none", fontSize: "13px"
+                  }}
+                />
+                <button
+                  type="submit"
+                  disabled={submittingSubtask || !newSubtaskTitle.trim()}
+                  style={{
+                    padding: "10px 16px", borderRadius: "8px", border: "none",
+                    background: "linear-gradient(135deg, #6366f1, #8b5cf6)", color: "white",
+                    fontWeight: "700", cursor: "pointer", fontSize: "13px"
+                  }}
+                >
+                  + Add
+                </button>
+              </form>
+            </div>
+          ) : loadingComments ? (
             <div style={{ textAlign: "center", padding: "40px 0", color: textMuted }}>
               Loading task stream...
             </div>

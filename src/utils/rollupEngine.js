@@ -1,65 +1,112 @@
-import { supabase } from '../supabaseClient';
+import { supabase } from '../supabaseClient.js';
 
 /**
- * Recomputes goal.progress_computed and goal.risk_flag for a given goalId
- * and writes the updated values to the Supabase 'goals' table.
+ * Calculates Task Completion Percentage based on its subtasks checklist.
+ * If task has subtasks: percentage = (completed subtasks weight / total subtasks weight) * 100
+ * If task has 0 subtasks: 100% if completed & approved/not_required, else 0%.
  */
-export async function recomputeGoalProgressAndRisk(goalId) {
-  if (!goalId) return null;
+export function calculateTaskCompletionPercentage(task, subtasksList = []) {
+  if (!task) return 0;
+  
+  if (subtasksList && subtasksList.length > 0) {
+    let totalWeight = 0;
+    let completedWeight = 0;
+    subtasksList.forEach(s => {
+      const w = Number(s.weight) || 1;
+      totalWeight += w;
+      if (Boolean(s.completed)) {
+        completedWeight += w;
+      }
+    });
+    return totalWeight > 0 ? Number(((completedWeight / totalWeight) * 100).toFixed(2)) : 0;
+  }
+
+  const isCompleted = Boolean(task.completed) && 
+    (task.approval_status === 'not_required' || task.approval_status === 'approved' || !task.approval_status);
+  return isCompleted ? 100 : 0;
+}
+
+/**
+ * Returns the effective progress of an entity (milestone or goal), respecting manual override if set.
+ */
+export function calculateEffectiveProgress(entity) {
+  if (!entity) return 0;
+  return entity.progress_override !== null && entity.progress_override !== undefined
+    ? Number(entity.progress_override)
+    : Number(entity.progress_computed || 0);
+}
+
+/**
+ * Calculates Milestone Progress from child tasks & subtasks.
+ * Formula: sum(task.weight * task.effective_progress) / sum(task.weight)
+ */
+export function calculateMilestoneProgress(tasksList = []) {
+  if (!tasksList || tasksList.length === 0) return 0;
+
+  let totalWeight = 0;
+  let weightedProgressSum = 0;
+
+  tasksList.forEach(t => {
+    const weight = Number(t.weight) || 1;
+    const taskProgress = calculateTaskCompletionPercentage(t, t.subtasks || []);
+    totalWeight += weight;
+    weightedProgressSum += (weight * taskProgress);
+  });
+
+  return totalWeight > 0 ? Number((weightedProgressSum / totalWeight).toFixed(2)) : 0;
+}
+
+/**
+ * Recomputes milestone.progress_computed and milestone.risk_flag for a given milestoneId
+ * and updates the database, then triggers parent Goal recomputation.
+ */
+export async function recomputeMilestoneProgressAndRisk(milestoneId) {
+  if (!milestoneId) return null;
 
   try {
-    // 1. Fetch all tasks under this goal
-    const { data: tasks, error } = await supabase
-      .from('tasks')
-      .select('id, weight, completed, completed_at, deadline, approval_status')
-      .eq('goal_id', goalId);
+    // 1. Fetch milestone
+    const { data: milestone, error: mErr } = await supabase
+      .from('milestones')
+      .select('id, goal_id')
+      .eq('id', milestoneId)
+      .single();
 
-    if (error) {
-      console.error("Error fetching tasks for goal rollup:", error);
+    if (mErr || !milestone) {
+      console.error("Error fetching milestone for rollup:", mErr);
+      return null;
+    }
+
+    // 2. Fetch tasks under this milestone + subtasks
+    const { data: tasks, error: tErr } = await supabase
+      .from('tasks')
+      .select(`
+        id, weight, completed, completed_at, deadline, approval_status,
+        subtasks ( id, weight, completed )
+      `)
+      .eq('milestone_id', milestoneId);
+
+    if (tErr) {
+      console.error("Error fetching tasks for milestone rollup:", tErr);
       return null;
     }
 
     const taskList = tasks || [];
     const now = new Date();
 
-    // 2. Compute progress_computed
-    // Formula: sum(task.weight for completed & approved/not_required tasks) / sum(task.weight for all tasks) * 100
-    let totalWeight = 0;
-    let completedWeight = 0;
+    // 3. Compute progress_computed
+    const progressComputed = calculateMilestoneProgress(taskList);
 
-    taskList.forEach(t => {
-      const w = Number(t.weight) || 1;
-      totalWeight += w;
-
-      const isTaskCompleted = Boolean(t.completed) && (t.approval_status === 'not_required' || t.approval_status === 'approved');
-      if (isTaskCompleted) {
-        completedWeight += w;
-      }
-    });
-
-    const progressComputed = totalWeight > 0
-      ? Number(((completedWeight / totalWeight) * 100).toFixed(2))
-      : 0;
-
-    // 3. Compute risk_flag
-    // 'overdue' if any incomplete task has deadline < today
-    // else 'at_risk' if any incomplete task has deadline within next 48h
-    // else 'none'
+    // 4. Compute risk_flag
     let riskFlag = 'none';
+    const incompleteTasks = taskList.filter(t => calculateTaskCompletionPercentage(t, t.subtasks || []) < 100 && t.deadline);
 
-    const incompleteTasksWithDeadline = taskList.filter(t => {
-      const isDone = Boolean(t.completed) && (t.approval_status === 'not_required' || t.approval_status === 'approved');
-      return !isDone && t.deadline;
-    });
-
-    for (const t of incompleteTasksWithDeadline) {
+    for (const t of incompleteTasks) {
       const deadlineDate = new Date(t.deadline);
-      // Check if deadline is strictly in the past (before start of today or diff < 0)
       const diffHours = (deadlineDate - now) / (1000 * 60 * 60);
 
       if (diffHours < -24 || (diffHours < 0 && deadlineDate.getDate() !== now.getDate())) {
         riskFlag = 'overdue';
-        break; // Overdue is highest priority risk
+        break;
       } else if (diffHours <= 48) {
         if (riskFlag !== 'overdue') {
           riskFlag = 'at_risk';
@@ -67,8 +114,108 @@ export async function recomputeGoalProgressAndRisk(goalId) {
       }
     }
 
-    // 4. Update the goals table in Supabase
-    const { data: updatedGoal, error: updateErr } = await supabase
+    // 5. Update milestone table
+    const { data: updatedMilestone, error: uErr } = await supabase
+      .from('milestones')
+      .update({
+        progress_computed: progressComputed,
+        risk_flag: riskFlag
+      })
+      .eq('id', milestoneId)
+      .select()
+      .single();
+
+    if (uErr) {
+      console.error("Error updating milestone rollup:", uErr);
+      return null;
+    }
+
+    // 6. Cascade rollup to parent goal
+    if (milestone.goal_id) {
+      await recomputeGoalProgressAndRisk(milestone.goal_id);
+    }
+
+    return updatedMilestone;
+
+  } catch (err) {
+    console.error("Milestone rollup computation error:", err);
+    return null;
+  }
+}
+
+/**
+ * Recomputes goal.progress_computed and goal.risk_flag for a given goalId.
+ * Weighted average of child milestones' effective progress.
+ */
+export async function recomputeGoalProgressAndRisk(goalId) {
+  if (!goalId) return null;
+
+  try {
+    // 1. Fetch child milestones
+    const { data: milestones, error: mErr } = await supabase
+      .from('milestones')
+      .select('id, weight, progress_computed, progress_override, risk_flag')
+      .eq('goal_id', goalId);
+
+    if (mErr) {
+      console.error("Error fetching milestones for goal rollup:", mErr);
+      return null;
+    }
+
+    const milestonesList = milestones || [];
+
+    let progressComputed = 0;
+    let riskFlag = 'none';
+
+    if (milestonesList.length > 0) {
+      let totalWeight = 0;
+      let weightedProgressSum = 0;
+
+      milestonesList.forEach(m => {
+        const weight = Number(m.weight) || 1;
+        const effProgress = calculateEffectiveProgress(m);
+        totalWeight += weight;
+        weightedProgressSum += (weight * effProgress);
+
+        if (m.risk_flag === 'overdue') riskFlag = 'overdue';
+        else if (m.risk_flag === 'at_risk' && riskFlag !== 'overdue') riskFlag = 'at_risk';
+      });
+
+      progressComputed = totalWeight > 0
+        ? Number((weightedProgressSum / totalWeight).toFixed(2))
+        : 0;
+
+    } else {
+      // Fallback for goals without milestones (legacy tasks directly under goal)
+      const { data: directTasks } = await supabase
+        .from('tasks')
+        .select('id, weight, completed, approval_status, deadline')
+        .eq('goal_id', goalId)
+        .is('milestone_id', null);
+
+      if (directTasks && directTasks.length > 0) {
+        let totalWeight = 0;
+        let completedWeight = 0;
+        const now = new Date();
+
+        directTasks.forEach(t => {
+          const w = Number(t.weight) || 1;
+          totalWeight += w;
+          const isDone = Boolean(t.completed) && (t.approval_status === 'not_required' || t.approval_status === 'approved');
+          if (isDone) completedWeight += w;
+          else if (t.deadline) {
+            const diffHours = (new Date(t.deadline) - now) / (1000 * 60 * 60);
+            if (diffHours < 0) riskFlag = 'overdue';
+            else if (diffHours <= 48 && riskFlag !== 'overdue') riskFlag = 'at_risk';
+          }
+        });
+
+        progressComputed = totalWeight > 0 ? Number(((completedWeight / totalWeight) * 100).toFixed(2)) : 0;
+      }
+    }
+
+    // 2. Update goal record
+    const { data: updatedGoal, error: uErr } = await supabase
       .from('goals')
       .update({
         progress_computed: progressComputed,
@@ -78,34 +225,23 @@ export async function recomputeGoalProgressAndRisk(goalId) {
       .select()
       .single();
 
-    if (updateErr) {
-      console.error("Error updating goal rollup:", updateErr);
+    if (uErr) {
+      console.error("Error updating goal rollup:", uErr);
       return null;
     }
 
     return updatedGoal;
 
   } catch (err) {
-    console.error("Rollup computation error:", err);
+    console.error("Goal rollup computation error:", err);
     return null;
   }
 }
 
 /**
- * Returns the effective progress of a goal (respecting manual override if set)
+ * Computes Goal Progress (weighted average across list of goals)
  */
-export function calculateEffectiveProgress(goal) {
-  if (!goal) return 0;
-  return goal.progress_override !== null && goal.progress_override !== undefined
-    ? Number(goal.progress_override)
-    : Number(goal.progress_computed || 0);
-}
-
-/**
- * Computes Goal Progress (weighted average of goal effective progress across a list of goals)
- * Formula: sum(goal.weight * goal.effective_progress) / sum(goal.weight)
- */
-export function calculateGoalsProgress(goalsList) {
+export function calculateGoalsProgress(goalsList = []) {
   if (!goalsList || goalsList.length === 0) return 0;
 
   let totalWeight = 0;
@@ -123,18 +259,16 @@ export function calculateGoalsProgress(goalsList) {
 }
 
 /**
- * Computes Project Effective Progress (weighted average of goal effective progress)
- * Formula: sum(goal.weight * goal.effective_progress) / sum(goal.weight)
+ * Computes Project Effective Progress
  */
-export function calculateProjectProgress(goalsList) {
+export function calculateProjectProgress(goalsList = []) {
   return calculateGoalsProgress(goalsList);
 }
 
 /**
- * Computes Department Effective Progress (unweighted average of project effective progress)
- * Formula: sum(project.effective_progress) / total_projects
+ * Computes Department Effective Progress
  */
-export function calculateDepartmentProgress(projectsList) {
+export function calculateDepartmentProgress(projectsList = []) {
   if (!projectsList || projectsList.length === 0) return 0;
 
   let progressSum = 0;
@@ -149,9 +283,9 @@ export function calculateDepartmentProgress(projectsList) {
 }
 
 /**
- * Productivity score formula: Clamp(0, 100, (completed/total * 100) - (overdue * 5))
+ * Productivity score formula
  */
-export function calculateProductivityScore(taskList) {
+export function calculateProductivityScore(taskList = []) {
   if (!taskList || !taskList.length) return 0;
   const now = new Date();
   const completed = taskList.filter((t) => Boolean(t.completed)).length;
@@ -164,9 +298,9 @@ export function calculateProductivityScore(taskList) {
 }
 
 /**
- * Personal streak counter: consecutive days with completed_at timestamp
+ * Personal streak counter
  */
-export function calculateStreak(taskList) {
+export function calculateStreak(taskList = []) {
   const completedWithDate = (taskList || []).filter((t) => Boolean(t.completed) && t.completed_at);
   if (!completedWithDate.length) return 0;
   const dates = [...new Set(completedWithDate.map((t) =>
@@ -182,11 +316,7 @@ export function calculateStreak(taskList) {
 }
 
 /**
- * Urgency sort priority (reused in /tasks and /analytics):
- * Priority 1: Overdue (incomplete, deadline < today)
- * Priority 2: Due Soon (incomplete, deadline within 48h)
- * Priority 3: Normal (incomplete, deadline > 48h or no deadline)
- * Priority 4: Completed
+ * Urgency sort priority
  */
 export function getTaskPriority(task) {
   const now = new Date();
@@ -198,7 +328,6 @@ export function getTaskPriority(task) {
   return 3;
 }
 
-export function sortTasksByUrgency(taskList) {
+export function sortTasksByUrgency(taskList = []) {
   return [...(taskList || [])].sort((a, b) => getTaskPriority(a) - getTaskPriority(b));
 }
-
