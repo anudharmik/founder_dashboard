@@ -88,6 +88,14 @@ export default function OrgSettings({ user, darkMode }) {
   }
 
   async function handleUpdateRole(memberId, role) {
+    const targetMember = membersList.find(m => m.id === memberId);
+    if (targetMember && targetMember.role === 'owner' && role !== 'owner') {
+      const ownerCount = membersList.filter(m => m.role === 'owner').length;
+      if (ownerCount <= 1) {
+        toast.error("Cannot demote the sole Owner. Please promote another member to Owner first.");
+        return;
+      }
+    }
     try {
       const { error } = await supabase
         .from('org_members')
@@ -103,6 +111,14 @@ export default function OrgSettings({ user, darkMode }) {
   }
 
   async function handleRemoveMember(memberId) {
+    const targetMember = membersList.find(m => m.id === memberId);
+    if (targetMember && targetMember.role === 'owner') {
+      const ownerCount = membersList.filter(m => m.role === 'owner').length;
+      if (ownerCount <= 1) {
+        toast.error("Cannot remove the sole Owner. Please promote another member to Owner first.");
+        return;
+      }
+    }
     if (!window.confirm("Are you sure you want to remove this member from the organization?")) return;
     try {
       const { error } = await supabase
@@ -290,7 +306,7 @@ export default function OrgSettings({ user, darkMode }) {
                       <div style={{ fontWeight: "600" }}>{m.user_id === user?.id ? `${user?.email} (You)` : m.user_id}</div>
                     </td>
                     <td style={{ padding: "14px 16px" }}>
-                      {isOwner && m.user_id !== user?.id ? (
+                      {isOwner ? (
                         <select
                           value={m.role}
                           onChange={(e) => handleUpdateRole(m.id, e.target.value)}
