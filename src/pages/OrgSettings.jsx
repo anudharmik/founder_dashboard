@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useOrg } from '../context/OrgContext';
 import { supabase } from '../supabaseClient';
 import CreateOrgOnboarding from '../components/CreateOrgOnboarding';
+import OrgPermissions from './OrgPermissions';
 import toast from 'react-hot-toast';
 
 export default function OrgSettings({ user, darkMode }) {
   const { activeOrg, userRole, orgMembers, isOwner, isManager, refreshOrgData, fetchOrgMembers } = useOrg();
+  const [activeSettingsTab, setActiveSettingsTab] = useState('members'); // 'members' | 'permissions'
   const [membersList, setMembersList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isInviteOpen, setIsInviteOpen] = useState(false);
@@ -194,6 +196,37 @@ export default function OrgSettings({ user, darkMode }) {
           Your Role: {userRole}
         </span>
       </div>
+
+      {/* Navigation Tabs */}
+      <div style={{ display: "flex", gap: "12px", marginBottom: "24px", borderBottom: darkMode ? "1px solid #334155" : "1px solid #e2e8f0" }}>
+        <button
+          onClick={() => setActiveSettingsTab('members')}
+          style={{
+            padding: "10px 18px", background: "none", border: "none",
+            borderBottom: activeSettingsTab === 'members' ? "2px solid #6366f1" : "2px solid transparent",
+            color: activeSettingsTab === 'members' ? "#6366f1" : (darkMode ? "#94a3b8" : "#64748b"),
+            fontWeight: activeSettingsTab === 'members' ? "700" : "500", fontSize: "14px", cursor: "pointer"
+          }}
+        >
+          👥 Members & Workspace
+        </button>
+        <button
+          onClick={() => setActiveSettingsTab('permissions')}
+          style={{
+            padding: "10px 18px", background: "none", border: "none",
+            borderBottom: activeSettingsTab === 'permissions' ? "2px solid #6366f1" : "2px solid transparent",
+            color: activeSettingsTab === 'permissions' ? "#6366f1" : (darkMode ? "#94a3b8" : "#64748b"),
+            fontWeight: activeSettingsTab === 'permissions' ? "700" : "500", fontSize: "14px", cursor: "pointer"
+          }}
+        >
+          🔒 Scoped Permissions (RBAC)
+        </button>
+      </div>
+
+      {activeSettingsTab === 'permissions' ? (
+        <OrgPermissions user={user} darkMode={darkMode} />
+      ) : (
+        <>
 
       {/* Organization General Info */}
       <div style={{ ...cardStyle, marginBottom: "24px" }}>
@@ -465,6 +498,8 @@ export default function OrgSettings({ user, darkMode }) {
             </form>
           </div>
         </div>
+      )}
+        </>
       )}
     </div>
   );
