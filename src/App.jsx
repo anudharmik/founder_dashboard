@@ -69,10 +69,6 @@ function MainAppContent({ user, darkMode, setDarkMode }) {
 
   const lastFetchedHashRef = useRef(null);
 
-  if (!loadingOrg && !activeOrg) {
-    return <CreateOrgOnboarding user={user} darkMode={darkMode} />;
-  }
-
   const scopeKey = isEmployee ? `emp_${user?.id}` : (isGuest ? 'guest' : 'org');
   const cacheKeyHash = activeOrg ? `aiInsightsHash_${activeOrg.id}_${scopeKey}` : null;
   const cacheKeyData = activeOrg ? `aiInsightsCache_${activeOrg.id}_${scopeKey}` : null;
@@ -276,6 +272,10 @@ function MainAppContent({ user, darkMode, setDarkMode }) {
     } else {
       fetchGoals();
     }
+  }
+
+  if (!loadingOrg && !activeOrg) {
+    return <CreateOrgOnboarding user={user} darkMode={darkMode} />;
   }
 
   return (

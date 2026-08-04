@@ -532,7 +532,7 @@ export default function GoalDetail({ darkMode }) {
           assigner_id: user?.id,
           reviewer_id: user?.id, // defaults to assigner
           approval_status: approvalStatus,
-          blocked_by: taskBlockedBy || null,
+          blocked_by: (taskBlockedBy && taskBlockedBy.trim() !== '') ? taskBlockedBy.trim() : null,
           completed: false
         })
         .select()
