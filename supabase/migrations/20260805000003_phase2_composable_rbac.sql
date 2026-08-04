@@ -192,7 +192,7 @@ create policy "Owners or managers can insert tasks" on public.tasks
     public.get_org_role(org_id) in ('owner', 'manager')
     or public.has_effective_role(auth.uid(), 'goal', goal_id, 'manager')
     or (public.get_org_role(org_id) = 'employee' and exists (
-      select 1 from public.tasks t where t.goal_id = tasks.goal_id and t.assigned_to = auth.uid()
+      select 1 from public.tasks t where t.goal_id = tasks.goal_id and t.assignee_id = auth.uid()
     ))
   );
 
@@ -200,8 +200,8 @@ drop policy if exists "Owners managers or assignees can update tasks" on public.
 create policy "Owners managers or assignees can update tasks" on public.tasks
   for update using (
     public.has_effective_role(auth.uid(), 'task', id, 'manager')
-    or assigned_to = auth.uid()
-    or reviewed_by = auth.uid()
+    or assignee_id = auth.uid()
+    or reviewer_id = auth.uid()
   );
 
 drop policy if exists "Owners or managers can delete tasks" on public.tasks;

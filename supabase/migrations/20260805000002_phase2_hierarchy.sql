@@ -95,6 +95,6 @@ create policy "Owners managers or task assignees/reviewers can manage subtasks" 
     public.get_org_role(org_id) in ('owner', 'manager')
     or exists (
       select 1 from public.tasks t
-      where t.id = subtasks.task_id and (t.assigned_to = auth.uid() or t.reviewed_by = auth.uid() or t.created_by = auth.uid())
+      where t.id = subtasks.task_id and (t.assignee_id = auth.uid() or t.reviewer_id = auth.uid() or t.assigner_id = auth.uid())
     )
   );
