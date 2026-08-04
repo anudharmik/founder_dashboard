@@ -65,23 +65,36 @@ export default function OrgSettings({ user, darkMode }) {
 
   async function handleInviteMember(e) {
     e.preventDefault();
-    if (!inviteUserId.trim() || !activeOrg) return;
+    const inputVal = inviteUserId.trim();
+    if (!inputVal || !activeOrg) return;
     setSubmittingInvite(true);
     try {
-      const { error } = await supabase.from('org_members').insert({
-        org_id: activeOrg.id,
-        user_id: inviteUserId.trim(),
-        role: inviteRole
-      });
+      const isEmail = inputVal.includes('@');
+      if (isEmail) {
+        const { error } = await supabase.from('org_invites').insert({
+          org_id: activeOrg.id,
+          email: inputVal.toLowerCase(),
+          role: inviteRole,
+          invited_by: user.id
+        });
+        if (error) throw error;
+        toast.success(`Invitation sent to ${inputVal} as ${inviteRole}!`);
+      } else {
+        const { error } = await supabase.from('org_members').insert({
+          org_id: activeOrg.id,
+          user_id: inputVal,
+          role: inviteRole
+        });
+        if (error) throw error;
+        toast.success(`Member added as ${inviteRole}!`);
+      }
 
-      if (error) throw error;
-      toast.success(`Member added as ${inviteRole}!`);
       setIsInviteOpen(false);
       setInviteUserId('');
       setInviteRole('employee');
       loadMembers();
     } catch (err) {
-      toast.error(err.message || "Failed to add member");
+      toast.error(err.message || "Failed to add member / send invite");
     } finally {
       setSubmittingInvite(false);
     }
@@ -393,11 +406,11 @@ export default function OrgSettings({ user, darkMode }) {
             <form onSubmit={handleInviteMember} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
               <div>
                 <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: darkMode ? "#cbd5e1" : "#475569", marginBottom: "6px" }}>
-                  USER UUID
+                  USER EMAIL OR UUID
                 </label>
                 <input
                   type="text"
-                  placeholder="Paste user auth UUID"
+                  placeholder="e.g. colleague@example.com or User UUID"
                   value={inviteUserId}
                   onChange={(e) => setInviteUserId(e.target.value)}
                   required

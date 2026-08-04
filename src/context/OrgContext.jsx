@@ -27,6 +27,25 @@ export function OrgProvider({ children, user }) {
   async function fetchUserOrganizations() {
     setLoadingOrg(true);
     try {
+      // Auto-claim any pending invites matching the logged-in user's email
+      if (user?.email) {
+        try {
+          const { data: pendingInvites } = await supabase
+            .from('org_invites')
+            .select('token')
+            .eq('email', user.email.toLowerCase())
+            .eq('status', 'pending');
+
+          if (pendingInvites && pendingInvites.length > 0) {
+            for (const inv of pendingInvites) {
+              await supabase.rpc('accept_org_invite', { p_token: inv.token });
+            }
+          }
+        } catch (inviteErr) {
+          console.warn("Notice: org_invites auto-claim check skipped:", inviteErr.message);
+        }
+      }
+
       const { data: memberRows, error } = await supabase
         .from('org_members')
         .select(`
