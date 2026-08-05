@@ -12,6 +12,12 @@ export default function OrgSettings({ user, darkMode }) {
   const [loading, setLoading] = useState(true);
   const [isInviteOpen, setIsInviteOpen] = useState(false);
 
+  // Invitations state
+  const [invitesList, setInvitesList] = useState([]);
+  const [loadingInvites, setLoadingInvites] = useState(true);
+  const [inviteFilter, setInviteFilter] = useState('all'); // 'all' | 'pending' | 'accepted' | 'revoked'
+  const [inviteSearch, setInviteSearch] = useState('');
+
   // Invite modal state
   const [inviteUserId, setInviteUserId] = useState('');
   const [inviteRole, setInviteRole] = useState('employee');
@@ -25,6 +31,7 @@ export default function OrgSettings({ user, darkMode }) {
     if (activeOrg) {
       setNewOrgName(activeOrg.name || '');
       loadMembers();
+      loadInvites();
     }
   }, [activeOrg]);
 
@@ -44,6 +51,26 @@ export default function OrgSettings({ user, darkMode }) {
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function loadInvites() {
+    if (!activeOrg) return;
+    setLoadingInvites(true);
+    try {
+      const { data, error } = await supabase
+        .from('org_invites')
+        .select('*')
+        .eq('org_id', activeOrg.id)
+        .order('created_at', { ascending: false });
+
+      if (!error && data) {
+        setInvitesList(data);
+      }
+    } catch (err) {
+      console.error("Failed to load invites:", err);
+    } finally {
+      setLoadingInvites(false);
     }
   }
 
@@ -77,7 +104,8 @@ export default function OrgSettings({ user, darkMode }) {
           org_id: activeOrg.id,
           email: inputVal.toLowerCase(),
           role: inviteRole,
-          invited_by: user.id
+          invited_by: user.id,
+          status: 'pending'
         });
         if (error) throw error;
         toast.success(`Invitation sent to ${inputVal} as ${inviteRole}!`);
@@ -95,10 +123,68 @@ export default function OrgSettings({ user, darkMode }) {
       setInviteUserId('');
       setInviteRole('employee');
       loadMembers();
+      loadInvites();
     } catch (err) {
       toast.error(err.message || "Failed to add member / send invite");
     } finally {
       setSubmittingInvite(false);
+    }
+  }
+
+  async function handleRevokeInvite(inviteId) {
+    if (!window.confirm("Are you sure you want to revoke this invitation?")) return;
+    try {
+      const { error } = await supabase
+        .from('org_invites')
+        .update({ status: 'revoked' })
+        .eq('id', inviteId);
+
+      if (error) throw error;
+      toast.success("Invitation revoked");
+      loadInvites();
+    } catch (err) {
+      toast.error(err.message || "Failed to revoke invitation");
+    }
+  }
+
+  async function handleResendInvite(invite) {
+    try {
+      const { error } = await supabase
+        .from('org_invites')
+        .update({ created_at: new Date().toISOString(), status: 'pending' })
+        .eq('id', invite.id);
+
+      if (error) throw error;
+      toast.success(`Invitation resent to ${invite.email}!`);
+      loadInvites();
+    } catch (err) {
+      toast.error(err.message || "Failed to resend invitation");
+    }
+  }
+
+  async function handleCopyInviteLink(token) {
+    const inviteUrl = `${window.location.origin}/login?invite_token=${token}`;
+    try {
+      await navigator.clipboard.writeText(inviteUrl);
+      toast.success("Invite link copied to clipboard!");
+    } catch (err) {
+      toast.error("Could not copy link to clipboard");
+    }
+  }
+
+  async function handleDeleteInvite(inviteId) {
+    if (!window.confirm("Delete this invitation record?")) return;
+    try {
+      const { error } = await supabase
+        .from('org_invites')
+        .delete()
+        .eq('id', inviteId);
+
+      if (error) throw error;
+      toast.success("Invitation removed");
+      loadInvites();
+    } catch (err) {
+      toast.error(err.message || "Failed to delete invite");
     }
   }
 
@@ -413,6 +499,252 @@ export default function OrgSettings({ user, darkMode }) {
                     )}
                   </tr>
                 ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* Invitations & Invitees Management Card */}
+      <div style={{ ...cardStyle, marginTop: "24px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", flexWrap: "wrap", gap: "12px" }}>
+          <div>
+            <h3 style={{ fontSize: "18px", fontWeight: "700", color: darkMode ? "#f1f5f9" : "#1e293b", margin: "0 0 4px", display: "flex", alignItems: "center", gap: "8px" }}>
+              <span>📩</span> Sent Invitations & Invitees ({invitesList.length})
+            </h3>
+            <p style={{ fontSize: "13px", color: darkMode ? "#94a3b8" : "#64748b", margin: 0 }}>
+              Track users invited to this workspace and their platform joining status.
+            </p>
+          </div>
+
+          <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+            {isOwner && (
+              <button
+                onClick={() => setIsInviteOpen(true)}
+                style={{
+                  padding: "8px 14px",
+                  borderRadius: "8px",
+                  border: "none",
+                  background: "#6366f1",
+                  color: "#ffffff",
+                  fontWeight: "600",
+                  fontSize: "12px",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px"
+                }}
+              >
+                <span>➕</span> Invite Someone
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Summary Metrics */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "12px", marginBottom: "20px" }}>
+          <div style={{ padding: "12px 16px", borderRadius: "10px", background: darkMode ? "rgba(15, 23, 42, 0.6)" : "#f8fafc", border: darkMode ? "1px solid #334155" : "1px solid #e2e8f0" }}>
+            <span style={{ fontSize: "11px", fontWeight: "700", color: darkMode ? "#94a3b8" : "#64748b", textTransform: "uppercase" }}>Total Sent</span>
+            <div style={{ fontSize: "20px", fontWeight: "800", color: darkMode ? "#f8fafc" : "#0f172a", marginTop: "2px" }}>{invitesList.length}</div>
+          </div>
+          <div style={{ padding: "12px 16px", borderRadius: "10px", background: darkMode ? "rgba(245, 158, 11, 0.1)" : "#fffbeb", border: "1px solid rgba(245, 158, 11, 0.2)" }}>
+            <span style={{ fontSize: "11px", fontWeight: "700", color: "#f59e0b", textTransform: "uppercase" }}>Pending Join ⏳</span>
+            <div style={{ fontSize: "20px", fontWeight: "800", color: "#fbbf24", marginTop: "2px" }}>{invitesList.filter(i => i.status === 'pending').length}</div>
+          </div>
+          <div style={{ padding: "12px 16px", borderRadius: "10px", background: darkMode ? "rgba(34, 197, 94, 0.1)" : "#f0fdf4", border: "1px solid rgba(34, 197, 94, 0.2)" }}>
+            <span style={{ fontSize: "11px", fontWeight: "700", color: "#22c55e", textTransform: "uppercase" }}>Joined Platform ✅</span>
+            <div style={{ fontSize: "20px", fontWeight: "800", color: "#4ade80", marginTop: "2px" }}>{invitesList.filter(i => i.status === 'accepted').length}</div>
+          </div>
+          <div style={{ padding: "12px 16px", borderRadius: "10px", background: darkMode ? "rgba(239, 68, 68, 0.1)" : "#fef2f2", border: "1px solid rgba(239, 68, 68, 0.2)" }}>
+            <span style={{ fontSize: "11px", fontWeight: "700", color: "#ef4444", textTransform: "uppercase" }}>Revoked 🚫</span>
+            <div style={{ fontSize: "20px", fontWeight: "800", color: "#f87171", marginTop: "2px" }}>{invitesList.filter(i => i.status === 'revoked').length}</div>
+          </div>
+        </div>
+
+        {/* Filters and Search Bar */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", flexWrap: "wrap", gap: "12px" }}>
+          <div style={{ display: "flex", gap: "6px" }}>
+            {['all', 'pending', 'accepted', 'revoked'].map((st) => (
+              <button
+                key={st}
+                onClick={() => setInviteFilter(st)}
+                style={{
+                  padding: "5px 12px",
+                  borderRadius: "20px",
+                  fontSize: "12px",
+                  fontWeight: "600",
+                  textTransform: "capitalize",
+                  cursor: "pointer",
+                  border: inviteFilter === st ? "1px solid #6366f1" : (darkMode ? "1px solid #334155" : "1px solid #cbd5e1"),
+                  background: inviteFilter === st ? "#6366f1" : "transparent",
+                  color: inviteFilter === st ? "#ffffff" : (darkMode ? "#94a3b8" : "#64748b")
+                }}
+              >
+                {st === 'all' ? 'All Invites' : st === 'accepted' ? 'Joined ✅' : st === 'pending' ? 'Pending ⏳' : 'Revoked 🚫'}
+              </button>
+            ))}
+          </div>
+
+          <input
+            type="text"
+            placeholder="Search invitees..."
+            value={inviteSearch}
+            onChange={(e) => setInviteSearch(e.target.value)}
+            style={{
+              padding: "6px 12px",
+              borderRadius: "8px",
+              fontSize: "13px",
+              border: darkMode ? "1px solid #334155" : "1px solid #cbd5e1",
+              background: darkMode ? "#0f172a" : "#ffffff",
+              color: darkMode ? "#f8fafc" : "#0f172a",
+              minWidth: "200px"
+            }}
+          />
+        </div>
+
+        {/* Invites Table */}
+        {loadingInvites ? (
+          <p style={{ color: darkMode ? "#94a3b8" : "#64748b", fontSize: "14px" }}>Loading invitations...</p>
+        ) : invitesList.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "32px 16px", color: darkMode ? "#94a3b8" : "#64748b" }}>
+            <span style={{ fontSize: "28px", display: "block", marginBottom: "8px" }}>📩</span>
+            <p style={{ margin: 0, fontSize: "14px" }}>No invitations have been sent yet.</p>
+            <p style={{ margin: "4px 0 0", fontSize: "12px", opacity: 0.8 }}>Use the "Add Member" button above to invite team members by email.</p>
+          </div>
+        ) : (
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "13px" }}>
+              <thead>
+                <tr style={{ borderBottom: darkMode ? "1px solid rgba(255,255,255,0.08)" : "1px solid #e2e8f0" }}>
+                  <th style={{ padding: "10px 14px", color: darkMode ? "#94a3b8" : "#64748b", fontWeight: "600", fontSize: "11px" }}>INVITEE EMAIL</th>
+                  <th style={{ padding: "10px 14px", color: darkMode ? "#94a3b8" : "#64748b", fontWeight: "600", fontSize: "11px" }}>ASSIGNED ROLE</th>
+                  <th style={{ padding: "10px 14px", color: darkMode ? "#94a3b8" : "#64748b", fontWeight: "600", fontSize: "11px" }}>INVITED BY</th>
+                  <th style={{ padding: "10px 14px", color: darkMode ? "#94a3b8" : "#64748b", fontWeight: "600", fontSize: "11px" }}>SENT DATE</th>
+                  <th style={{ padding: "10px 14px", color: darkMode ? "#94a3b8" : "#64748b", fontWeight: "600", fontSize: "11px" }}>JOINING STATUS</th>
+                  <th style={{ padding: "10px 14px", color: darkMode ? "#94a3b8" : "#64748b", fontWeight: "600", fontSize: "11px", textAlign: "right" }}>ACTIONS</th>
+                </tr>
+              </thead>
+              <tbody>
+                {invitesList
+                  .filter(inv => inviteFilter === 'all' || inv.status === inviteFilter)
+                  .filter(inv => !inviteSearch || inv.email.toLowerCase().includes(inviteSearch.toLowerCase()) || inv.role.toLowerCase().includes(inviteSearch.toLowerCase()))
+                  .map((inv) => {
+                    const statusConfig = {
+                      pending: { bg: 'rgba(245, 158, 11, 0.15)', text: '#fbbf24', border: 'rgba(245, 158, 11, 0.3)', label: '⏳ Pending (Awaiting Join)' },
+                      accepted: { bg: 'rgba(34, 197, 94, 0.15)', text: '#4ade80', border: 'rgba(34, 197, 94, 0.3)', label: '✅ Joined Platform' },
+                      revoked: { bg: 'rgba(239, 68, 68, 0.15)', text: '#f87171', border: 'rgba(239, 68, 68, 0.3)', label: '🚫 Revoked' }
+                    };
+                    const currentStatus = statusConfig[inv.status] || statusConfig.pending;
+
+                    return (
+                      <tr key={inv.id} style={{ borderBottom: darkMode ? "1px solid rgba(255,255,255,0.04)" : "1px solid #f1f5f9" }}>
+                        <td style={{ padding: "12px 14px", color: darkMode ? "#f1f5f9" : "#0f172a", fontWeight: "600" }}>
+                          {inv.email}
+                        </td>
+                        <td style={{ padding: "12px 14px" }}>
+                          <span style={{
+                            padding: "3px 8px",
+                            borderRadius: "10px",
+                            fontSize: "11px",
+                            fontWeight: "700",
+                            textTransform: "uppercase",
+                            background: roleColors[inv.role]?.bg || "rgba(255,255,255,0.1)",
+                            color: roleColors[inv.role]?.text || "#fff",
+                            border: `1px solid ${roleColors[inv.role]?.border || 'transparent'}`
+                          }}>
+                            {inv.role}
+                          </span>
+                        </td>
+                        <td style={{ padding: "12px 14px", color: darkMode ? "#94a3b8" : "#64748b" }}>
+                          {inv.invited_by ? getMemberDisplayName(inv.invited_by) : 'System'}
+                        </td>
+                        <td style={{ padding: "12px 14px", color: darkMode ? "#94a3b8" : "#64748b" }}>
+                          {inv.created_at ? new Date(inv.created_at).toLocaleDateString() : 'N/A'}
+                        </td>
+                        <td style={{ padding: "12px 14px" }}>
+                          <span style={{
+                            padding: "4px 10px",
+                            borderRadius: "12px",
+                            fontSize: "11px",
+                            fontWeight: "700",
+                            background: currentStatus.bg,
+                            color: currentStatus.text,
+                            border: `1px solid ${currentStatus.border}`
+                          }}>
+                            {currentStatus.label}
+                          </span>
+                        </td>
+                        <td style={{ padding: "12px 14px", textAlign: "right" }}>
+                          <div style={{ display: "flex", gap: "6px", justifyContent: "flex-end" }}>
+                            {inv.status === 'pending' && (
+                              <>
+                                <button
+                                  onClick={() => handleCopyInviteLink(inv.token)}
+                                  title="Copy Invite Acceptance Link"
+                                  style={{
+                                    background: "rgba(99, 102, 241, 0.1)",
+                                    border: "1px solid rgba(99, 102, 241, 0.3)",
+                                    color: "#818cf8",
+                                    padding: "4px 8px",
+                                    borderRadius: "6px",
+                                    fontSize: "11px",
+                                    cursor: "pointer"
+                                  }}
+                                >
+                                  📋 Copy Link
+                                </button>
+                                <button
+                                  onClick={() => handleResendInvite(inv)}
+                                  title="Resend Invite"
+                                  style={{
+                                    background: "rgba(59, 130, 246, 0.1)",
+                                    border: "1px solid rgba(59, 130, 246, 0.3)",
+                                    color: "#60a5fa",
+                                    padding: "4px 8px",
+                                    borderRadius: "6px",
+                                    fontSize: "11px",
+                                    cursor: "pointer"
+                                  }}
+                                >
+                                  🔄 Resend
+                                </button>
+                                <button
+                                  onClick={() => handleRevokeInvite(inv.id)}
+                                  title="Revoke Invite"
+                                  style={{
+                                    background: "rgba(239, 68, 68, 0.1)",
+                                    border: "1px solid rgba(239, 68, 68, 0.3)",
+                                    color: "#f87171",
+                                    padding: "4px 8px",
+                                    borderRadius: "6px",
+                                    fontSize: "11px",
+                                    cursor: "pointer"
+                                  }}
+                                >
+                                  🚫 Revoke
+                                </button>
+                              </>
+                            )}
+                            <button
+                              onClick={() => handleDeleteInvite(inv.id)}
+                              title="Delete Invite Record"
+                              style={{
+                                background: "rgba(100, 116, 139, 0.1)",
+                                border: "1px solid rgba(100, 116, 139, 0.3)",
+                                color: darkMode ? "#94a3b8" : "#64748b",
+                                padding: "4px 8px",
+                                borderRadius: "6px",
+                                fontSize: "11px",
+                                cursor: "pointer"
+                              }}
+                            >
+                              🗑️
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
               </tbody>
             </table>
           </div>
