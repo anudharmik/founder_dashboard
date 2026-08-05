@@ -247,11 +247,12 @@ export default function OrgPermissions({ user, darkMode }) {
       {showGrantModal && (
         <div style={{
           position: "fixed", inset: 0, zIndex: 9999, background: "rgba(0,0,0,0.65)",
-          backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px"
+          backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px",
+          overflowY: "auto"
         }}>
           <div style={{
             background: cardBg, borderRadius: "20px", border: `1px solid ${borderCol}`,
-            width: "100%", maxWidth: "480px", padding: "28px", boxShadow: "0 20px 40px rgba(0,0,0,0.3)"
+            width: "100%", maxWidth: "480px", maxHeight: "90vh", overflowY: "auto", padding: "28px", boxShadow: "0 20px 40px rgba(0,0,0,0.3)"
           }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
               <h2 style={{ margin: 0, fontSize: "18px", fontWeight: "800", color: darkMode ? "#f8fafc" : "#0f172a" }}>
@@ -269,10 +270,11 @@ export default function OrgPermissions({ user, darkMode }) {
                   required
                   value={selectedUserId}
                   onChange={(e) => setSelectedUserId(e.target.value)}
+                  className="form-select"
                   style={{
-                    width: "100%", padding: "10px 14px", borderRadius: "8px",
+                    width: "100%", padding: "10px 36px 10px 14px", borderRadius: "8px",
                     border: `1px solid ${borderCol}`, background: darkMode ? "#0f172a" : "#f8fafc",
-                    color: darkMode ? "#f8fafc" : "#0f172a", fontSize: "13px"
+                    color: darkMode ? "#f8fafc" : "#0f172a", fontSize: "13px", cursor: "pointer"
                   }}
                 >
                   <option value="">-- Choose Member --</option>
@@ -294,10 +296,11 @@ export default function OrgPermissions({ user, darkMode }) {
                     setScopeType(e.target.value);
                     setScopeId('');
                   }}
+                  className="form-select"
                   style={{
-                    width: "100%", padding: "10px 14px", borderRadius: "8px",
+                    width: "100%", padding: "10px 36px 10px 14px", borderRadius: "8px",
                     border: `1px solid ${borderCol}`, background: darkMode ? "#0f172a" : "#f8fafc",
-                    color: darkMode ? "#f8fafc" : "#0f172a", fontSize: "13px"
+                    color: darkMode ? "#f8fafc" : "#0f172a", fontSize: "13px", cursor: "pointer"
                   }}
                 >
                   <option value="project">Project Scope</option>
@@ -313,10 +316,11 @@ export default function OrgPermissions({ user, darkMode }) {
                   required
                   value={scopeId}
                   onChange={(e) => setScopeId(e.target.value)}
+                  className="form-select"
                   style={{
-                    width: "100%", padding: "10px 14px", borderRadius: "8px",
+                    width: "100%", padding: "10px 36px 10px 14px", borderRadius: "8px",
                     border: `1px solid ${borderCol}`, background: darkMode ? "#0f172a" : "#f8fafc",
-                    color: darkMode ? "#f8fafc" : "#0f172a", fontSize: "13px"
+                    color: darkMode ? "#f8fafc" : "#0f172a", fontSize: "13px", cursor: "pointer"
                   }}
                 >
                   <option value="">-- Choose {scopeType} --</option>
@@ -334,10 +338,11 @@ export default function OrgPermissions({ user, darkMode }) {
                 <select
                   value={grantRole}
                   onChange={(e) => setGrantRole(e.target.value)}
+                  className="form-select"
                   style={{
-                    width: "100%", padding: "10px 14px", borderRadius: "8px",
+                    width: "100%", padding: "10px 36px 10px 14px", borderRadius: "8px",
                     border: `1px solid ${borderCol}`, background: darkMode ? "#0f172a" : "#f8fafc",
-                    color: darkMode ? "#f8fafc" : "#0f172a", fontSize: "13px"
+                    color: darkMode ? "#f8fafc" : "#0f172a", fontSize: "13px", cursor: "pointer"
                   }}
                 >
                   <option value="manager">Manager — Full management within scope</option>

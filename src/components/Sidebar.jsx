@@ -179,6 +179,7 @@ export default function Sidebar({ darkMode, isOpen, onClose, onOpenReminders }) 
             <select
               value={activeOrg.id}
               onChange={(e) => switchOrg(e.target.value)}
+              className="form-select"
               style={{
                 width: '100%',
                 background: 'transparent',

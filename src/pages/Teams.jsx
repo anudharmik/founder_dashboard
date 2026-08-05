@@ -368,12 +368,13 @@ export default function Teams({ darkMode }) {
         <div style={{
           position: "fixed", inset: 0, zIndex: 10000,
           background: "rgba(0,0,0,0.6)", backdropFilter: "blur(6px)",
-          display: "flex", alignItems: "center", justifyContent: "center", padding: "16px"
+          display: "flex", alignItems: "center", justifyContent: "center", padding: "16px",
+          overflowY: "auto"
         }}>
           <div style={{
             background: darkMode ? "#0f172a" : "#ffffff",
             border: darkMode ? "1px solid #1e293b" : "1px solid #cbd5e1",
-            borderRadius: "14px", padding: "24px", width: "100%", maxWidth: "500px"
+            borderRadius: "14px", padding: "24px", width: "100%", maxWidth: "500px", maxHeight: "90vh", overflowY: "auto"
           }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
               <h3 style={{ margin: 0, color: darkMode ? "#f8fafc" : "#0f172a" }}>
@@ -392,11 +393,13 @@ export default function Teams({ darkMode }) {
               <select
                 value={selectedUserIdToAdd}
                 onChange={(e) => setSelectedUserIdToAdd(e.target.value)}
+                className="form-select"
                 style={{
-                  flex: 1, padding: "8px 12px", borderRadius: "8px",
+                  flex: 1, padding: "8px 36px 8px 12px", borderRadius: "8px",
                   border: darkMode ? "1px solid #334155" : "1px solid #cbd5e1",
                   background: darkMode ? "#1e293b" : "#f8fafc",
                   color: darkMode ? "#fff" : "#000",
+                  cursor: "pointer"
                 }}
               >
                 <option value="">Select Org Member to Add...</option>

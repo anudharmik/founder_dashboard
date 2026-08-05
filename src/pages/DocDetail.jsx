@@ -224,7 +224,7 @@ export default function DocDetail({ user, darkMode }) {
                     boxShadow: "0 4px 12px rgba(16,185,129,0.3)"
                   }}
                 >
-                  {saving ? "Saving..." : "Save Document"}
+                  {saving ? "Saving..." : "💾 Save Document"}
                 </button>
               )}
             </div>

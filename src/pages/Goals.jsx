@@ -139,6 +139,7 @@ export default function Goals({ user, goals, tasks, projects, setTasks, fetchGoa
               Project
             </label>
             <select
+              className="form-select"
               style={selectStyle}
               value={selectedProject}
               onChange={(e) => setSelectedProject(e.target.value)}
@@ -202,6 +203,7 @@ export default function Goals({ user, goals, tasks, projects, setTasks, fetchGoa
             Filter by
           </label>
           <select
+            className="form-select"
             style={{ ...selectStyle, flex: "0 1 240px" }}
             value={filterProject} onChange={(e) => setFilterProject(e.target.value)}
             onFocus={(e) => { e.target.style.borderColor = "#6366f1"; e.target.style.boxShadow = "0 0 0 3px rgba(99,102,241,0.15)"; }}

@@ -1335,10 +1335,11 @@ export default function GoalDetail({ darkMode }) {
                       required
                       value={taskAssigneeId}
                       onChange={(e) => setTaskAssigneeId(e.target.value)}
+                      className="form-select"
                       style={{
-                        width: "100%", padding: "11px 14px", borderRadius: "10px",
+                        width: "100%", padding: "11px 38px 11px 14px", borderRadius: "10px",
                         border: `1px solid ${borderCol}`, background: darkMode ? "#0f172a" : "#f8fafc",
-                        color: darkMode ? "#f8fafc" : "#0f172a", outline: "none", fontSize: "14px", boxSizing: "border-box"
+                        color: darkMode ? "#f8fafc" : "#0f172a", outline: "none", fontSize: "14px", boxSizing: "border-box", cursor: "pointer"
                       }}
                     >
                       <option value="">-- Select Member --</option>
@@ -1393,10 +1394,11 @@ export default function GoalDetail({ darkMode }) {
                   <select
                     value={taskBlockedBy}
                     onChange={(e) => setTaskBlockedBy(e.target.value)}
+                    className="form-select"
                     style={{
-                      width: "100%", padding: "11px 14px", borderRadius: "10px",
+                      width: "100%", padding: "11px 38px 11px 14px", borderRadius: "10px",
                       border: `1px solid ${borderCol}`, background: darkMode ? "#0f172a" : "#f8fafc",
-                      color: darkMode ? "#f8fafc" : "#0f172a", outline: "none", fontSize: "14px", boxSizing: "border-box"
+                      color: darkMode ? "#f8fafc" : "#0f172a", outline: "none", fontSize: "14px", boxSizing: "border-box", cursor: "pointer"
                     }}
                   >
                     <option value="">-- None --</option>
@@ -1874,10 +1876,11 @@ export default function GoalDetail({ darkMode }) {
                         <select
                           value={prop.assignee_id}
                           onChange={(e) => handleUpdateProposalField(idx, "assignee_id", e.target.value)}
+                          className="form-select"
                           style={{
-                            width: "100%", padding: "8px 10px", borderRadius: "8px",
+                            width: "100%", padding: "8px 36px 8px 10px", borderRadius: "8px",
                             border: `1px solid ${borderCol}`, background: darkMode ? "#1e293b" : "#ffffff",
-                            color: darkMode ? "#f8fafc" : "#0f172a", fontSize: "13px", outline: "none", boxSizing: "border-box"
+                            color: darkMode ? "#f8fafc" : "#0f172a", fontSize: "13px", outline: "none", boxSizing: "border-box", cursor: "pointer"
                           }}
                         >
                           <option value="">-- Select Member --</option>

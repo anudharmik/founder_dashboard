@@ -444,14 +444,16 @@ export default function OrgSettings({ user, darkMode }) {
                         <select
                           value={m.role}
                           onChange={(e) => handleUpdateRole(m.id, e.target.value)}
+                          className="form-select"
                           style={{
-                            padding: "4px 10px",
+                            padding: "4px 30px 4px 10px",
                             borderRadius: "6px",
                             border: darkMode ? "1px solid #334155" : "1px solid #cbd5e1",
                             background: darkMode ? "#0f172a" : "#ffffff",
                             color: darkMode ? "#f1f5f9" : "#0f172a",
                             fontSize: "13px",
-                            fontWeight: "600"
+                            fontWeight: "600",
+                            cursor: "pointer"
                           }}
                         >
                           <option value="owner">Owner</option>
@@ -798,12 +800,14 @@ export default function OrgSettings({ user, darkMode }) {
                 <select
                   value={inviteRole}
                   onChange={(e) => setInviteRole(e.target.value)}
+                  className="form-select"
                   style={{
-                    width: "100%", padding: "10px 14px", borderRadius: "8px",
+                    width: "100%", padding: "10px 36px 10px 14px", borderRadius: "8px",
                     border: darkMode ? "1px solid #334155" : "1px solid #cbd5e1",
                     background: darkMode ? "#1e293b" : "#f8fafc",
                     color: darkMode ? "#fff" : "#000",
-                    boxSizing: "border-box"
+                    boxSizing: "border-box",
+                    cursor: "pointer"
                   }}
                 >
                   <option value="owner">Owner — Full org-wide control</option>

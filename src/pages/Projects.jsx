@@ -201,8 +201,9 @@ export default function Projects({ darkMode }) {
         <select
           value={deptFilter}
           onChange={(e) => setDeptFilter(e.target.value)}
+          className="form-select"
           style={{
-            padding: "9px 14px", borderRadius: "8px", border: `1px solid ${borderCol}`,
+            padding: "9px 36px 9px 14px", borderRadius: "8px", border: `1px solid ${borderCol}`,
             background: darkMode ? "#0f172a" : "#f8fafc", color: darkMode ? "#f8fafc" : "#0f172a",
             fontSize: "13px", fontWeight: "500", cursor: "pointer", outline: "none"
           }}
@@ -217,8 +218,9 @@ export default function Projects({ darkMode }) {
         <select
           value={teamFilter}
           onChange={(e) => setTeamFilter(e.target.value)}
+          className="form-select"
           style={{
-            padding: "9px 14px", borderRadius: "8px", border: `1px solid ${borderCol}`,
+            padding: "9px 36px 9px 14px", borderRadius: "8px", border: `1px solid ${borderCol}`,
             background: darkMode ? "#0f172a" : "#f8fafc", color: darkMode ? "#f8fafc" : "#0f172a",
             fontSize: "13px", fontWeight: "500", cursor: "pointer", outline: "none"
           }}
@@ -392,11 +394,12 @@ export default function Projects({ darkMode }) {
       {showCreateModal && (
         <div style={{
           position: "fixed", inset: 0, zIndex: 9999, background: "rgba(0,0,0,0.6)",
-          backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px"
+          backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px",
+          overflowY: "auto"
         }}>
           <div style={{
             background: cardBg, borderRadius: "20px", border: `1px solid ${borderCol}`,
-            width: "100%", maxWidth: "520px", padding: "28px", boxShadow: "0 20px 40px rgba(0,0,0,0.3)",
+            width: "100%", maxWidth: "520px", maxHeight: "90vh", overflowY: "auto", padding: "28px", boxShadow: "0 20px 40px rgba(0,0,0,0.3)",
             animation: "scaleUp 0.2s ease"
           }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
@@ -439,10 +442,11 @@ export default function Projects({ darkMode }) {
                   required
                   value={departmentId}
                   onChange={(e) => setDepartmentId(e.target.value)}
+                  className="form-select"
                   style={{
-                    width: "100%", padding: "11px 14px", borderRadius: "10px",
+                    width: "100%", padding: "11px 38px 11px 14px", borderRadius: "10px",
                     border: `1px solid ${borderCol}`, background: darkMode ? "#0f172a" : "#f8fafc",
-                    color: darkMode ? "#f8fafc" : "#0f172a", outline: "none", fontSize: "14px", boxSizing: "border-box"
+                    color: darkMode ? "#f8fafc" : "#0f172a", outline: "none", fontSize: "14px", boxSizing: "border-box", cursor: "pointer"
                   }}
                 >
                   <option value="">-- Select Department --</option>

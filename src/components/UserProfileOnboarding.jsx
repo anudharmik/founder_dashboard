@@ -128,10 +128,11 @@ export default function UserProfileOnboarding({ user, onComplete, darkMode }) {
               <select
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
+                className="form-select"
                 style={{
-                  width: "100%", padding: "11px 14px", borderRadius: "10px",
+                  width: "100%", padding: "11px 38px 11px 14px", borderRadius: "10px",
                   border: `1px solid ${borderCol}`, background: darkMode ? "#0f172a" : "#f8fafc",
-                  color: darkMode ? "#f8fafc" : "#0f172a", outline: "none", fontSize: "14px", boxSizing: "border-box"
+                  color: darkMode ? "#f8fafc" : "#0f172a", outline: "none", fontSize: "14px", boxSizing: "border-box", cursor: "pointer"
                 }}
               >
                 <option value="">-- Prefer not to say --</option>
@@ -153,7 +154,7 @@ export default function UserProfileOnboarding({ user, onComplete, darkMode }) {
               boxShadow: "0 4px 14px rgba(99,102,241,0.35)"
             }}
           >
-            {submitting ? "Saving Profile..." : "Complete Setup & Continue →"}
+            {submitting ? "Saving Profile..." : "Complete Profile →"}
           </button>
         </form>
       </div>
