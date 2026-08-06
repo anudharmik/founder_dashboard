@@ -1,6 +1,7 @@
 import TaskList from "./TaskList";
 import "../App.css";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const ACCENTS = ["#6366f1", "#ec4899", "#f59e0b", "#22c55e", "#06b6d4", "#8b5cf6"];
 
@@ -114,7 +115,9 @@ export default function GoalCard({ goal, tasks, taskInputs, setTaskInputs, addTa
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "12px", flexWrap: "wrap" }}>
                                 <div style={{ flex: 1, minWidth: 0 }}>
                                     <h2 style={{ margin: "0 0 4px", fontSize: "17px", fontWeight: "700", color: darkMode ? "#f1f5f9" : "#0f172a" }}>
-                                        {goal.title}
+                                        <Link to={`/goals/${goal.id}`} style={{ color: "inherit", textDecoration: "none" }}>
+                                            {goal.title}
+                                        </Link>
                                     </h2>
                                     {goal.description && (
                                         <p style={{ margin: 0, fontSize: "13px", color: darkMode ? "#64748b" : "#94a3b8", lineHeight: "1.5" }}>
@@ -122,17 +125,53 @@ export default function GoalCard({ goal, tasks, taskInputs, setTaskInputs, addTa
                                         </p>
                                     )}
                                 </div>
-                                <button
-                                    style={{
-                                        ...btnBase, background: darkMode ? "#334155" : "#f1f5f9",
-                                        color: darkMode ? "#94a3b8" : "#64748b", flexShrink: 0, fontSize: "12px",
-                                    }}
-                                    onClick={() => setIsEditingGoal(true)}
-                                    onMouseEnter={(e) => { e.currentTarget.style.background = darkMode ? "#475569" : "#e2e8f0"; }}
-                                    onMouseLeave={(e) => { e.currentTarget.style.background = darkMode ? "#334155" : "#f1f5f9"; }}
-                                >
-                                    ✏️ Edit
-                                </button>
+
+                                <div style={{ display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap" }}>
+                                    {goal.project_id && (
+                                        <Link
+                                            to={`/projects/${goal.project_id}/docs`}
+                                            style={{
+                                                ...btnBase,
+                                                background: darkMode ? "rgba(99,102,241,0.18)" : "#e0e7ff",
+                                                color: "#6366f1",
+                                                textDecoration: "none",
+                                                fontSize: "12px",
+                                                fontWeight: "700",
+                                                display: "inline-flex",
+                                                alignItems: "center",
+                                                gap: "4px"
+                                            }}
+                                        >
+                                            📄 Project Docs
+                                        </Link>
+                                    )}
+                                    <Link
+                                        to={`/goals/${goal.id}`}
+                                        style={{
+                                            ...btnBase,
+                                            background: darkMode ? "rgba(255,255,255,0.06)" : "#f1f5f9",
+                                            color: darkMode ? "#cbd5e1" : "#475569",
+                                            textDecoration: "none",
+                                            fontSize: "12px",
+                                            display: "inline-flex",
+                                            alignItems: "center",
+                                            gap: "4px"
+                                        }}
+                                    >
+                                        🎯 View Details →
+                                    </Link>
+                                    <button
+                                        style={{
+                                            ...btnBase, background: darkMode ? "#334155" : "#f1f5f9",
+                                            color: darkMode ? "#94a3b8" : "#64748b", flexShrink: 0, fontSize: "12px",
+                                        }}
+                                        onClick={() => setIsEditingGoal(true)}
+                                        onMouseEnter={(e) => { e.currentTarget.style.background = darkMode ? "#475569" : "#e2e8f0"; }}
+                                        onMouseLeave={(e) => { e.currentTarget.style.background = darkMode ? "#334155" : "#f1f5f9"; }}
+                                    >
+                                        ✏️ Edit
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     )}
