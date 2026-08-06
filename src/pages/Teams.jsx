@@ -9,6 +9,12 @@ export default function Teams({ darkMode }) {
   const [teamMembersMap, setTeamMembersMap] = useState({});
   const [loading, setLoading] = useState(true);
 
+  // Departments state
+  const [departments, setDepartments] = useState([]);
+  const [isDeptModalOpen, setIsDeptModalOpen] = useState(false);
+  const [deptName, setDeptName] = useState('');
+  const [submittingDept, setSubmittingDept] = useState(false);
+
   // New/Edit Team Modal
   const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
   const [teamName, setTeamName] = useState('');
@@ -28,6 +34,13 @@ export default function Teams({ darkMode }) {
   async function fetchTeams() {
     setLoading(true);
     try {
+      // Fetch departments
+      const { data: deptData } = await supabase
+        .from('departments')
+        .select('*')
+        .eq('org_id', activeOrg.id);
+      setDepartments(deptData || []);
+
       const { data: teamData, error: teamErr } = await supabase
         .from('teams')
         .select('*')
@@ -54,6 +67,29 @@ export default function Teams({ darkMode }) {
       console.error("Fetch teams error:", err);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleSaveDepartment(e) {
+    e.preventDefault();
+    if (!deptName.trim() || !activeOrg) return;
+    setSubmittingDept(true);
+    try {
+      const { error } = await supabase
+        .from('departments')
+        .insert({
+          org_id: activeOrg.id,
+          name: deptName.trim()
+        });
+      if (error) throw error;
+      toast.success("Department created!");
+      setIsDeptModalOpen(false);
+      setDeptName('');
+      fetchTeams();
+    } catch (err) {
+      toast.error(err.message || "Failed to create department");
+    } finally {
+      setSubmittingDept(false);
     }
   }
 
@@ -195,6 +231,42 @@ export default function Teams({ darkMode }) {
         )}
       </div>
 
+      {/* Department Prerequisite Warning Banner */}
+      {departments.length === 0 && (
+        <div style={{
+          marginBottom: "24px", padding: "16px 20px", borderRadius: "14px",
+          background: darkMode ? "rgba(245,158,11,0.12)" : "#fffbeb",
+          border: "1px solid rgba(245,158,11,0.35)",
+          display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px",
+          boxShadow: "0 4px 12px rgba(245,158,11,0.08)"
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <span style={{ fontSize: "22px" }}>🏢</span>
+            <div>
+              <div style={{ fontSize: "14.5px", fontWeight: "700", color: darkMode ? "#fbbf24" : "#b45309" }}>
+                You need a Department first
+              </div>
+              <div style={{ fontSize: "13px", color: darkMode ? "#cbd5e1" : "#475569" }}>
+                Teams structure members across departments. Create at least one department before defining teams.
+              </div>
+            </div>
+          </div>
+          {canManageTeams && (
+            <button
+              onClick={() => { setDeptName(''); setIsDeptModalOpen(true); }}
+              style={{
+                padding: "9px 18px", borderRadius: "10px", border: "none",
+                background: "linear-gradient(135deg, #f59e0b, #d97706)", color: "#ffffff",
+                fontWeight: "700", fontSize: "13px", cursor: "pointer",
+                boxShadow: "0 4px 12px rgba(245,158,11,0.3)"
+              }}
+            >
+              + Create Department Now
+            </button>
+          )}
+        </div>
+      )}
+
       {/* Grid of Teams */}
       {loading ? (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "20px" }}>
@@ -322,6 +394,28 @@ export default function Teams({ darkMode }) {
             <h3 style={{ margin: "0 0 16px", color: darkMode ? "#f8fafc" : "#0f172a" }}>
               {editingTeamId ? "Edit Team" : "Create New Team"}
             </h3>
+
+            {departments.length === 0 && (
+              <div style={{
+                marginBottom: "16px", padding: "12px 14px", borderRadius: "10px",
+                background: darkMode ? "rgba(245,158,11,0.15)" : "#fffbeb",
+                border: "1px solid rgba(245,158,11,0.35)", fontSize: "12.5px",
+                color: darkMode ? "#fbbf24" : "#b45309"
+              }}>
+                ⚠️ You need a Department first before creating a Team.{" "}
+                <button
+                  type="button"
+                  onClick={() => { setDeptName(''); setIsDeptModalOpen(true); }}
+                  style={{
+                    background: "none", border: "none", color: "#6366f1", fontWeight: "700",
+                    cursor: "pointer", textDecoration: "underline", padding: 0
+                  }}
+                >
+                  [+ Create one now]
+                </button>
+              </div>
+            )}
+
             <form onSubmit={handleSaveTeam}>
               <div style={{ marginBottom: "16px" }}>
                 <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: darkMode ? "#cbd5e1" : "#475569", marginBottom: "6px" }}>
@@ -356,6 +450,72 @@ export default function Teams({ darkMode }) {
                   style={{ padding: "8px 16px", borderRadius: "8px", border: "none", background: "#6366f1", color: "#fff", fontWeight: "700", cursor: "pointer" }}
                 >
                   {submittingTeam ? "Saving..." : "Save Team"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Create Department Modal (Inline resolution) */}
+      {isDeptModalOpen && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 10001,
+          background: "rgba(0,0,0,0.65)", backdropFilter: "blur(6px)",
+          display: "flex", alignItems: "center", justifyContent: "center", padding: "16px"
+        }}>
+          <div style={{
+            background: darkMode ? "#0f172a" : "#ffffff",
+            border: darkMode ? "1px solid #1e293b" : "1px solid #cbd5e1",
+            borderRadius: "14px", padding: "24px", width: "100%", maxWidth: "420px",
+            boxShadow: "0 20px 40px rgba(0,0,0,0.3)"
+          }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+              <h3 style={{ margin: 0, color: darkMode ? "#f8fafc" : "#0f172a", fontSize: "18px", fontWeight: "800" }}>
+                Create New Department
+              </h3>
+              <button
+                onClick={() => setIsDeptModalOpen(false)}
+                style={{ background: "none", border: "none", color: "#64748b", fontSize: "20px", cursor: "pointer" }}
+              >
+                ✕
+              </button>
+            </div>
+            <form onSubmit={handleSaveDepartment}>
+              <div style={{ marginBottom: "16px" }}>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: darkMode ? "#cbd5e1" : "#475569", marginBottom: "6px" }}>
+                  DEPARTMENT NAME *
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Engineering, Product, Growth"
+                  value={deptName}
+                  onChange={(e) => setDeptName(e.target.value)}
+                  required
+                  autoFocus
+                  style={{
+                    width: "100%", padding: "10px 14px", borderRadius: "8px",
+                    border: darkMode ? "1px solid #334155" : "1px solid #cbd5e1",
+                    background: darkMode ? "#1e293b" : "#f8fafc",
+                    color: darkMode ? "#fff" : "#000",
+                    boxSizing: "border-box"
+                  }}
+                />
+              </div>
+              <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
+                <button
+                  type="button"
+                  onClick={() => setIsDeptModalOpen(false)}
+                  style={{ padding: "8px 16px", borderRadius: "8px", border: "1px solid #64748b", background: "transparent", color: darkMode ? "#cbd5e1" : "#475569", cursor: "pointer" }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={submittingDept}
+                  style={{ padding: "8px 16px", borderRadius: "8px", border: "none", background: "#6366f1", color: "#fff", fontWeight: "700", cursor: "pointer" }}
+                >
+                  {submittingDept ? "Saving..." : "Save Department"}
                 </button>
               </div>
             </form>

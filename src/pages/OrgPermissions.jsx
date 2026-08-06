@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useOrg } from '../context/OrgContext';
 import { supabase } from '../supabaseClient';
 import toast from 'react-hot-toast';
 
 export default function OrgPermissions({ user, darkMode }) {
+  const navigate = useNavigate();
   const { activeOrg, userRole, getMemberDisplayName } = useOrg() || {};
   const [grants, setGrants] = useState([]);
   const [members, setMembers] = useState([]);
@@ -312,6 +314,49 @@ export default function OrgPermissions({ user, darkMode }) {
                 <label style={{ display: "block", marginBottom: "6px", fontSize: "12px", fontWeight: "700", color: textMuted }}>
                   TARGET {scopeType.toUpperCase()} *
                 </label>
+
+                {scopeType === 'department' && departments.length === 0 && (
+                  <div style={{
+                    marginBottom: "10px", padding: "10px 12px", borderRadius: "8px",
+                    background: darkMode ? "rgba(245,158,11,0.15)" : "#fffbeb",
+                    border: "1px solid rgba(245,158,11,0.35)", fontSize: "12px",
+                    color: darkMode ? "#fbbf24" : "#b45309"
+                  }}>
+                    ⚠️ No departments exist yet.{" "}
+                    <button
+                      type="button"
+                      onClick={() => navigate('/departments')}
+                      style={{
+                        background: "none", border: "none", color: "#6366f1", fontWeight: "700",
+                        cursor: "pointer", textDecoration: "underline", padding: 0
+                      }}
+                    >
+                      [+ Create Department]
+                    </button>
+                  </div>
+                )}
+
+                {scopeType === 'project' && projects.length === 0 && (
+                  <div style={{
+                    marginBottom: "10px", padding: "10px 12px", borderRadius: "8px",
+                    background: darkMode ? "rgba(245,158,11,0.15)" : "#fffbeb",
+                    border: "1px solid rgba(245,158,11,0.35)", fontSize: "12px",
+                    color: darkMode ? "#fbbf24" : "#b45309"
+                  }}>
+                    ⚠️ No projects exist yet.{" "}
+                    <button
+                      type="button"
+                      onClick={() => navigate('/projects')}
+                      style={{
+                        background: "none", border: "none", color: "#6366f1", fontWeight: "700",
+                        cursor: "pointer", textDecoration: "underline", padding: 0
+                      }}
+                    >
+                      [+ Create Project]
+                    </button>
+                  </div>
+                )}
+
                 <select
                   required
                   value={scopeId}

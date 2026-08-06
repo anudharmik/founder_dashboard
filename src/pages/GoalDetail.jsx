@@ -65,6 +65,10 @@ export default function GoalDetail({ darkMode }) {
   const [msWeight, setMsWeight] = useState(1);
   const [submittingMs, setSubmittingMs] = useState(false);
 
+  // Project Docs State
+  const [projectDocs, setProjectDocs] = useState([]);
+  const [showDocsModal, setShowDocsModal] = useState(false);
+
   // Milestone Override State
   const [showMsOverrideModal, setShowMsOverrideModal] = useState(false);
   const [selectedMsForOverride, setSelectedMsForOverride] = useState(null);
@@ -240,7 +244,7 @@ export default function GoalDetail({ darkMode }) {
       setEditWeight(goalData.weight || 1);
       setOverrideInput(goalData.progress_override !== null ? String(goalData.progress_override) : "");
 
-      // 2. Fetch parent project
+      // 2. Fetch parent project & docs
       if (goalData.project_id) {
         const { data: projData } = await supabase
           .from('projects')
@@ -248,6 +252,13 @@ export default function GoalDetail({ darkMode }) {
           .eq('id', goalData.project_id)
           .single();
         if (projData) setProject(projData);
+
+        const { data: docsData } = await supabase
+          .from('project_docs')
+          .select('*')
+          .eq('project_id', goalData.project_id)
+          .order('updated_at', { ascending: false });
+        setProjectDocs(docsData || []);
       }
 
       // 3. Fetch Milestones for this goal
@@ -718,18 +729,32 @@ export default function GoalDetail({ darkMode }) {
             )}
           </div>
 
-          {canManageGoal && (
+          <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
             <button
-              onClick={() => setShowEditModal(true)}
+              onClick={() => setShowDocsModal(true)}
               style={{
-                padding: "9px 16px", borderRadius: "10px", border: `1px solid ${borderCol}`,
-                background: darkMode ? "#0f172a" : "#f8fafc", color: darkMode ? "#f8fafc" : "#0f172a",
-                fontWeight: "600", fontSize: "13px", cursor: "pointer"
+                padding: "9px 16px", borderRadius: "10px", border: "1px solid rgba(99,102,241,0.4)",
+                background: darkMode ? "rgba(99,102,241,0.15)" : "#e0e7ff",
+                color: "#6366f1", fontWeight: "700", fontSize: "13px", cursor: "pointer",
+                display: "flex", alignItems: "center", gap: "6px", transition: "all 0.15s ease"
               }}
             >
-              ✏️ Edit Goal
+              📄 Project Docs ({projectDocs.length})
             </button>
-          )}
+
+            {canManageGoal && (
+              <button
+                onClick={() => setShowEditModal(true)}
+                style={{
+                  padding: "9px 16px", borderRadius: "10px", border: `1px solid ${borderCol}`,
+                  background: darkMode ? "#0f172a" : "#f8fafc", color: darkMode ? "#f8fafc" : "#0f172a",
+                  fontWeight: "600", fontSize: "13px", cursor: "pointer"
+                }}
+              >
+                ✏️ Edit Goal
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Progress Display Gauge */}
@@ -1926,6 +1951,125 @@ export default function GoalDetail({ darkMode }) {
         userRole={userRole}
         onTaskUpdate={loadData}
       />
+
+      {/* Project Docs Modal */}
+      {showDocsModal && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 10000,
+          background: "rgba(0,0,0,0.65)", backdropFilter: "blur(6px)",
+          display: "flex", alignItems: "center", justifyContent: "center", padding: "20px"
+        }}>
+          <div style={{
+            background: cardBg, borderRadius: "20px", border: `1px solid ${borderCol}`,
+            width: "100%", maxWidth: "600px", maxHeight: "85vh", overflowY: "auto", padding: "28px",
+            boxShadow: "0 20px 40px rgba(0,0,0,0.3)"
+          }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+              <div>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
+                  <span style={{ padding: "3px 10px", borderRadius: "12px", fontSize: "11px", fontWeight: "700", background: "rgba(99,102,241,0.15)", color: "#818cf8", textTransform: "uppercase" }}>
+                    📄 Project Documentation
+                  </span>
+                  <span style={{ fontSize: "12.5px", color: textMuted }}>
+                    {project ? project.title : "Project"}
+                  </span>
+                </div>
+                <h2 style={{ margin: 0, fontSize: "20px", fontWeight: "800", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+                  Project Specs & Knowledge
+                </h2>
+              </div>
+              <button
+                onClick={() => setShowDocsModal(false)}
+                style={{ background: "none", border: "none", color: textMuted, fontSize: "20px", cursor: "pointer" }}
+              >
+                ✕
+              </button>
+            </div>
+
+            {projectDocs.length === 0 ? (
+              <div style={{
+                textAlign: "center", padding: "40px 20px", background: darkMode ? "#0f172a" : "#f8fafc",
+                borderRadius: "14px", border: `1px dashed ${borderCol}`
+              }}>
+                <div style={{ fontSize: "36px", marginBottom: "10px" }}>📄</div>
+                <h4 style={{ margin: "0 0 6px", fontSize: "16px", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+                  No documentation pages created yet
+                </h4>
+                <p style={{ margin: "0 0 16px", fontSize: "13px", color: textMuted }}>
+                  Keep your team aligned by creating specs, technical architecture docs, and meeting notes.
+                </p>
+                {project && (
+                  <Link
+                    to={`/projects/${project.id}/docs`}
+                    target="_blank"
+                    style={{
+                      padding: "9px 18px", borderRadius: "8px", background: "#6366f1",
+                      color: "white", textDecoration: "none", fontWeight: "600", fontSize: "13px", display: "inline-block"
+                    }}
+                  >
+                    + Create First Document ↗
+                  </Link>
+                )}
+              </div>
+            ) : (
+              <div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+                  <span style={{ fontSize: "13px", fontWeight: "600", color: textMuted }}>
+                    {projectDocs.length} Document{projectDocs.length !== 1 ? "s" : ""} Available
+                  </span>
+                  {project && (
+                    <Link
+                      to={`/projects/${project.id}/docs`}
+                      target="_blank"
+                      style={{ fontSize: "12.5px", color: "#6366f1", fontWeight: "700", textDecoration: "none" }}
+                    >
+                      Open Full Docs View ↗
+                    </Link>
+                  )}
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                  {projectDocs.map(doc => {
+                    const snippet = doc.content ? doc.content.replace(/<[^>]*>?/gm, '').slice(0, 100) : 'Empty document';
+                    return (
+                      <div
+                        key={doc.id}
+                        style={{
+                          padding: "14px 18px", borderRadius: "12px",
+                          background: darkMode ? "#0f172a" : "#f8fafc",
+                          border: `1px solid ${borderCol}`,
+                          display: "flex", justifyContent: "space-between", alignItems: "center", gap: "12px"
+                        }}
+                      >
+                        <div>
+                          <h4 style={{ margin: "0 0 4px", fontSize: "14.5px", fontWeight: "700", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+                            📄 {doc.title}
+                          </h4>
+                          <p style={{ margin: 0, fontSize: "12.5px", color: textMuted }}>
+                            {snippet}...
+                          </p>
+                        </div>
+                        {project && (
+                          <Link
+                            to={`/projects/${project.id}/docs/${doc.id}`}
+                            target="_blank"
+                            style={{
+                              padding: "6px 12px", borderRadius: "6px", border: `1px solid ${borderCol}`,
+                              background: "transparent", color: "#6366f1", fontSize: "12px", fontWeight: "600",
+                              textDecoration: "none", whiteSpace: "nowrap"
+                            }}
+                          >
+                            Read Doc ↗
+                          </Link>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

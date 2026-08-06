@@ -26,6 +26,35 @@ export default function Projects({ darkMode }) {
   const [selectedTeamIds, setSelectedTeamIds] = useState([]);
   const [submitting, setSubmitting] = useState(false);
 
+  // Inline Department Creation State
+  const [isDeptModalOpen, setIsDeptModalOpen] = useState(false);
+  const [deptNameInput, setDeptNameInput] = useState('');
+  const [submittingDept, setSubmittingDept] = useState(false);
+
+  async function handleSaveDepartment(e) {
+    e.preventDefault();
+    if (!deptNameInput.trim() || !activeOrg) return;
+    setSubmittingDept(true);
+    try {
+      const { data: newDept, error } = await supabase
+        .from('departments')
+        .insert({ org_id: activeOrg.id, name: deptNameInput.trim() })
+        .select()
+        .single();
+
+      if (error) throw error;
+      toast.success("Department created!");
+      setIsDeptModalOpen(false);
+      setDeptNameInput('');
+      if (newDept) setDepartmentId(newDept.id);
+      loadData();
+    } catch (err) {
+      toast.error(err.message || "Failed to create department");
+    } finally {
+      setSubmittingDept(false);
+    }
+  }
+
   const canManageProjects = userRole === 'owner' || userRole === 'manager';
 
   useEffect(() => {
@@ -414,6 +443,27 @@ export default function Projects({ darkMode }) {
               </button>
             </div>
 
+            {departments.length === 0 && (
+              <div style={{
+                marginBottom: "16px", padding: "12px 14px", borderRadius: "10px",
+                background: darkMode ? "rgba(245,158,11,0.15)" : "#fffbeb",
+                border: "1px solid rgba(245,158,11,0.35)", fontSize: "12.5px",
+                color: darkMode ? "#fbbf24" : "#b45309"
+              }}>
+                ⚠️ You need a Department first before creating a Project.{" "}
+                <button
+                  type="button"
+                  onClick={() => { setDeptNameInput(''); setIsDeptModalOpen(true); }}
+                  style={{
+                    background: "none", border: "none", color: "#6366f1", fontWeight: "700",
+                    cursor: "pointer", textDecoration: "underline", padding: 0
+                  }}
+                >
+                  [+ Create Department Now]
+                </button>
+              </div>
+            )}
+
             <form onSubmit={handleCreateProject}>
               {/* Title */}
               <div style={{ marginBottom: "16px" }}>
@@ -529,6 +579,72 @@ export default function Projects({ darkMode }) {
                   }}
                 >
                   {submitting ? "Creating..." : "Create Project"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Create Department Modal (Inline resolution) */}
+      {isDeptModalOpen && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 10000,
+          background: "rgba(0,0,0,0.65)", backdropFilter: "blur(6px)",
+          display: "flex", alignItems: "center", justifyContent: "center", padding: "16px"
+        }}>
+          <div style={{
+            background: darkMode ? "#0f172a" : "#ffffff",
+            border: darkMode ? "1px solid #1e293b" : "1px solid #cbd5e1",
+            borderRadius: "14px", padding: "24px", width: "100%", maxWidth: "420px",
+            boxShadow: "0 20px 40px rgba(0,0,0,0.3)"
+          }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+              <h3 style={{ margin: 0, color: darkMode ? "#f8fafc" : "#0f172a", fontSize: "18px", fontWeight: "800" }}>
+                Create New Department
+              </h3>
+              <button
+                onClick={() => setIsDeptModalOpen(false)}
+                style={{ background: "none", border: "none", color: "#64748b", fontSize: "20px", cursor: "pointer" }}
+              >
+                ✕
+              </button>
+            </div>
+            <form onSubmit={handleSaveDepartment}>
+              <div style={{ marginBottom: "16px" }}>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: darkMode ? "#cbd5e1" : "#475569", marginBottom: "6px" }}>
+                  DEPARTMENT NAME *
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Engineering, Product, Growth"
+                  value={deptNameInput}
+                  onChange={(e) => setDeptNameInput(e.target.value)}
+                  required
+                  autoFocus
+                  style={{
+                    width: "100%", padding: "10px 14px", borderRadius: "8px",
+                    border: darkMode ? "1px solid #334155" : "1px solid #cbd5e1",
+                    background: darkMode ? "#1e293b" : "#f8fafc",
+                    color: darkMode ? "#fff" : "#000",
+                    boxSizing: "border-box"
+                  }}
+                />
+              </div>
+              <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
+                <button
+                  type="button"
+                  onClick={() => setIsDeptModalOpen(false)}
+                  style={{ padding: "8px 16px", borderRadius: "8px", border: "1px solid #64748b", background: "transparent", color: darkMode ? "#cbd5e1" : "#475569", cursor: "pointer" }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={submittingDept}
+                  style={{ padding: "8px 16px", borderRadius: "8px", border: "none", background: "#6366f1", color: "#fff", fontWeight: "700", cursor: "pointer" }}
+                >
+                  {submittingDept ? "Saving..." : "Save Department"}
                 </button>
               </div>
             </form>

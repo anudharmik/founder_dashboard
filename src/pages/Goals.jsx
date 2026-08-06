@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../supabaseClient';
 import GoalCard from '../components/GoalCard';
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useOrg } from "../context/OrgContext";
 import toast from "react-hot-toast";
 
 export default function Goals({ user, goals, tasks, projects, setTasks, fetchGoals, fetchTasks, toggleTask, updateTask, updateGoal, darkMode, loading, aiInsights = { focusToday: [] } }) {
+  const navigate = useNavigate();
   const { activeOrg, userRole, canManageGoals } = useOrg() || {};
   const canManage = canManageGoals ?? (userRole === 'owner' || userRole === 'manager');
 
@@ -32,9 +33,15 @@ export default function Goals({ user, goals, tasks, projects, setTasks, fetchGoa
     }
     if (!user || !activeOrg) { alert("You must be logged in and have an active organization"); return; }
 
+    const targetProjId = selectedProject || (projects.length > 0 ? projects[0].id : null);
+    if (!targetProjId) {
+      toast.error("Please create a Project first before adding goals.");
+      return;
+    }
+
     const { error } = await supabase.from("goals").insert([{
       org_id: activeOrg.id,
-      project_id: selectedProject || null,
+      project_id: targetProjId,
       title: title.trim(),
       description: description.trim() || null,
       weight: 1,
@@ -152,6 +159,41 @@ export default function Goals({ user, goals, tasks, projects, setTasks, fetchGoa
           </div>
         )}
       </div>
+
+      {/* Project Prerequisite Warning Banner */}
+      {projects.length === 0 && (
+        <div style={{
+          marginBottom: "24px", padding: "16px 20px", borderRadius: "14px",
+          background: darkMode ? "rgba(245,158,11,0.12)" : "#fffbeb",
+          border: "1px solid rgba(245,158,11,0.35)",
+          display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px"
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <span style={{ fontSize: "22px" }}>📁</span>
+            <div>
+              <div style={{ fontSize: "14.5px", fontWeight: "700", color: darkMode ? "#fbbf24" : "#b45309" }}>
+                You need a Project first
+              </div>
+              <div style={{ fontSize: "13px", color: darkMode ? "#cbd5e1" : "#475569" }}>
+                Goals must be linked to a Project. Create at least one project before adding goals.
+              </div>
+            </div>
+          </div>
+          {canManage && (
+            <button
+              onClick={() => navigate('/projects')}
+              style={{
+                padding: "9px 18px", borderRadius: "10px", border: "none",
+                background: "linear-gradient(135deg, #6366f1, #8b5cf6)", color: "#ffffff",
+                fontWeight: "700", fontSize: "13px", cursor: "pointer",
+                boxShadow: "0 4px 12px rgba(99,102,241,0.3)"
+              }}
+            >
+              + Create Project Now
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Add goal form (Owner/Manager only) */}
       {canManage && (
