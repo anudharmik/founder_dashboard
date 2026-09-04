@@ -9,7 +9,7 @@ async function testSqlEndpoints() {
   const endpoints = [
     `${url}/pg/v1/query`,
     `${url}/rest/v1/rpc/exec_sql`,
-    `https://api.supabase.com/v1/projects/nxtcrjszmxqyaixpthpb/database/query`
+    `https://api.supabase.com/v1/projects/eisgwjzzcwgjunfuboen/database/query`
   ];
 
   for (const ep of endpoints) {
