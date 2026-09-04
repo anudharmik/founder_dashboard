@@ -45,11 +45,11 @@ export default function Login() {
                 .single();
 
               if (!orgErr && orgData) {
-                await supabase.from("org_members").insert({
+                await supabase.from("org_members").upsert({
                   org_id: orgData.id,
                   user_id: newUserId,
                   role: "owner"
-                });
+                }, { onConflict: "org_id, user_id" });
               }
             } catch (createErr) {
               console.warn("Org scaffolding on signup notice:", createErr);

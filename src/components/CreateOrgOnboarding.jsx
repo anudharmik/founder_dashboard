@@ -27,16 +27,16 @@ export default function CreateOrgOnboarding({ user, darkMode }) {
 
       if (orgErr) throw orgErr;
 
-      // 2. Add current user as Owner
+      // 2. Add current user as Owner (use upsert to handle DB trigger conflict gracefully)
       const { error: memErr } = await supabase
         .from("org_members")
-        .insert({
+        .upsert({
           org_id: newOrg.id,
           user_id: user.id,
           role: "owner"
-        });
+        }, { onConflict: "org_id, user_id" });
 
-      if (memErr) throw memErr;
+      if (memErr && memErr.code !== "23505") throw memErr;
 
       toast.success("Organization created! Welcome to FounderOS.");
 
