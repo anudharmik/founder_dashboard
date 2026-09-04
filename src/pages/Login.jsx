@@ -144,14 +144,13 @@ export default function Login() {
           flex-direction: column;
           justify-content: center;
           align-items: center;
-          padding: 40px 24px;
+          padding: 32px 20px;
           position: relative;
           z-index: 10;
           flex: 1;
           min-width: 0;
           overflow-y: auto;
-          background: rgba(255, 248, 239, 0.7);
-          backdrop-filter: blur(16px);
+          background: transparent;
         }
         @media (min-width: 900px) {
           .astrav-right {
@@ -160,17 +159,29 @@ export default function Login() {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
             box-shadow: -10px 0 40px rgba(46,32,19,0.04);
+            padding: 40px 24px;
           }
         }
 
         .astrav-form-card {
           width: 100%;
-          max-width: 380px;
+          max-width: 390px;
           padding: 32px 28px;
-          border-radius: 20px;
-          background: #ffffff;
-          border: 1px solid #F0DFC9;
-          box-shadow: 0 12px 32px rgba(46,32,19,0.06);
+          border-radius: 22px;
+          background: rgba(255, 255, 255, 0.76);
+          backdrop-filter: blur(14px);
+          -webkit-backdrop-filter: blur(14px);
+          border: 1px solid rgba(240, 223, 201, 0.85);
+          box-shadow: 0 16px 40px rgba(46, 32, 19, 0.1);
+        }
+
+        @media (min-width: 900px) {
+          .astrav-form-card {
+            background: #ffffff;
+            border: 1px solid #F0DFC9;
+            box-shadow: 0 12px 32px rgba(46,32,19,0.06);
+            backdrop-filter: none;
+          }
         }
 
         /* Inputs */
@@ -179,7 +190,7 @@ export default function Login() {
           padding: 12px 16px;
           border-radius: 10px;
           border: 1px solid #F0DFC9;
-          background: #FFF8EF;
+          background: rgba(255, 248, 239, 0.85);
           color: #2E2013;
           font-size: 14px;
           outline: none;
@@ -212,12 +223,12 @@ export default function Login() {
           justify-content: center;
           gap: 8px;
           letter-spacing: 0.01em;
-          box-shadow: 0 4px 14px rgba(207,74,17,0.3);
+          box-shadow: 0 4px 14px rgba(207,74,17,0.35);
         }
         .astrav-btn-primary:hover:not(:disabled) {
           background: #b83e0c;
           transform: translateY(-1px);
-          box-shadow: 0 6px 20px rgba(207,74,17,0.4);
+          box-shadow: 0 6px 20px rgba(207,74,17,0.45);
         }
         .astrav-btn-primary:active:not(:disabled) { transform: scale(0.98); }
         .astrav-btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
@@ -256,7 +267,7 @@ export default function Login() {
         }
       `}</style>
 
-      {/* ── GLOBAL BACKGROUND SVG LANDSCAPE (VISIBLE ON BOTH MOBILE & DESKTOP) ── */}
+      {/* ── GLOBAL BACKGROUND SVG LANDSCAPE (VIBRANT & VISIBLE ON MOBILE & DESKTOP) ── */}
       <div style={{
         position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1,
         overflow: "hidden",
@@ -268,33 +279,35 @@ export default function Login() {
           transition: "transform 0.1s linear",
         }}>
           <svg width="100%" height="100%" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid slice" fill="none">
-            <circle cx="220" cy="180" r="140" fill="#ffec69" opacity="0.45" />
-            <circle cx="220" cy="180" r="90" fill="#fab60a" opacity="0.35" />
-            <circle cx="850" cy="140" r="190" fill="#f7d7b0" opacity="0.35" />
+            <circle cx="180" cy="160" r="160" fill="#ffec69" opacity="0.6" />
+            <circle cx="180" cy="160" r="100" fill="#fab60a" opacity="0.45" />
+            <circle cx="850" cy="140" r="220" fill="#f7d7b0" opacity="0.5" />
+            <circle cx="500" cy="100" r="120" fill="#ffec69" opacity="0.35" />
           </svg>
         </div>
 
-        {/* Layer 2 — Distant Peach Horizons */}
+        {/* Layer 2 — Distant Peach Horizons & Waves */}
         <div style={{
           position: "absolute", inset: "-30px",
           transform: `translate(${parallax.x * 12}px, ${parallax.y * 12}px)`,
           transition: "transform 0.1s linear",
         }}>
           <svg width="100%" height="100%" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid slice" fill="none">
-            <path d="M-100 650 Q 200 500 500 620 T 1100 580 V 900 H -100 Z" fill="#f7d7b0" opacity="0.6" />
+            <path d="M-100 580 Q 200 440 500 560 T 1100 520 V 900 H -100 Z" fill="#f7d7b0" opacity="0.75" />
           </svg>
         </div>
 
-        {/* Layer 3 — Midground Green Growth Hills */}
+        {/* Layer 3 — Midground Green Growth Hills & Vector Markers */}
         <div style={{
           position: "absolute", inset: "-40px",
           transform: `translate(${parallax.x * 20}px, ${parallax.y * 20}px)`,
           transition: "transform 0.1s linear",
         }}>
           <svg width="100%" height="100%" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid slice" fill="none">
-            <path d="M-100 700 Q 300 560 650 680 T 1200 640 V 900 H -100 Z" fill="#2e936f" opacity="0.22" />
-            <polygon points="450,480 480,540 420,540" fill="#2e936f" opacity="0.35" />
-            <polygon points="720,440 760,520 680,520" fill="#fab60a" opacity="0.35" />
+            <path d="M-100 640 Q 300 500 650 620 T 1200 580 V 900 H -100 Z" fill="#2e936f" opacity="0.32" />
+            <polygon points="450,420 480,480 420,480" fill="#2e936f" opacity="0.45" />
+            <polygon points="720,380 760,460 680,460" fill="#fab60a" opacity="0.5" />
+            <polygon points="180,460 210,520 150,520" fill="#f15e1c" opacity="0.4" />
           </svg>
         </div>
 
@@ -305,10 +318,11 @@ export default function Login() {
           transition: "transform 0.1s linear",
         }}>
           <svg width="100%" height="100%" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid slice" fill="none">
-            <path d="M-50 750 Q 400 620 800 730 T 1150 700 V 900 H -50 Z" fill="#f7d7b0" opacity="0.45" />
-            <circle cx="780" cy="580" r="9" fill="#f15e1c" opacity="0.65" />
-            <circle cx="820" cy="530" r="15" fill="#fab60a" opacity="0.75" />
-            <circle cx="870" cy="470" r="22" fill="#2e936f" opacity="0.85" />
+            <path d="M-50 710 Q 400 580 800 690 T 1150 660 V 900 H -50 Z" fill="#f7d7b0" opacity="0.5" />
+            <circle cx="160" cy="540" r="14" fill="#f15e1c" opacity="0.75" />
+            <circle cx="780" cy="520" r="12" fill="#f15e1c" opacity="0.75" />
+            <circle cx="830" cy="460" r="18" fill="#fab60a" opacity="0.8" />
+            <circle cx="890" cy="400" r="26" fill="#2e936f" opacity="0.9" />
           </svg>
         </div>
       </div>
