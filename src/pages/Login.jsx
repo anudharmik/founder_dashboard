@@ -23,12 +23,12 @@ export default function Login() {
   const animFrameRef = useRef(null);
 
   useEffect(() => {
-    // Check prefers-reduced-motion
+    // Check prefers-reduced-motion & mobile screen
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const isMobile = window.innerWidth < 768;
 
     if (prefersReducedMotion || isMobile) {
-      return; // Skip parallax on reduced motion or mobile screens
+      return; // Skip mousemove parallax on reduced motion or mobile screens
     }
 
     function handleMouseMove(e) {
@@ -132,8 +132,8 @@ export default function Login() {
           flex-direction: column;
           justify-content: space-between;
           position: relative;
+          z-index: 2;
           overflow: hidden;
-          background: #FFF8EF;
         }
         @media (min-width: 900px) {
           .astrav-left { display: flex; }
@@ -150,15 +150,27 @@ export default function Login() {
           flex: 1;
           min-width: 0;
           overflow-y: auto;
-          background: #FFF8EF;
+          background: rgba(255, 248, 239, 0.7);
+          backdrop-filter: blur(16px);
         }
         @media (min-width: 900px) {
           .astrav-right {
             flex: 0 0 480px;
             border-left: 1px solid #F0DFC9;
-            background: #ffffff;
-            box-shadow: -10px 0 40px rgba(46,32,19,0.03);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: -10px 0 40px rgba(46,32,19,0.04);
           }
+        }
+
+        .astrav-form-card {
+          width: 100%;
+          max-width: 380px;
+          padding: 32px 28px;
+          border-radius: 20px;
+          background: #ffffff;
+          border: 1px solid #F0DFC9;
+          box-shadow: 0 12px 32px rgba(46,32,19,0.06);
         }
 
         /* Inputs */
@@ -244,67 +256,65 @@ export default function Login() {
         }
       `}</style>
 
-      {/* ── LEFT PANEL: BRAND & PARALLAX ILLUSTRATION ── */}
-      <div className="astrav-left">
-
-        {/* SVG Parallax Landscape Illustration */}
+      {/* ── GLOBAL BACKGROUND SVG LANDSCAPE (VISIBLE ON BOTH MOBILE & DESKTOP) ── */}
+      <div style={{
+        position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1,
+        overflow: "hidden",
+      }}>
+        {/* Layer 1 — Sky & Sun */}
         <div style={{
-          position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1,
-          overflow: "hidden",
+          position: "absolute", inset: "-20px",
+          transform: `translate(${parallax.x * 6}px, ${parallax.y * 6}px)`,
+          transition: "transform 0.1s linear",
         }}>
-          {/* Layer 1 — Sky & Sun (Slow drift) */}
-          <div style={{
-            position: "absolute", inset: "-20px",
-            transform: `translate(${parallax.x * 6}px, ${parallax.y * 6}px)`,
-            transition: "transform 0.1s linear",
-          }}>
-            <svg width="100%" height="100%" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid slice" fill="none">
-              <circle cx="200" cy="180" r="120" fill="#ffec69" opacity="0.4" />
-              <circle cx="200" cy="180" r="80" fill="#fab60a" opacity="0.3" />
-              <circle cx="850" cy="120" r="180" fill="#f7d7b0" opacity="0.3" />
-            </svg>
-          </div>
-
-          {/* Layer 2 — Distant Peach Horizons (Medium drift) */}
-          <div style={{
-            position: "absolute", inset: "-30px",
-            transform: `translate(${parallax.x * 12}px, ${parallax.y * 12}px)`,
-            transition: "transform 0.1s linear",
-          }}>
-            <svg width="100%" height="100%" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid slice" fill="none">
-              <path d="M-100 650 Q 200 500 500 620 T 1100 580 V 900 H -100 Z" fill="#f7d7b0" opacity="0.5" />
-            </svg>
-          </div>
-
-          {/* Layer 3 — Midground Green Growth Hills (Stronger drift) */}
-          <div style={{
-            position: "absolute", inset: "-40px",
-            transform: `translate(${parallax.x * 20}px, ${parallax.y * 20}px)`,
-            transition: "transform 0.1s linear",
-          }}>
-            <svg width="100%" height="100%" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid slice" fill="none">
-              <path d="M-100 700 Q 300 560 650 680 T 1200 640 V 900 H -100 Z" fill="#2e936f" opacity="0.18" />
-              {/* Geometric Momentum Vectors */}
-              <polygon points="450,480 480,540 420,540" fill="#2e936f" opacity="0.3" />
-              <polygon points="720,440 760,520 680,520" fill="#fab60a" opacity="0.3" />
-            </svg>
-          </div>
-
-          {/* Layer 4 — Foreground Brand Orange Momentum Accents */}
-          <div style={{
-            position: "absolute", inset: "-50px",
-            transform: `translate(${parallax.x * 30}px, ${parallax.y * 30}px)`,
-            transition: "transform 0.1s linear",
-          }}>
-            <svg width="100%" height="100%" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid slice" fill="none">
-              <path d="M-50 750 Q 400 620 800 730 T 1150 700 V 900 H -50 Z" fill="#f7d7b0" opacity="0.4" />
-              <circle cx="780" cy="580" r="8" fill="#f15e1c" opacity="0.6" />
-              <circle cx="820" cy="530" r="14" fill="#fab60a" opacity="0.7" />
-              <circle cx="870" cy="470" r="20" fill="#2e936f" opacity="0.8" />
-            </svg>
-          </div>
+          <svg width="100%" height="100%" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid slice" fill="none">
+            <circle cx="220" cy="180" r="140" fill="#ffec69" opacity="0.45" />
+            <circle cx="220" cy="180" r="90" fill="#fab60a" opacity="0.35" />
+            <circle cx="850" cy="140" r="190" fill="#f7d7b0" opacity="0.35" />
+          </svg>
         </div>
 
+        {/* Layer 2 — Distant Peach Horizons */}
+        <div style={{
+          position: "absolute", inset: "-30px",
+          transform: `translate(${parallax.x * 12}px, ${parallax.y * 12}px)`,
+          transition: "transform 0.1s linear",
+        }}>
+          <svg width="100%" height="100%" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid slice" fill="none">
+            <path d="M-100 650 Q 200 500 500 620 T 1100 580 V 900 H -100 Z" fill="#f7d7b0" opacity="0.6" />
+          </svg>
+        </div>
+
+        {/* Layer 3 — Midground Green Growth Hills */}
+        <div style={{
+          position: "absolute", inset: "-40px",
+          transform: `translate(${parallax.x * 20}px, ${parallax.y * 20}px)`,
+          transition: "transform 0.1s linear",
+        }}>
+          <svg width="100%" height="100%" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid slice" fill="none">
+            <path d="M-100 700 Q 300 560 650 680 T 1200 640 V 900 H -100 Z" fill="#2e936f" opacity="0.22" />
+            <polygon points="450,480 480,540 420,540" fill="#2e936f" opacity="0.35" />
+            <polygon points="720,440 760,520 680,520" fill="#fab60a" opacity="0.35" />
+          </svg>
+        </div>
+
+        {/* Layer 4 — Foreground Brand Orange Momentum Shapes */}
+        <div style={{
+          position: "absolute", inset: "-50px",
+          transform: `translate(${parallax.x * 30}px, ${parallax.y * 30}px)`,
+          transition: "transform 0.1s linear",
+        }}>
+          <svg width="100%" height="100%" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid slice" fill="none">
+            <path d="M-50 750 Q 400 620 800 730 T 1150 700 V 900 H -50 Z" fill="#f7d7b0" opacity="0.45" />
+            <circle cx="780" cy="580" r="9" fill="#f15e1c" opacity="0.65" />
+            <circle cx="820" cy="530" r="15" fill="#fab60a" opacity="0.75" />
+            <circle cx="870" cy="470" r="22" fill="#2e936f" opacity="0.85" />
+          </svg>
+        </div>
+      </div>
+
+      {/* ── LEFT PANEL: DESKTOP BRAND & FEATURES ── */}
+      <div className="astrav-left">
         {/* Top Header & Brand */}
         <div style={{ position: "relative", zIndex: 5 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '32px' }}>
@@ -365,13 +375,13 @@ export default function Login() {
         </div>
       </div>
 
-      {/* ── RIGHT PANEL: AUTH FORM ── */}
+      {/* ── RIGHT PANEL: AUTH FORM CARD ── */}
       <div className="astrav-right">
-        <div style={{ width: '100%', maxWidth: '380px' }}>
+        <div className="astrav-form-card">
 
           {/* Header */}
-          <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+          <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
               <div style={{
                 width: '28px', height: '28px', borderRadius: '8px',
                 background: 'linear-gradient(135deg, #f15e1c, #fab60a)',
