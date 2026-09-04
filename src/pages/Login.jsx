@@ -243,20 +243,50 @@ export default function Login() {
         }
         .astrav-link:hover { color: #cf4a11; text-decoration: underline; }
 
-        /* Feature Cards */
-        .astrav-feature {
+        /* Feature Highlights Section */
+        .astrav-features-scrim {
+          background: rgba(255, 248, 239, 0.45);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+          border-radius: 18px;
+          padding: 20px 24px;
+          border: 1px solid rgba(241, 94, 28, 0.08);
+          margin: 32px 0 36px;
           display: flex;
-          gap: 14px;
-          padding: 14px 16px;
-          border-radius: 12px;
-          background: #ffffff;
-          border: 1px solid #F0DFC9;
-          box-shadow: 0 2px 8px rgba(46,32,19,0.04);
-          transition: transform 0.18s ease, box-shadow 0.18s ease;
+          flex-direction: column;
+          gap: 22px;
+          position: relative;
+          z-index: 5;
+          max-width: 480px;
         }
-        .astrav-feature:hover {
+        .astrav-feature-item {
+          display: flex;
+          align-items: flex-start;
+          gap: 16px;
+          transition: transform 0.18s ease;
+        }
+        .astrav-feature-item:hover {
           transform: translateX(4px);
-          box-shadow: 0 4px 14px rgba(46,32,19,0.08);
+        }
+        .astrav-feature-icon {
+          font-size: 24px;
+          line-height: 1;
+          flex-shrink: 0;
+          margin-top: 2px;
+        }
+        .astrav-feature-title {
+          margin: 0 0 4px;
+          font-size: 16px;
+          font-weight: 800;
+          color: #2E2013;
+          letter-spacing: -0.3px;
+        }
+        .astrav-feature-desc {
+          margin: 0;
+          font-size: 13.5px;
+          font-weight: 500;
+          color: #5C4A3A;
+          line-height: 1.5;
         }
 
         .pw-wrap { position: relative; }
@@ -358,23 +388,19 @@ export default function Login() {
             }}>ASTRAV</span>
           </h1>
 
-          <p style={{ fontSize: '16px', color: '#8A7461', lineHeight: '1.6', margin: 0, maxWidth: '460px' }}>
-            The all-in-one command center for ambitious founders to manage goals, track tasks, and drive daily momentum.
+          <p style={{ fontSize: '16px', color: '#5C4A3A', lineHeight: '1.6', margin: 0, maxWidth: '480px' }}>
+            The command center where teams turn goals into daily execution — from company strategy down to individual tasks.
           </p>
         </div>
 
-        {/* Middle Feature Highlights */}
-        <div style={{ position: "relative", zIndex: 5, maxWidth: "480px", margin: "36px 0", display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        {/* Middle Feature Highlights (Scrim Containerless Layout) */}
+        <div className="astrav-features-scrim">
           {FEATURES.map((f, i) => (
-            <div key={i} className="astrav-feature">
-              <div style={{
-                width: '38px', height: '38px', borderRadius: '10px', flexShrink: 0,
-                background: 'rgba(241,94,28,0.08)', border: '1px solid rgba(241,94,28,0.15)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px',
-              }}>{f.icon}</div>
+            <div key={i} className="astrav-feature-item">
+              <span className="astrav-feature-icon">{f.icon}</span>
               <div>
-                <p style={{ margin: '0 0 2px', fontSize: '13.5px', fontWeight: '700', color: '#2E2013' }}>{f.title}</p>
-                <p style={{ margin: 0, fontSize: '12px', color: '#8A7461', lineHeight: '1.45' }}>{f.desc}</p>
+                <h3 className="astrav-feature-title">{f.title}</h3>
+                <p className="astrav-feature-desc">{f.desc}</p>
               </div>
             </div>
           ))}
