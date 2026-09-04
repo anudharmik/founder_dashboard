@@ -237,14 +237,14 @@ export default function OrgSettings({ user, darkMode }) {
 
   const roleColors = {
     owner: { bg: 'rgba(239, 68, 68, 0.15)', text: '#f87171', border: 'rgba(239, 68, 68, 0.3)' },
-    manager: { bg: 'rgba(168, 85, 247, 0.15)', text: '#c084fc', border: 'rgba(168, 85, 247, 0.3)' },
+    manager: { bg: 'rgba(250, 182, 10, 0.15)', text: '#fab60a', border: 'rgba(250, 182, 10, 0.3)' },
     employee: { bg: 'rgba(59, 130, 246, 0.15)', text: '#60a5fa', border: 'rgba(59, 130, 246, 0.3)' },
     guest: { bg: 'rgba(156, 163, 175, 0.15)', text: '#9ca3af', border: 'rgba(156, 163, 175, 0.3)' }
   };
 
   const cardStyle = {
     background: darkMode ? "rgba(30, 41, 59, 0.75)" : "#ffffff",
-    border: darkMode ? "1px solid rgba(255,255,255,0.08)" : "1px solid #e2e8f0",
+    border: darkMode ? "1px solid rgba(255,255,255,0.08)" : "1px solid #E8D9C5",
     borderRadius: "16px",
     padding: "24px",
     boxShadow: darkMode
@@ -262,11 +262,11 @@ export default function OrgSettings({ user, darkMode }) {
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "28px" }}>
         <div>
-          <h1 style={{ fontSize: "26px", fontWeight: "800", color: darkMode ? "#f8fafc" : "#0f172a", margin: "0 0 6px" }}>
+          <h1 style={{ fontSize: "26px", fontWeight: "800", color: darkMode ? "#FFF8EF" : "#2E2013", margin: "0 0 6px" }}>
             Organization Settings
           </h1>
-          <p style={{ fontSize: "14px", color: darkMode ? "#94a3b8" : "#64748b", margin: 0 }}>
-            Manage members, roles, and workspace details for <span style={{ color: "#818cf8", fontWeight: "600" }}>{activeOrg.name}</span>
+          <p style={{ fontSize: "14px", color: darkMode ? "#B3A18C" : "#9C8B76", margin: 0 }}>
+            Manage members, roles, and workspace details for <span style={{ color: "#f15e1c", fontWeight: "600" }}>{activeOrg.name}</span>
           </p>
         </div>
         <span style={{
@@ -275,22 +275,22 @@ export default function OrgSettings({ user, darkMode }) {
           fontSize: "12px",
           fontWeight: "700",
           textTransform: "uppercase",
-          background: roleColors[userRole]?.bg || "rgba(99,102,241,0.15)",
-          color: roleColors[userRole]?.text || "#818cf8",
-          border: `1px solid ${roleColors[userRole]?.border || 'rgba(99,102,241,0.3)'}`
+          background: roleColors[userRole]?.bg || "rgba(241, 94, 28, 0.15)",
+          color: roleColors[userRole]?.text || "#f15e1c",
+          border: `1px solid ${roleColors[userRole]?.border || 'rgba(241, 94, 28, 0.3)'}`
         }}>
           Your Role: {userRole}
         </span>
       </div>
 
       {/* Navigation Tabs */}
-      <div style={{ display: "flex", gap: "12px", marginBottom: "24px", borderBottom: darkMode ? "1px solid #334155" : "1px solid #e2e8f0" }}>
+      <div style={{ display: "flex", gap: "12px", marginBottom: "24px", borderBottom: darkMode ? "1px solid #4A3C2C" : "1px solid #E8D9C5" }}>
         <button
           onClick={() => setActiveSettingsTab('members')}
           style={{
             padding: "10px 18px", background: "none", border: "none",
-            borderBottom: activeSettingsTab === 'members' ? "2px solid #6366f1" : "2px solid transparent",
-            color: activeSettingsTab === 'members' ? "#6366f1" : (darkMode ? "#94a3b8" : "#64748b"),
+            borderBottom: activeSettingsTab === 'members' ? "2px solid #f15e1c" : "2px solid transparent",
+            color: activeSettingsTab === 'members' ? "#f15e1c" : (darkMode ? "#B3A18C" : "#9C8B76"),
             fontWeight: activeSettingsTab === 'members' ? "700" : "500", fontSize: "14px", cursor: "pointer"
           }}
         >
@@ -300,8 +300,8 @@ export default function OrgSettings({ user, darkMode }) {
           onClick={() => setActiveSettingsTab('permissions')}
           style={{
             padding: "10px 18px", background: "none", border: "none",
-            borderBottom: activeSettingsTab === 'permissions' ? "2px solid #6366f1" : "2px solid transparent",
-            color: activeSettingsTab === 'permissions' ? "#6366f1" : (darkMode ? "#94a3b8" : "#64748b"),
+            borderBottom: activeSettingsTab === 'permissions' ? "2px solid #f15e1c" : "2px solid transparent",
+            color: activeSettingsTab === 'permissions' ? "#f15e1c" : (darkMode ? "#B3A18C" : "#9C8B76"),
             fontWeight: activeSettingsTab === 'permissions' ? "700" : "500", fontSize: "14px", cursor: "pointer"
           }}
         >
@@ -317,14 +317,14 @@ export default function OrgSettings({ user, darkMode }) {
       {/* Organization General Info */}
       <div style={{ ...cardStyle, marginBottom: "24px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-          <h3 style={{ fontSize: "18px", fontWeight: "700", color: darkMode ? "#f1f5f9" : "#1e293b", margin: 0 }}>
+          <h3 style={{ fontSize: "18px", fontWeight: "700", color: darkMode ? "#FFF3E2" : "#1E140C", margin: 0 }}>
             Workspace Identity
           </h3>
           {isOwner && !editingOrgName && (
             <button
               onClick={() => setEditingOrgName(true)}
               style={{
-                background: "none", border: "none", color: "#818cf8", fontSize: "13px", fontWeight: "600", cursor: "pointer"
+                background: "none", border: "none", color: "#f15e1c", fontSize: "13px", fontWeight: "600", cursor: "pointer"
               }}
             >
               ✏️ Edit Name
@@ -342,15 +342,15 @@ export default function OrgSettings({ user, darkMode }) {
                 flex: 1,
                 padding: "8px 14px",
                 borderRadius: "8px",
-                border: darkMode ? "1px solid #334155" : "1px solid #cbd5e1",
-                background: darkMode ? "#0f172a" : "#f8fafc",
+                border: darkMode ? "1px solid #4A3C2C" : "1px solid #D5C2A5",
+                background: darkMode ? "#2E2013" : "#FFF8EF",
                 color: darkMode ? "#fff" : "#000",
               }}
             />
             <button
               type="submit"
               style={{
-                padding: "8px 16px", borderRadius: "8px", border: "none", background: "#6366f1", color: "#fff", fontWeight: "600", cursor: "pointer"
+                padding: "8px 16px", borderRadius: "8px", border: "none", background: "#f15e1c", color: "#fff", fontWeight: "600", cursor: "pointer"
               }}
             >
               Save
@@ -359,7 +359,7 @@ export default function OrgSettings({ user, darkMode }) {
               type="button"
               onClick={() => setEditingOrgName(false)}
               style={{
-                padding: "8px 16px", borderRadius: "8px", border: "1px solid #64748b", background: "transparent", color: darkMode ? "#cbd5e1" : "#475569", cursor: "pointer"
+                padding: "8px 16px", borderRadius: "8px", border: "1px solid #9C8B76", background: "transparent", color: darkMode ? "#D5C2A5" : "#6E5D4B", cursor: "pointer"
               }}
             >
               Cancel
@@ -368,15 +368,15 @@ export default function OrgSettings({ user, darkMode }) {
         ) : (
           <div style={{ display: "flex", gap: "24px", fontSize: "14px" }}>
             <div>
-              <span style={{ color: darkMode ? "#64748b" : "#94a3b8", display: "block", fontSize: "12px", fontWeight: "600" }}>NAME</span>
-              <strong style={{ color: darkMode ? "#e2e8f0" : "#0f172a" }}>{activeOrg.name}</strong>
+              <span style={{ color: darkMode ? "#9C8B76" : "#B3A18C", display: "block", fontSize: "12px", fontWeight: "600" }}>NAME</span>
+              <strong style={{ color: darkMode ? "#E8D9C5" : "#2E2013" }}>{activeOrg.name}</strong>
             </div>
             <div>
-              <span style={{ color: darkMode ? "#64748b" : "#94a3b8", display: "block", fontSize: "12px", fontWeight: "600" }}>ORG ID</span>
-              <code style={{ color: "#818cf8", fontSize: "12px" }}>{activeOrg.id}</code>
+              <span style={{ color: darkMode ? "#9C8B76" : "#B3A18C", display: "block", fontSize: "12px", fontWeight: "600" }}>ORG ID</span>
+              <code style={{ color: "#f15e1c", fontSize: "12px" }}>{activeOrg.id}</code>
             </div>
             <div>
-              <span style={{ color: darkMode ? "#64748b" : "#94a3b8", display: "block", fontSize: "12px", fontWeight: "600" }}>PLAN</span>
+              <span style={{ color: darkMode ? "#9C8B76" : "#B3A18C", display: "block", fontSize: "12px", fontWeight: "600" }}>PLAN</span>
               <span style={{ color: "#22c55e", fontWeight: "600" }}>Pilot Tier</span>
             </div>
           </div>
@@ -387,10 +387,10 @@ export default function OrgSettings({ user, darkMode }) {
       <div style={cardStyle}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
           <div>
-            <h3 style={{ fontSize: "18px", fontWeight: "700", color: darkMode ? "#f1f5f9" : "#1e293b", margin: "0 0 4px" }}>
+            <h3 style={{ fontSize: "18px", fontWeight: "700", color: darkMode ? "#FFF3E2" : "#1E140C", margin: "0 0 4px" }}>
               Team Members ({membersList.length})
             </h3>
-            <p style={{ fontSize: "13px", color: darkMode ? "#94a3b8" : "#64748b", margin: 0 }}>
+            <p style={{ fontSize: "13px", color: darkMode ? "#B3A18C" : "#9C8B76", margin: 0 }}>
               Users with access to this organization and their permission role (§5.1 RBAC model).
             </p>
           </div>
@@ -401,12 +401,12 @@ export default function OrgSettings({ user, darkMode }) {
                 padding: "10px 18px",
                 borderRadius: "10px",
                 border: "none",
-                background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+                background: "linear-gradient(135deg, #f15e1c, #fab60a)",
                 color: "#ffffff",
                 fontWeight: "700",
                 fontSize: "13px",
                 cursor: "pointer",
-                boxShadow: "0 4px 14px rgba(99,102,241,0.3)",
+                boxShadow: "0 4px 14px rgba(241, 94, 28, 0.3)",
                 display: "flex",
                 alignItems: "center",
                 gap: "6px"
@@ -419,22 +419,22 @@ export default function OrgSettings({ user, darkMode }) {
 
         {/* Member Table */}
         {loading ? (
-          <p style={{ color: darkMode ? "#94a3b8" : "#64748b" }}>Loading members...</p>
+          <p style={{ color: darkMode ? "#B3A18C" : "#9C8B76" }}>Loading members...</p>
         ) : (
           <div style={{ overflowX: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "14px" }}>
               <thead>
-                <tr style={{ borderBottom: darkMode ? "1px solid rgba(255,255,255,0.08)" : "1px solid #e2e8f0" }}>
-                  <th style={{ padding: "12px 16px", color: darkMode ? "#94a3b8" : "#64748b", fontWeight: "600", fontSize: "12px" }}>USER ID / EMAIL</th>
-                  <th style={{ padding: "12px 16px", color: darkMode ? "#94a3b8" : "#64748b", fontWeight: "600", fontSize: "12px" }}>ROLE</th>
-                  <th style={{ padding: "12px 16px", color: darkMode ? "#94a3b8" : "#64748b", fontWeight: "600", fontSize: "12px" }}>JOINED</th>
-                  {isOwner && <th style={{ padding: "12px 16px", color: darkMode ? "#94a3b8" : "#64748b", fontWeight: "600", fontSize: "12px", textAlign: "right" }}>ACTIONS</th>}
+                <tr style={{ borderBottom: darkMode ? "1px solid rgba(255,255,255,0.08)" : "1px solid #E8D9C5" }}>
+                  <th style={{ padding: "12px 16px", color: darkMode ? "#B3A18C" : "#9C8B76", fontWeight: "600", fontSize: "12px" }}>USER ID / EMAIL</th>
+                  <th style={{ padding: "12px 16px", color: darkMode ? "#B3A18C" : "#9C8B76", fontWeight: "600", fontSize: "12px" }}>ROLE</th>
+                  <th style={{ padding: "12px 16px", color: darkMode ? "#B3A18C" : "#9C8B76", fontWeight: "600", fontSize: "12px" }}>JOINED</th>
+                  {isOwner && <th style={{ padding: "12px 16px", color: darkMode ? "#B3A18C" : "#9C8B76", fontWeight: "600", fontSize: "12px", textAlign: "right" }}>ACTIONS</th>}
                 </tr>
               </thead>
               <tbody>
                 {membersList.map((m) => (
-                  <tr key={m.id} style={{ borderBottom: darkMode ? "1px solid rgba(255,255,255,0.04)" : "1px solid #f1f5f9" }}>
-                    <td style={{ padding: "14px 16px", color: darkMode ? "#f1f5f9" : "#0f172a" }}>
+                  <tr key={m.id} style={{ borderBottom: darkMode ? "1px solid rgba(255,255,255,0.04)" : "1px solid #FFF3E2" }}>
+                    <td style={{ padding: "14px 16px", color: darkMode ? "#FFF3E2" : "#2E2013" }}>
                       <div style={{ fontWeight: "600" }}>
                         {getMemberDisplayName(m.user_id)}{m.user_id === user?.id ? " (You)" : ""}
                       </div>
@@ -448,9 +448,9 @@ export default function OrgSettings({ user, darkMode }) {
                           style={{
                             padding: "4px 30px 4px 10px",
                             borderRadius: "6px",
-                            border: darkMode ? "1px solid #334155" : "1px solid #cbd5e1",
-                            background: darkMode ? "#0f172a" : "#ffffff",
-                            color: darkMode ? "#f1f5f9" : "#0f172a",
+                            border: darkMode ? "1px solid #4A3C2C" : "1px solid #D5C2A5",
+                            background: darkMode ? "#2E2013" : "#ffffff",
+                            color: darkMode ? "#FFF3E2" : "#2E2013",
                             fontSize: "13px",
                             fontWeight: "600",
                             cursor: "pointer"
@@ -476,7 +476,7 @@ export default function OrgSettings({ user, darkMode }) {
                         </span>
                       )}
                     </td>
-                    <td style={{ padding: "14px 16px", color: darkMode ? "#94a3b8" : "#64748b", fontSize: "13px" }}>
+                    <td style={{ padding: "14px 16px", color: darkMode ? "#B3A18C" : "#9C8B76", fontSize: "13px" }}>
                       {m.created_at ? new Date(m.created_at).toLocaleDateString() : 'N/A'}
                     </td>
                     {isOwner && (
@@ -511,10 +511,10 @@ export default function OrgSettings({ user, darkMode }) {
       <div style={{ ...cardStyle, marginTop: "24px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", flexWrap: "wrap", gap: "12px" }}>
           <div>
-            <h3 style={{ fontSize: "18px", fontWeight: "700", color: darkMode ? "#f1f5f9" : "#1e293b", margin: "0 0 4px", display: "flex", alignItems: "center", gap: "8px" }}>
+            <h3 style={{ fontSize: "18px", fontWeight: "700", color: darkMode ? "#FFF3E2" : "#1E140C", margin: "0 0 4px", display: "flex", alignItems: "center", gap: "8px" }}>
               <span>📩</span> Sent Invitations & Invitees ({invitesList.length})
             </h3>
-            <p style={{ fontSize: "13px", color: darkMode ? "#94a3b8" : "#64748b", margin: 0 }}>
+            <p style={{ fontSize: "13px", color: darkMode ? "#B3A18C" : "#9C8B76", margin: 0 }}>
               Track users invited to this workspace and their platform joining status.
             </p>
           </div>
@@ -527,7 +527,7 @@ export default function OrgSettings({ user, darkMode }) {
                   padding: "8px 14px",
                   borderRadius: "8px",
                   border: "none",
-                  background: "#6366f1",
+                  background: "#f15e1c",
                   color: "#ffffff",
                   fontWeight: "600",
                   fontSize: "12px",
@@ -545,9 +545,9 @@ export default function OrgSettings({ user, darkMode }) {
 
         {/* Summary Metrics */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "12px", marginBottom: "20px" }}>
-          <div style={{ padding: "12px 16px", borderRadius: "10px", background: darkMode ? "rgba(15, 23, 42, 0.6)" : "#f8fafc", border: darkMode ? "1px solid #334155" : "1px solid #e2e8f0" }}>
-            <span style={{ fontSize: "11px", fontWeight: "700", color: darkMode ? "#94a3b8" : "#64748b", textTransform: "uppercase" }}>Total Sent</span>
-            <div style={{ fontSize: "20px", fontWeight: "800", color: darkMode ? "#f8fafc" : "#0f172a", marginTop: "2px" }}>{invitesList.length}</div>
+          <div style={{ padding: "12px 16px", borderRadius: "10px", background: darkMode ? "rgba(15, 23, 42, 0.6)" : "#FFF8EF", border: darkMode ? "1px solid #4A3C2C" : "1px solid #E8D9C5" }}>
+            <span style={{ fontSize: "11px", fontWeight: "700", color: darkMode ? "#B3A18C" : "#9C8B76", textTransform: "uppercase" }}>Total Sent</span>
+            <div style={{ fontSize: "20px", fontWeight: "800", color: darkMode ? "#FFF8EF" : "#2E2013", marginTop: "2px" }}>{invitesList.length}</div>
           </div>
           <div style={{ padding: "12px 16px", borderRadius: "10px", background: darkMode ? "rgba(245, 158, 11, 0.1)" : "#fffbeb", border: "1px solid rgba(245, 158, 11, 0.2)" }}>
             <span style={{ fontSize: "11px", fontWeight: "700", color: "#f59e0b", textTransform: "uppercase" }}>Pending Join ⏳</span>
@@ -577,9 +577,9 @@ export default function OrgSettings({ user, darkMode }) {
                   fontWeight: "600",
                   textTransform: "capitalize",
                   cursor: "pointer",
-                  border: inviteFilter === st ? "1px solid #6366f1" : (darkMode ? "1px solid #334155" : "1px solid #cbd5e1"),
-                  background: inviteFilter === st ? "#6366f1" : "transparent",
-                  color: inviteFilter === st ? "#ffffff" : (darkMode ? "#94a3b8" : "#64748b")
+                  border: inviteFilter === st ? "1px solid #f15e1c" : (darkMode ? "1px solid #4A3C2C" : "1px solid #D5C2A5"),
+                  background: inviteFilter === st ? "#f15e1c" : "transparent",
+                  color: inviteFilter === st ? "#ffffff" : (darkMode ? "#B3A18C" : "#9C8B76")
                 }}
               >
                 {st === 'all' ? 'All Invites' : st === 'accepted' ? 'Joined ✅' : st === 'pending' ? 'Pending ⏳' : 'Revoked 🚫'}
@@ -596,9 +596,9 @@ export default function OrgSettings({ user, darkMode }) {
               padding: "6px 12px",
               borderRadius: "8px",
               fontSize: "13px",
-              border: darkMode ? "1px solid #334155" : "1px solid #cbd5e1",
-              background: darkMode ? "#0f172a" : "#ffffff",
-              color: darkMode ? "#f8fafc" : "#0f172a",
+              border: darkMode ? "1px solid #4A3C2C" : "1px solid #D5C2A5",
+              background: darkMode ? "#2E2013" : "#ffffff",
+              color: darkMode ? "#FFF8EF" : "#2E2013",
               minWidth: "200px"
             }}
           />
@@ -606,9 +606,9 @@ export default function OrgSettings({ user, darkMode }) {
 
         {/* Invites Table */}
         {loadingInvites ? (
-          <p style={{ color: darkMode ? "#94a3b8" : "#64748b", fontSize: "14px" }}>Loading invitations...</p>
+          <p style={{ color: darkMode ? "#B3A18C" : "#9C8B76", fontSize: "14px" }}>Loading invitations...</p>
         ) : invitesList.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "32px 16px", color: darkMode ? "#94a3b8" : "#64748b" }}>
+          <div style={{ textAlign: "center", padding: "32px 16px", color: darkMode ? "#B3A18C" : "#9C8B76" }}>
             <span style={{ fontSize: "28px", display: "block", marginBottom: "8px" }}>📩</span>
             <p style={{ margin: 0, fontSize: "14px" }}>No invitations have been sent yet.</p>
             <p style={{ margin: "4px 0 0", fontSize: "12px", opacity: 0.8 }}>Use the "Add Member" button above to invite team members by email.</p>
@@ -617,13 +617,13 @@ export default function OrgSettings({ user, darkMode }) {
           <div style={{ overflowX: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "13px" }}>
               <thead>
-                <tr style={{ borderBottom: darkMode ? "1px solid rgba(255,255,255,0.08)" : "1px solid #e2e8f0" }}>
-                  <th style={{ padding: "10px 14px", color: darkMode ? "#94a3b8" : "#64748b", fontWeight: "600", fontSize: "11px" }}>INVITEE EMAIL</th>
-                  <th style={{ padding: "10px 14px", color: darkMode ? "#94a3b8" : "#64748b", fontWeight: "600", fontSize: "11px" }}>ASSIGNED ROLE</th>
-                  <th style={{ padding: "10px 14px", color: darkMode ? "#94a3b8" : "#64748b", fontWeight: "600", fontSize: "11px" }}>INVITED BY</th>
-                  <th style={{ padding: "10px 14px", color: darkMode ? "#94a3b8" : "#64748b", fontWeight: "600", fontSize: "11px" }}>SENT DATE</th>
-                  <th style={{ padding: "10px 14px", color: darkMode ? "#94a3b8" : "#64748b", fontWeight: "600", fontSize: "11px" }}>JOINING STATUS</th>
-                  <th style={{ padding: "10px 14px", color: darkMode ? "#94a3b8" : "#64748b", fontWeight: "600", fontSize: "11px", textAlign: "right" }}>ACTIONS</th>
+                <tr style={{ borderBottom: darkMode ? "1px solid rgba(255,255,255,0.08)" : "1px solid #E8D9C5" }}>
+                  <th style={{ padding: "10px 14px", color: darkMode ? "#B3A18C" : "#9C8B76", fontWeight: "600", fontSize: "11px" }}>INVITEE EMAIL</th>
+                  <th style={{ padding: "10px 14px", color: darkMode ? "#B3A18C" : "#9C8B76", fontWeight: "600", fontSize: "11px" }}>ASSIGNED ROLE</th>
+                  <th style={{ padding: "10px 14px", color: darkMode ? "#B3A18C" : "#9C8B76", fontWeight: "600", fontSize: "11px" }}>INVITED BY</th>
+                  <th style={{ padding: "10px 14px", color: darkMode ? "#B3A18C" : "#9C8B76", fontWeight: "600", fontSize: "11px" }}>SENT DATE</th>
+                  <th style={{ padding: "10px 14px", color: darkMode ? "#B3A18C" : "#9C8B76", fontWeight: "600", fontSize: "11px" }}>JOINING STATUS</th>
+                  <th style={{ padding: "10px 14px", color: darkMode ? "#B3A18C" : "#9C8B76", fontWeight: "600", fontSize: "11px", textAlign: "right" }}>ACTIONS</th>
                 </tr>
               </thead>
               <tbody>
@@ -639,8 +639,8 @@ export default function OrgSettings({ user, darkMode }) {
                     const currentStatus = statusConfig[inv.status] || statusConfig.pending;
 
                     return (
-                      <tr key={inv.id} style={{ borderBottom: darkMode ? "1px solid rgba(255,255,255,0.04)" : "1px solid #f1f5f9" }}>
-                        <td style={{ padding: "12px 14px", color: darkMode ? "#f1f5f9" : "#0f172a", fontWeight: "600" }}>
+                      <tr key={inv.id} style={{ borderBottom: darkMode ? "1px solid rgba(255,255,255,0.04)" : "1px solid #FFF3E2" }}>
+                        <td style={{ padding: "12px 14px", color: darkMode ? "#FFF3E2" : "#2E2013", fontWeight: "600" }}>
                           {inv.email}
                         </td>
                         <td style={{ padding: "12px 14px" }}>
@@ -657,10 +657,10 @@ export default function OrgSettings({ user, darkMode }) {
                             {inv.role}
                           </span>
                         </td>
-                        <td style={{ padding: "12px 14px", color: darkMode ? "#94a3b8" : "#64748b" }}>
+                        <td style={{ padding: "12px 14px", color: darkMode ? "#B3A18C" : "#9C8B76" }}>
                           {inv.invited_by ? getMemberDisplayName(inv.invited_by) : 'System'}
                         </td>
-                        <td style={{ padding: "12px 14px", color: darkMode ? "#94a3b8" : "#64748b" }}>
+                        <td style={{ padding: "12px 14px", color: darkMode ? "#B3A18C" : "#9C8B76" }}>
                           {inv.created_at ? new Date(inv.created_at).toLocaleDateString() : 'N/A'}
                         </td>
                         <td style={{ padding: "12px 14px" }}>
@@ -684,9 +684,9 @@ export default function OrgSettings({ user, darkMode }) {
                                   onClick={() => handleCopyInviteLink(inv.token)}
                                   title="Copy Invite Acceptance Link"
                                   style={{
-                                    background: "rgba(99, 102, 241, 0.1)",
-                                    border: "1px solid rgba(99, 102, 241, 0.3)",
-                                    color: "#818cf8",
+                                    background: "rgba(241, 94, 28, 0.1)",
+                                    border: "1px solid rgba(241, 94, 28, 0.3)",
+                                    color: "#f15e1c",
                                     padding: "4px 8px",
                                     borderRadius: "6px",
                                     fontSize: "11px",
@@ -733,7 +733,7 @@ export default function OrgSettings({ user, darkMode }) {
                               style={{
                                 background: "rgba(100, 116, 139, 0.1)",
                                 border: "1px solid rgba(100, 116, 139, 0.3)",
-                                color: darkMode ? "#94a3b8" : "#64748b",
+                                color: darkMode ? "#B3A18C" : "#9C8B76",
                                 padding: "4px 8px",
                                 borderRadius: "6px",
                                 fontSize: "11px",
@@ -761,20 +761,20 @@ export default function OrgSettings({ user, darkMode }) {
           display: "flex", alignItems: "center", justifyContent: "center", padding: "16px"
         }}>
           <div style={{
-            ...cardStyle, width: "100%", maxWidth: "460px", background: darkMode ? "#0f172a" : "#ffffff", border: darkMode ? "1px solid #1e293b" : "1px solid #cbd5e1"
+            ...cardStyle, width: "100%", maxWidth: "460px", background: darkMode ? "#2E2013" : "#ffffff", border: darkMode ? "1px solid #1E140C" : "1px solid #D5C2A5"
           }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-              <h3 style={{ margin: 0, color: darkMode ? "#f8fafc" : "#0f172a" }}>Add Team Member</h3>
+              <h3 style={{ margin: 0, color: darkMode ? "#FFF8EF" : "#2E2013" }}>Add Team Member</h3>
               <button
                 onClick={() => setIsInviteOpen(false)}
-                style={{ background: "none", border: "none", color: "#64748b", fontSize: "18px", cursor: "pointer" }}
+                style={{ background: "none", border: "none", color: "#9C8B76", fontSize: "18px", cursor: "pointer" }}
               >
                 ✕
               </button>
             </div>
             <form onSubmit={handleInviteMember} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
               <div>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: darkMode ? "#cbd5e1" : "#475569", marginBottom: "6px" }}>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: darkMode ? "#D5C2A5" : "#6E5D4B", marginBottom: "6px" }}>
                   USER EMAIL OR UUID
                 </label>
                 <input
@@ -785,8 +785,8 @@ export default function OrgSettings({ user, darkMode }) {
                   required
                   style={{
                     width: "100%", padding: "10px 14px", borderRadius: "8px",
-                    border: darkMode ? "1px solid #334155" : "1px solid #cbd5e1",
-                    background: darkMode ? "#1e293b" : "#f8fafc",
+                    border: darkMode ? "1px solid #4A3C2C" : "1px solid #D5C2A5",
+                    background: darkMode ? "#1E140C" : "#FFF8EF",
                     color: darkMode ? "#fff" : "#000",
                     boxSizing: "border-box"
                   }}
@@ -794,7 +794,7 @@ export default function OrgSettings({ user, darkMode }) {
               </div>
 
               <div>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: darkMode ? "#cbd5e1" : "#475569", marginBottom: "6px" }}>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: darkMode ? "#D5C2A5" : "#6E5D4B", marginBottom: "6px" }}>
                   ASSIGN ROLE (§5.1 RBAC Model)
                 </label>
                 <select
@@ -803,8 +803,8 @@ export default function OrgSettings({ user, darkMode }) {
                   className="form-select"
                   style={{
                     width: "100%", padding: "10px 36px 10px 14px", borderRadius: "8px",
-                    border: darkMode ? "1px solid #334155" : "1px solid #cbd5e1",
-                    background: darkMode ? "#1e293b" : "#f8fafc",
+                    border: darkMode ? "1px solid #4A3C2C" : "1px solid #D5C2A5",
+                    background: darkMode ? "#1E140C" : "#FFF8EF",
                     color: darkMode ? "#fff" : "#000",
                     boxSizing: "border-box",
                     cursor: "pointer"
@@ -821,14 +821,14 @@ export default function OrgSettings({ user, darkMode }) {
                 <button
                   type="button"
                   onClick={() => setIsInviteOpen(false)}
-                  style={{ padding: "10px 18px", borderRadius: "8px", border: "1px solid #64748b", background: "transparent", color: darkMode ? "#cbd5e1" : "#475569", cursor: "pointer" }}
+                  style={{ padding: "10px 18px", borderRadius: "8px", border: "1px solid #9C8B76", background: "transparent", color: darkMode ? "#D5C2A5" : "#6E5D4B", cursor: "pointer" }}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submittingInvite}
-                  style={{ padding: "10px 18px", borderRadius: "8px", border: "none", background: "#6366f1", color: "#fff", fontWeight: "700", cursor: "pointer" }}
+                  style={{ padding: "10px 18px", borderRadius: "8px", border: "none", background: "#f15e1c", color: "#fff", fontWeight: "700", cursor: "pointer" }}
                 >
                   {submittingInvite ? "Adding..." : "Add Member"}
                 </button>

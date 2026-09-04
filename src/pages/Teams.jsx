@@ -179,7 +179,7 @@ export default function Teams({ darkMode }) {
 
   const cardStyle = {
     background: darkMode ? "rgba(30,41,59,0.7)" : "#ffffff",
-    border: darkMode ? "1px solid rgba(255,255,255,0.08)" : "1px solid #e2e8f0",
+    border: darkMode ? "1px solid rgba(255,255,255,0.08)" : "1px solid #E8D9C5",
     borderRadius: "14px",
     padding: "24px",
     boxShadow: darkMode ? "0 4px 20px rgba(0,0,0,0.25)" : "0 4px 20px rgba(0,0,0,0.05)",
@@ -189,8 +189,8 @@ export default function Teams({ darkMode }) {
   if (!activeOrg) {
     return (
       <div style={{ padding: "32px", maxWidth: "1000px", margin: "0 auto" }}>
-        <h2 style={{ color: darkMode ? "#f8fafc" : "#0f172a" }}>Teams</h2>
-        <p style={{ color: darkMode ? "#94a3b8" : "#64748b" }}>Please select or create an organization first.</p>
+        <h2 style={{ color: darkMode ? "#FFF8EF" : "#2E2013" }}>Teams</h2>
+        <p style={{ color: darkMode ? "#B3A18C" : "#9C8B76" }}>Please select or create an organization first.</p>
       </div>
     );
   }
@@ -200,10 +200,10 @@ export default function Teams({ darkMode }) {
       {/* Page Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "28px" }}>
         <div>
-          <h1 style={{ fontSize: "26px", fontWeight: "800", color: darkMode ? "#f8fafc" : "#0f172a", margin: "0 0 6px" }}>
+          <h1 style={{ fontSize: "26px", fontWeight: "800", color: darkMode ? "#FFF8EF" : "#2E2013", margin: "0 0 6px" }}>
             Cross-Functional Teams
           </h1>
-          <p style={{ fontSize: "14px", color: darkMode ? "#94a3b8" : "#64748b", margin: 0 }}>
+          <p style={{ fontSize: "14px", color: darkMode ? "#B3A18C" : "#9C8B76", margin: 0 }}>
             Manage teams and assign members to cross-functional projects in {activeOrg.name}.
           </p>
         </div>
@@ -215,12 +215,12 @@ export default function Teams({ darkMode }) {
               padding: "10px 18px",
               borderRadius: "10px",
               border: "none",
-              background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+              background: "#cf4a11",
               color: "#ffffff",
               fontWeight: "700",
               fontSize: "13px",
               cursor: "pointer",
-              boxShadow: "0 4px 14px rgba(99,102,241,0.3)",
+              boxShadow: "0 4px 14px rgba(207,74,17,0.3)",
               display: "flex",
               alignItems: "center",
               gap: "6px"
@@ -235,18 +235,18 @@ export default function Teams({ darkMode }) {
       {departments.length === 0 && (
         <div style={{
           marginBottom: "24px", padding: "16px 20px", borderRadius: "14px",
-          background: darkMode ? "rgba(245,158,11,0.12)" : "#fffbeb",
-          border: "1px solid rgba(245,158,11,0.35)",
+          background: darkMode ? "rgba(250,182,10,0.12)" : "#fffbeb",
+          border: "1px solid rgba(250,182,10,0.35)",
           display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px",
-          boxShadow: "0 4px 12px rgba(245,158,11,0.08)"
+          boxShadow: "0 4px 12px rgba(250,182,10,0.08)"
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <span style={{ fontSize: "22px" }}>🏢</span>
             <div>
-              <div style={{ fontSize: "14.5px", fontWeight: "700", color: darkMode ? "#fbbf24" : "#b45309" }}>
+              <div style={{ fontSize: "14.5px", fontWeight: "700", color: darkMode ? "#fab60a" : "#b45309" }}>
                 You need a Department first
               </div>
-              <div style={{ fontSize: "13px", color: darkMode ? "#cbd5e1" : "#475569" }}>
+              <div style={{ fontSize: "13px", color: darkMode ? "#D5C2A5" : "#6E5D4B" }}>
                 Teams structure members across departments. Create at least one department before defining teams.
               </div>
             </div>
@@ -256,9 +256,9 @@ export default function Teams({ darkMode }) {
               onClick={() => { setDeptName(''); setIsDeptModalOpen(true); }}
               style={{
                 padding: "9px 18px", borderRadius: "10px", border: "none",
-                background: "linear-gradient(135deg, #f59e0b, #d97706)", color: "#ffffff",
+                background: "#cf4a11", color: "#ffffff",
                 fontWeight: "700", fontSize: "13px", cursor: "pointer",
-                boxShadow: "0 4px 12px rgba(245,158,11,0.3)"
+                boxShadow: "0 4px 12px rgba(207,74,17,0.3)"
               }}
             >
               + Create Department Now
@@ -281,15 +281,15 @@ export default function Teams({ darkMode }) {
       ) : teams.length === 0 ? (
         <div style={{ ...cardStyle, textAlign: "center", padding: "48px 24px" }}>
           <span style={{ fontSize: "36px", display: "block", marginBottom: "12px" }}>👥</span>
-          <h3 style={{ margin: "0 0 8px", color: darkMode ? "#f1f5f9" : "#1e293b" }}>No Teams Created</h3>
-          <p style={{ fontSize: "13px", color: darkMode ? "#94a3b8" : "#64748b", margin: "0 0 20px" }}>
+          <h3 style={{ margin: "0 0 8px", color: darkMode ? "#FFF3E2" : "#1E140C" }}>No Teams Created</h3>
+          <p style={{ fontSize: "13px", color: darkMode ? "#B3A18C" : "#9C8B76", margin: "0 0 20px" }}>
             {canManageTeams ? "Create cross-functional teams to group members across departments." : "No teams exist in this organization."}
           </p>
           {canManageTeams && (
             <button
               onClick={() => { setEditingTeamId(null); setTeamName(''); setIsTeamModalOpen(true); }}
               style={{
-                padding: "10px 20px", borderRadius: "10px", border: "none", background: "#6366f1", color: "#fff", fontWeight: "700", cursor: "pointer"
+                padding: "10px 20px", borderRadius: "10px", border: "none", background: "#cf4a11", color: "#fff", fontWeight: "700", cursor: "pointer"
               }}
             >
               Add Team
@@ -300,31 +300,31 @@ export default function Teams({ darkMode }) {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "20px" }}>
           {teams.map((t) => {
             const memberIds = teamMembersMap[t.id] || [];
+
             return (
               <div key={t.id} style={cardStyle}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "16px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                   <div>
-                    <h3 style={{ margin: "0 0 4px", fontSize: "17px", fontWeight: "700", color: darkMode ? "#f8fafc" : "#0f172a" }}>
-                      👥 {t.name}
+                    <h3 style={{ margin: "0 0 4px", fontSize: "16px", fontWeight: "800", color: darkMode ? "#FFF8EF" : "#2E2013" }}>
+                      {t.name}
                     </h3>
-                    <span style={{ fontSize: "12px", color: darkMode ? "#94a3b8" : "#64748b" }}>
-                      {memberIds.length} {memberIds.length === 1 ? 'Member' : 'Members'}
-                    </span>
+                    <p style={{ margin: 0, fontSize: "12px", color: darkMode ? "#B3A18C" : "#9C8B76" }}>
+                      🏢 Department ID: {t.department_id ? t.department_id.substring(0, 8) : 'Unassigned'}
+                    </p>
                   </div>
-
                   {canManageTeams && (
                     <div style={{ display: "flex", gap: "6px" }}>
                       <button
                         onClick={() => { setEditingTeamId(t.id); setTeamName(t.name); setIsTeamModalOpen(true); }}
-                        title="Edit Team Name"
-                        style={{ background: "none", border: "none", color: "#818cf8", cursor: "pointer", fontSize: "14px" }}
+                        title="Edit Team"
+                        style={{ background: "none", border: "none", color: "#f15e1c", cursor: "pointer", fontSize: "14px" }}
                       >
                         ✏️
                       </button>
                       <button
                         onClick={() => handleDeleteTeam(t.id)}
                         title="Delete Team"
-                        style={{ background: "none", border: "none", color: "#f87171", cursor: "pointer", fontSize: "14px" }}
+                        style={{ background: "none", border: "none", color: "#C13E1A", cursor: "pointer", fontSize: "14px" }}
                       >
                         🗑️
                       </button>
@@ -335,16 +335,16 @@ export default function Teams({ darkMode }) {
                 {/* Team Members Preview */}
                 <div style={{ margin: "16px 0", display: "flex", flexWrap: "wrap", gap: "6px" }}>
                   {memberIds.length === 0 ? (
-                    <span style={{ fontSize: "12px", color: darkMode ? "#64748b" : "#94a3b8", italic: true }}>No members assigned</span>
+                    <span style={{ fontSize: "12px", color: darkMode ? "#9C8B76" : "#B3A18C", italic: true }}>No members assigned</span>
                   ) : (
                     memberIds.map(uid => (
                       <span
                         key={uid}
                         style={{
                           fontSize: "11px", padding: "4px 8px", borderRadius: "12px",
-                          background: darkMode ? "rgba(99,102,241,0.15)" : "#e0e7ff",
-                          color: darkMode ? "#a5b4fc" : "#4338ca",
-                          border: darkMode ? "1px solid rgba(99,102,241,0.3)" : "1px solid #c7d2fe",
+                          background: darkMode ? "rgba(241,94,28,0.15)" : "#FFF3E2",
+                          color: darkMode ? "#fab60a" : "#cf4a11",
+                          border: darkMode ? "1px solid rgba(241,94,28,0.3)" : "1px solid #F0DFC9",
                           fontFamily: "monospace"
                         }}
                       >
@@ -361,9 +361,9 @@ export default function Teams({ darkMode }) {
                       width: "100%",
                       padding: "8px 12px",
                       borderRadius: "8px",
-                      border: darkMode ? "1px solid rgba(255,255,255,0.1)" : "1px solid #cbd5e1",
-                      background: darkMode ? "rgba(255,255,255,0.04)" : "#f8fafc",
-                      color: darkMode ? "#f1f5f9" : "#334155",
+                      border: darkMode ? "1px solid rgba(255,255,255,0.1)" : "1px solid #F0DFC9",
+                      background: darkMode ? "rgba(255,255,255,0.04)" : "#FFF3E2",
+                      color: darkMode ? "#FFF3E2" : "#2E2013",
                       fontSize: "12px",
                       fontWeight: "600",
                       cursor: "pointer",
@@ -387,27 +387,27 @@ export default function Teams({ darkMode }) {
           display: "flex", alignItems: "center", justifyContent: "center", padding: "16px"
         }}>
           <div style={{
-            background: darkMode ? "#0f172a" : "#ffffff",
-            border: darkMode ? "1px solid #1e293b" : "1px solid #cbd5e1",
+            background: darkMode ? "#2E2013" : "#ffffff",
+            border: darkMode ? "1px solid #1E140C" : "1px solid #D5C2A5",
             borderRadius: "14px", padding: "24px", width: "100%", maxWidth: "420px"
           }}>
-            <h3 style={{ margin: "0 0 16px", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+            <h3 style={{ margin: "0 0 16px", color: darkMode ? "#FFF8EF" : "#2E2013" }}>
               {editingTeamId ? "Edit Team" : "Create New Team"}
             </h3>
 
             {departments.length === 0 && (
               <div style={{
                 marginBottom: "16px", padding: "12px 14px", borderRadius: "10px",
-                background: darkMode ? "rgba(245,158,11,0.15)" : "#fffbeb",
-                border: "1px solid rgba(245,158,11,0.35)", fontSize: "12.5px",
-                color: darkMode ? "#fbbf24" : "#b45309"
+                background: darkMode ? "rgba(250,182,10,0.15)" : "#fffbeb",
+                border: "1px solid rgba(250,182,10,0.35)", fontSize: "12.5px",
+                color: darkMode ? "#fab60a" : "#b45309"
               }}>
                 ⚠️ You need a Department first before creating a Team.{" "}
                 <button
                   type="button"
                   onClick={() => { setDeptName(''); setIsDeptModalOpen(true); }}
                   style={{
-                    background: "none", border: "none", color: "#6366f1", fontWeight: "700",
+                    background: "none", border: "none", color: "#f15e1c", fontWeight: "700",
                     cursor: "pointer", textDecoration: "underline", padding: 0
                   }}
                 >
@@ -418,7 +418,7 @@ export default function Teams({ darkMode }) {
 
             <form onSubmit={handleSaveTeam}>
               <div style={{ marginBottom: "16px" }}>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: darkMode ? "#cbd5e1" : "#475569", marginBottom: "6px" }}>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: darkMode ? "#D5C2A5" : "#6E5D4B", marginBottom: "6px" }}>
                   TEAM NAME
                 </label>
                 <input
@@ -429,8 +429,8 @@ export default function Teams({ darkMode }) {
                   required
                   style={{
                     width: "100%", padding: "10px 14px", borderRadius: "8px",
-                    border: darkMode ? "1px solid #334155" : "1px solid #cbd5e1",
-                    background: darkMode ? "#1e293b" : "#f8fafc",
+                    border: darkMode ? "1px solid #4A3C2C" : "1px solid #D5C2A5",
+                    background: darkMode ? "#1E140C" : "#FFF8EF",
                     color: darkMode ? "#fff" : "#000",
                     boxSizing: "border-box"
                   }}
@@ -440,14 +440,14 @@ export default function Teams({ darkMode }) {
                 <button
                   type="button"
                   onClick={() => setIsTeamModalOpen(false)}
-                  style={{ padding: "8px 16px", borderRadius: "8px", border: "1px solid #64748b", background: "transparent", color: darkMode ? "#cbd5e1" : "#475569", cursor: "pointer" }}
+                  style={{ padding: "8px 16px", borderRadius: "8px", border: "1px solid #9C8B76", background: "transparent", color: darkMode ? "#D5C2A5" : "#6E5D4B", cursor: "pointer" }}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submittingTeam}
-                  style={{ padding: "8px 16px", borderRadius: "8px", border: "none", background: "#6366f1", color: "#fff", fontWeight: "700", cursor: "pointer" }}
+                  style={{ padding: "8px 16px", borderRadius: "8px", border: "none", background: "#cf4a11", color: "#fff", fontWeight: "700", cursor: "pointer" }}
                 >
                   {submittingTeam ? "Saving..." : "Save Team"}
                 </button>
@@ -465,25 +465,25 @@ export default function Teams({ darkMode }) {
           display: "flex", alignItems: "center", justifyContent: "center", padding: "16px"
         }}>
           <div style={{
-            background: darkMode ? "#0f172a" : "#ffffff",
-            border: darkMode ? "1px solid #1e293b" : "1px solid #cbd5e1",
+            background: darkMode ? "#2E2013" : "#ffffff",
+            border: darkMode ? "1px solid #1E140C" : "1px solid #D5C2A5",
             borderRadius: "14px", padding: "24px", width: "100%", maxWidth: "420px",
             boxShadow: "0 20px 40px rgba(0,0,0,0.3)"
           }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-              <h3 style={{ margin: 0, color: darkMode ? "#f8fafc" : "#0f172a", fontSize: "18px", fontWeight: "800" }}>
+              <h3 style={{ margin: 0, color: darkMode ? "#FFF8EF" : "#2E2013", fontSize: "18px", fontWeight: "800" }}>
                 Create New Department
               </h3>
               <button
                 onClick={() => setIsDeptModalOpen(false)}
-                style={{ background: "none", border: "none", color: "#64748b", fontSize: "20px", cursor: "pointer" }}
+                style={{ background: "none", border: "none", color: "#9C8B76", fontSize: "20px", cursor: "pointer" }}
               >
                 ✕
               </button>
             </div>
             <form onSubmit={handleSaveDepartment}>
               <div style={{ marginBottom: "16px" }}>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: darkMode ? "#cbd5e1" : "#475569", marginBottom: "6px" }}>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: darkMode ? "#D5C2A5" : "#6E5D4B", marginBottom: "6px" }}>
                   DEPARTMENT NAME *
                 </label>
                 <input
@@ -495,8 +495,8 @@ export default function Teams({ darkMode }) {
                   autoFocus
                   style={{
                     width: "100%", padding: "10px 14px", borderRadius: "8px",
-                    border: darkMode ? "1px solid #334155" : "1px solid #cbd5e1",
-                    background: darkMode ? "#1e293b" : "#f8fafc",
+                    border: darkMode ? "1px solid #4A3C2C" : "1px solid #D5C2A5",
+                    background: darkMode ? "#1E140C" : "#FFF8EF",
                     color: darkMode ? "#fff" : "#000",
                     boxSizing: "border-box"
                   }}
@@ -506,14 +506,14 @@ export default function Teams({ darkMode }) {
                 <button
                   type="button"
                   onClick={() => setIsDeptModalOpen(false)}
-                  style={{ padding: "8px 16px", borderRadius: "8px", border: "1px solid #64748b", background: "transparent", color: darkMode ? "#cbd5e1" : "#475569", cursor: "pointer" }}
+                  style={{ padding: "8px 16px", borderRadius: "8px", border: "1px solid #9C8B76", background: "transparent", color: darkMode ? "#D5C2A5" : "#6E5D4B", cursor: "pointer" }}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submittingDept}
-                  style={{ padding: "8px 16px", borderRadius: "8px", border: "none", background: "#6366f1", color: "#fff", fontWeight: "700", cursor: "pointer" }}
+                  style={{ padding: "8px 16px", borderRadius: "8px", border: "none", background: "#cf4a11", color: "#fff", fontWeight: "700", cursor: "pointer" }}
                 >
                   {submittingDept ? "Saving..." : "Save Department"}
                 </button>
@@ -532,17 +532,17 @@ export default function Teams({ darkMode }) {
           overflowY: "auto"
         }}>
           <div style={{
-            background: darkMode ? "#0f172a" : "#ffffff",
-            border: darkMode ? "1px solid #1e293b" : "1px solid #cbd5e1",
+            background: darkMode ? "#2E2013" : "#ffffff",
+            border: darkMode ? "1px solid #1E140C" : "1px solid #D5C2A5",
             borderRadius: "14px", padding: "24px", width: "100%", maxWidth: "500px", maxHeight: "90vh", overflowY: "auto"
           }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-              <h3 style={{ margin: 0, color: darkMode ? "#f8fafc" : "#0f172a" }}>
+              <h3 style={{ margin: 0, color: darkMode ? "#FFF8EF" : "#2E2013" }}>
                 Manage Members: {activeTeamForMembers.name}
               </h3>
               <button
                 onClick={() => setActiveTeamForMembers(null)}
-                style={{ background: "none", border: "none", color: "#64748b", fontSize: "18px", cursor: "pointer" }}
+                style={{ background: "none", border: "none", color: "#9C8B76", fontSize: "18px", cursor: "pointer" }}
               >
                 ✕
               </button>
@@ -556,8 +556,8 @@ export default function Teams({ darkMode }) {
                 className="form-select"
                 style={{
                   flex: 1, padding: "8px 36px 8px 12px", borderRadius: "8px",
-                  border: darkMode ? "1px solid #334155" : "1px solid #cbd5e1",
-                  background: darkMode ? "#1e293b" : "#f8fafc",
+                  border: darkMode ? "1px solid #4A3C2C" : "1px solid #D5C2A5",
+                  background: darkMode ? "#1E140C" : "#FFF8EF",
                   color: darkMode ? "#fff" : "#000",
                   cursor: "pointer"
                 }}
@@ -574,14 +574,14 @@ export default function Teams({ darkMode }) {
               <button
                 type="submit"
                 disabled={!selectedUserIdToAdd}
-                style={{ padding: "8px 16px", borderRadius: "8px", border: "none", background: "#6366f1", color: "#fff", fontWeight: "700", cursor: "pointer" }}
+                style={{ padding: "8px 16px", borderRadius: "8px", border: "none", background: "#cf4a11", color: "#fff", fontWeight: "700", cursor: "pointer" }}
               >
                 Add
               </button>
             </form>
 
             {/* Existing Team Members List */}
-            <h4 style={{ fontSize: "14px", color: darkMode ? "#cbd5e1" : "#475569", margin: "0 0 10px" }}>
+            <h4 style={{ fontSize: "14px", color: darkMode ? "#D5C2A5" : "#6E5D4B", margin: "0 0 10px" }}>
               Current Team Members ({ (teamMembersMap[activeTeamForMembers.id] || []).length })
             </h4>
             <div style={{ maxHeight: "250px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "8px" }}>
@@ -591,11 +591,11 @@ export default function Teams({ darkMode }) {
                   style={{
                     display: "flex", justifyContent: "space-between", alignItems: "center",
                     padding: "10px 12px", borderRadius: "8px",
-                    background: darkMode ? "rgba(255,255,255,0.03)" : "#f8fafc",
-                    border: darkMode ? "1px solid rgba(255,255,255,0.06)" : "1px solid #e2e8f0"
+                    background: darkMode ? "rgba(255,255,255,0.03)" : "#FFF8EF",
+                    border: darkMode ? "1px solid rgba(255,255,255,0.06)" : "1px solid #E8D9C5"
                   }}
                 >
-                  <span style={{ fontSize: "13px", color: darkMode ? "#f1f5f9" : "#0f172a", fontFamily: "monospace" }}>
+                  <span style={{ fontSize: "13px", color: darkMode ? "#FFF3E2" : "#2E2013", fontFamily: "monospace" }}>
                     {uid}
                   </span>
                   <button

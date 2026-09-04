@@ -168,7 +168,7 @@ export default function Sidebar({ darkMode, isOpen, onClose, onOpenReminders }) 
             <span>Organization</span>
             <span style={{
               fontSize: '9px', fontWeight: '800', textTransform: 'uppercase',
-              color: userRole === 'owner' ? '#f87171' : userRole === 'manager' ? '#c084fc' : '#60a5fa',
+              color: userRole === 'owner' ? '#f87171' : userRole === 'manager' ? '#fab60a' : '#60a5fa',
               background: 'rgba(255,255,255,0.08)', padding: '1px 6px', borderRadius: '8px'
             }}>
               {userRole}
@@ -184,7 +184,7 @@ export default function Sidebar({ darkMode, isOpen, onClose, onOpenReminders }) 
                 width: '100%',
                 background: 'transparent',
                 border: 'none',
-                color: '#f8fafc',
+                color: '#FFF8EF',
                 fontSize: '13px',
                 fontWeight: '700',
                 outline: 'none',
@@ -192,13 +192,13 @@ export default function Sidebar({ darkMode, isOpen, onClose, onOpenReminders }) 
               }}
             >
               {userOrgs.map(o => (
-                <option key={o.id} value={o.id} style={{ background: '#0f172a', color: '#fff' }}>
+                <option key={o.id} value={o.id} style={{ background: '#2E2013', color: '#fff' }}>
                   {o.name} ({o.role})
                 </option>
               ))}
             </select>
           ) : (
-            <div style={{ fontSize: '13px', fontWeight: '700', color: '#f8fafc', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            <div style={{ fontSize: '13px', fontWeight: '700', color: '#FFF8EF', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               {activeOrg.name}
             </div>
           )}

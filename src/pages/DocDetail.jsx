@@ -152,9 +152,9 @@ export default function DocDetail({ user, darkMode }) {
     }
   }
 
-  const cardBg = darkMode ? "#1e293b" : "#ffffff";
-  const borderCol = darkMode ? "rgba(255,255,255,0.08)" : "#e2e8f0";
-  const textMuted = darkMode ? "#94a3b8" : "#64748b";
+  const cardBg = darkMode ? "#1E140C" : "#ffffff";
+  const borderCol = darkMode ? "rgba(255,255,255,0.08)" : "#E8D9C5";
+  const textMuted = darkMode ? "#B3A18C" : "#9C8B76";
 
   if (loading) {
     return <div style={{ textAlign: "center", padding: "60px", color: textMuted }}>Loading document...</div>;
@@ -166,7 +166,7 @@ export default function DocDetail({ user, darkMode }) {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
         <Link
           to={`/projects/${projectId}/docs`}
-          style={{ display: "inline-flex", alignItems: "center", gap: "6px", color: "#818cf8", fontSize: "13px", fontWeight: "600", textDecoration: "none" }}
+          style={{ display: "inline-flex", alignItems: "center", gap: "6px", color: "#f15e1c", fontSize: "13px", fontWeight: "600", textDecoration: "none" }}
         >
           ← Back to Project Docs List
         </Link>
@@ -175,8 +175,8 @@ export default function DocDetail({ user, darkMode }) {
           onClick={() => setShowHistory(!showHistory)}
           style={{
             padding: "6px 14px", borderRadius: "8px", border: `1px solid ${borderCol}`,
-            background: showHistory ? "rgba(99,102,241,0.15)" : (darkMode ? "#0f172a" : "#f8fafc"),
-            color: showHistory ? "#818cf8" : textMuted, fontWeight: "600", fontSize: "12.5px", cursor: "pointer"
+            background: showHistory ? "rgba(241, 94, 28, 0.15)" : (darkMode ? "#2E2013" : "#FFF8EF"),
+            color: showHistory ? "#f15e1c" : textMuted, fontWeight: "600", fontSize: "12.5px", cursor: "pointer"
           }}
         >
           📜 Version History ({editsList.length})
@@ -202,7 +202,7 @@ export default function DocDetail({ user, darkMode }) {
               placeholder="Document Title"
               style={{
                 fontSize: "22px", fontWeight: "800", background: "none", border: "none",
-                color: darkMode ? "#f8fafc" : "#0f172a", outline: "none", width: "100%"
+                color: darkMode ? "#FFF8EF" : "#2E2013", outline: "none", width: "100%"
               }}
             />
 
@@ -219,9 +219,9 @@ export default function DocDetail({ user, darkMode }) {
                   disabled={saving}
                   style={{
                     padding: "9px 20px", borderRadius: "10px", border: "none",
-                    background: "linear-gradient(135deg, #10b981, #059669)", color: "white",
+                    background: "linear-gradient(135deg, #2e936f, #24785a)", color: "white",
                     fontWeight: "700", fontSize: "13.5px", cursor: "pointer", opacity: saving ? 0.6 : 1,
-                    boxShadow: "0 4px 12px rgba(16,185,129,0.3)"
+                    boxShadow: "0 4px 12px rgba(46, 147, 111, 0.3)"
                   }}
                 >
                   {saving ? "Saving..." : "💾 Save Document"}
@@ -249,7 +249,7 @@ export default function DocDetail({ user, darkMode }) {
             padding: "20px", boxShadow: "0 4px 20px rgba(0,0,0,0.04)", shrink: 0
           }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-              <h3 style={{ margin: 0, fontSize: "15px", fontWeight: "700", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+              <h3 style={{ margin: 0, fontSize: "15px", fontWeight: "700", color: darkMode ? "#FFF8EF" : "#2E2013" }}>
                 📜 Edit Audit Log
               </h3>
               <button onClick={() => setShowHistory(false)} style={{ background: "none", border: "none", color: textMuted, cursor: "pointer" }}>✕</button>
@@ -266,11 +266,11 @@ export default function DocDetail({ user, darkMode }) {
                     key={edit.id}
                     style={{
                       padding: "10px 12px", borderRadius: "8px",
-                      background: darkMode ? "#0f172a" : "#f8fafc", border: `1px solid ${borderCol}`,
+                      background: darkMode ? "#2E2013" : "#FFF8EF", border: `1px solid ${borderCol}`,
                       fontSize: "12px"
                     }}
                   >
-                    <div style={{ fontWeight: "700", color: darkMode ? "#f8fafc" : "#0f172a", marginBottom: "2px" }}>
+                    <div style={{ fontWeight: "700", color: darkMode ? "#FFF8EF" : "#2E2013", marginBottom: "2px" }}>
                       Edit #{editsList.length - idx}
                     </div>
                     <div style={{ color: textMuted, fontSize: "11px" }}>

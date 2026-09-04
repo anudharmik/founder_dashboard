@@ -109,9 +109,9 @@ export default function ProjectDocs({ user, darkMode }) {
     }
   }
 
-  const cardBg = darkMode ? "#1e293b" : "#ffffff";
-  const borderCol = darkMode ? "rgba(255,255,255,0.08)" : "#e2e8f0";
-  const textMuted = darkMode ? "#94a3b8" : "#64748b";
+  const cardBg = darkMode ? "#1E140C" : "#ffffff";
+  const borderCol = darkMode ? "rgba(255,255,255,0.08)" : "#E8D9C5";
+  const textMuted = darkMode ? "#B3A18C" : "#9C8B76";
 
   function stripHtml(html) {
     if (!html) return 'Empty document';
@@ -125,7 +125,7 @@ export default function ProjectDocs({ user, darkMode }) {
       {/* Back Link */}
       <Link
         to={`/projects/${projectId}`}
-        style={{ display: "inline-flex", alignItems: "center", gap: "6px", color: "#818cf8", fontSize: "13px", fontWeight: "600", textDecoration: "none", marginBottom: "16px" }}
+        style={{ display: "inline-flex", alignItems: "center", gap: "6px", color: "#f15e1c", fontSize: "13px", fontWeight: "600", textDecoration: "none", marginBottom: "16px" }}
       >
         ← Back to {project ? project.title : "Project"}
       </Link>
@@ -134,14 +134,14 @@ export default function ProjectDocs({ user, darkMode }) {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "28px" }}>
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
-            <span style={{ padding: "3px 10px", borderRadius: "12px", fontSize: "11px", fontWeight: "700", background: "rgba(99,102,241,0.15)", color: "#818cf8", textTransform: "uppercase" }}>
+            <span style={{ padding: "3px 10px", borderRadius: "12px", fontSize: "11px", fontWeight: "700", background: "rgba(241, 94, 28, 0.15)", color: "#f15e1c", textTransform: "uppercase" }}>
               📄 Documentation
             </span>
             <span style={{ fontSize: "13px", color: textMuted }}>
               {project ? project.title : ''}
             </span>
           </div>
-          <h1 style={{ margin: 0, fontSize: "26px", fontWeight: "800", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+          <h1 style={{ margin: 0, fontSize: "26px", fontWeight: "800", color: darkMode ? "#FFF8EF" : "#2E2013" }}>
             Project Knowledge & Specs
           </h1>
         </div>
@@ -151,8 +151,8 @@ export default function ProjectDocs({ user, darkMode }) {
             onClick={() => setShowCreateModal(true)}
             style={{
               padding: "10px 20px", borderRadius: "10px", border: "none",
-              background: "linear-gradient(135deg, #6366f1, #8b5cf6)", color: "white",
-              fontWeight: "700", fontSize: "14px", cursor: "pointer", boxShadow: "0 4px 12px rgba(99,102,241,0.3)"
+              background: "linear-gradient(135deg, #f15e1c, #fab60a)", color: "white",
+              fontWeight: "700", fontSize: "14px", cursor: "pointer", boxShadow: "0 4px 12px rgba(241, 94, 28, 0.3)"
             }}
           >
             + New Document
@@ -169,7 +169,7 @@ export default function ProjectDocs({ user, darkMode }) {
           border: `1px dashed ${borderCol}`
         }}>
           <div style={{ fontSize: "42px", marginBottom: "12px" }}>📄</div>
-          <h3 style={{ margin: "0 0 8px", fontSize: "18px", fontWeight: "700", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+          <h3 style={{ margin: "0 0 8px", fontSize: "18px", fontWeight: "700", color: darkMode ? "#FFF8EF" : "#2E2013" }}>
             No documentation pages created yet
           </h3>
           <p style={{ margin: "0 0 20px", fontSize: "14px", color: textMuted, maxWidth: "450px", marginLeft: "auto", marginRight: "auto" }}>
@@ -180,7 +180,7 @@ export default function ProjectDocs({ user, darkMode }) {
               onClick={() => setShowCreateModal(true)}
               style={{
                 padding: "10px 20px", borderRadius: "8px", border: "none",
-                background: "#6366f1", color: "white", fontWeight: "600", fontSize: "13.5px", cursor: "pointer"
+                background: "#f15e1c", color: "white", fontWeight: "600", fontSize: "13.5px", cursor: "pointer"
               }}
             >
               + Create First Document
@@ -201,7 +201,7 @@ export default function ProjectDocs({ user, darkMode }) {
             >
               <div>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "10px" }}>
-                  <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "700", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+                  <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "700", color: darkMode ? "#FFF8EF" : "#2E2013" }}>
                     📄 {doc.title}
                   </h3>
                 </div>
@@ -216,7 +216,7 @@ export default function ProjectDocs({ user, darkMode }) {
 
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "11.5px", color: textMuted, borderTop: `1px solid ${borderCol}`, paddingTop: "12px" }}>
                 <span>Updated: {new Date(doc.updated_at).toLocaleDateString()}</span>
-                <span style={{ color: "#6366f1", fontWeight: "600" }}>View & Edit →</span>
+                <span style={{ color: "#f15e1c", fontWeight: "600" }}>View & Edit →</span>
               </div>
             </div>
           ))}
@@ -234,7 +234,7 @@ export default function ProjectDocs({ user, darkMode }) {
             width: "100%", maxWidth: "450px", padding: "28px", boxShadow: "0 20px 40px rgba(0,0,0,0.3)"
           }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-              <h2 style={{ margin: 0, fontSize: "18px", fontWeight: "800", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+              <h2 style={{ margin: 0, fontSize: "18px", fontWeight: "800", color: darkMode ? "#FFF8EF" : "#2E2013" }}>
                 Create New Document
               </h2>
               <button onClick={() => setShowCreateModal(false)} style={{ background: "none", border: "none", color: textMuted, fontSize: "20px", cursor: "pointer" }}>✕</button>
@@ -242,7 +242,7 @@ export default function ProjectDocs({ user, darkMode }) {
 
             <form onSubmit={handleCreateDoc}>
               <div style={{ marginBottom: "20px" }}>
-                <label style={{ display: "block", marginBottom: "6px", fontSize: "12.5px", fontWeight: "600", color: darkMode ? "#cbd5e1" : "#334155" }}>
+                <label style={{ display: "block", marginBottom: "6px", fontSize: "12.5px", fontWeight: "600", color: darkMode ? "#D5C2A5" : "#4A3C2C" }}>
                   Document Title *
                 </label>
                 <input
@@ -253,8 +253,8 @@ export default function ProjectDocs({ user, darkMode }) {
                   placeholder="e.g. Architecture Overview, API Spec"
                   style={{
                     width: "100%", padding: "11px 14px", borderRadius: "10px",
-                    border: `1px solid ${borderCol}`, background: darkMode ? "#0f172a" : "#f8fafc",
-                    color: darkMode ? "#f8fafc" : "#0f172a", outline: "none", fontSize: "14px", boxSizing: "border-box"
+                    border: `1px solid ${borderCol}`, background: darkMode ? "#2E2013" : "#FFF8EF",
+                    color: darkMode ? "#FFF8EF" : "#2E2013", outline: "none", fontSize: "14px", boxSizing: "border-box"
                   }}
                 />
               </div>
@@ -275,7 +275,7 @@ export default function ProjectDocs({ user, darkMode }) {
                   disabled={creating}
                   style={{
                     padding: "10px 22px", borderRadius: "10px", border: "none",
-                    background: "linear-gradient(135deg, #6366f1, #8b5cf6)", color: "white",
+                    background: "linear-gradient(135deg, #f15e1c, #fab60a)", color: "white",
                     fontWeight: "700", cursor: "pointer", opacity: creating ? 0.6 : 1
                   }}
                 >

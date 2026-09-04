@@ -52,9 +52,9 @@ export default function CreateOrgOnboarding({ user, darkMode }) {
     }
   }
 
-  const cardBg = darkMode ? "#1e293b" : "#ffffff";
-  const borderCol = darkMode ? "rgba(255,255,255,0.08)" : "#e2e8f0";
-  const textMuted = darkMode ? "#94a3b8" : "#64748b";
+  const cardBg = darkMode ? "#1E140C" : "#ffffff";
+  const borderCol = darkMode ? "rgba(255,255,255,0.08)" : "#E8D9C5";
+  const textMuted = darkMode ? "#B3A18C" : "#9C8B76";
 
   return (
     <div style={{
@@ -63,7 +63,7 @@ export default function CreateOrgOnboarding({ user, darkMode }) {
       alignItems: "center",
       justifyContent: "center",
       padding: "24px",
-      background: darkMode ? "#0f172a" : "#f3f4f6",
+      background: darkMode ? "#2E2013" : "#f3f4f6",
       fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
     }}>
       <div style={{
@@ -99,7 +99,7 @@ export default function CreateOrgOnboarding({ user, darkMode }) {
           fontWeight: "800",
           letterSpacing: "-0.5px",
           margin: "0 0 8px",
-          color: darkMode ? "#f8fafc" : "#0f172a",
+          color: darkMode ? "#FFF8EF" : "#2E2013",
         }}>
           Create your organization to get started
         </h1>
@@ -121,7 +121,7 @@ export default function CreateOrgOnboarding({ user, darkMode }) {
               fontWeight: "700",
               textTransform: "uppercase",
               letterSpacing: "0.05em",
-              color: darkMode ? "#cbd5e1" : "#475569",
+              color: darkMode ? "#D5C2A5" : "#6E5D4B",
               marginBottom: "8px",
             }}>
               Organization Name
@@ -136,9 +136,9 @@ export default function CreateOrgOnboarding({ user, darkMode }) {
                 width: "100%",
                 padding: "12px 16px",
                 borderRadius: "10px",
-                border: darkMode ? "1px solid rgba(255,255,255,0.12)" : "1px solid #cbd5e1",
+                border: darkMode ? "1px solid rgba(255,255,255,0.12)" : "1px solid #D5C2A5",
                 background: darkMode ? "rgba(15,23,42,0.8)" : "#ffffff",
-                color: darkMode ? "#f8fafc" : "#0f172a",
+                color: darkMode ? "#FFF8EF" : "#2E2013",
                 fontSize: "14px",
                 fontWeight: "500",
                 outline: "none",
@@ -146,11 +146,11 @@ export default function CreateOrgOnboarding({ user, darkMode }) {
                 fontFamily: "inherit",
               }}
               onFocus={(e) => {
-                e.target.style.borderColor = "#6366f1";
-                e.target.style.boxShadow = "0 0 0 3px rgba(99,102,241,0.18)";
+                e.target.style.borderColor = "#f15e1c";
+                e.target.style.boxShadow = "0 0 0 3px rgba(241, 94, 28, 0.18)";
               }}
               onBlur={(e) => {
-                e.target.style.borderColor = darkMode ? "rgba(255,255,255,0.12)" : "#cbd5e1";
+                e.target.style.borderColor = darkMode ? "rgba(255,255,255,0.12)" : "#D5C2A5";
                 e.target.style.boxShadow = "none";
               }}
             />
@@ -163,14 +163,14 @@ export default function CreateOrgOnboarding({ user, darkMode }) {
               padding: "13px 20px",
               borderRadius: "10px",
               border: "none",
-              background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+              background: "linear-gradient(135deg, #f15e1c, #fab60a)",
               color: "#ffffff",
               fontWeight: "700",
               fontSize: "14px",
               cursor: loading ? "not-allowed" : "pointer",
               opacity: loading ? 0.7 : 1,
               transition: "all 0.18s ease",
-              boxShadow: "0 4px 14px rgba(99,102,241,0.35)",
+              boxShadow: "0 4px 14px rgba(241, 94, 28, 0.35)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",

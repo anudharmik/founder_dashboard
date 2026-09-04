@@ -185,16 +185,16 @@ export default function Projects({ darkMode }) {
     return true;
   });
 
-  const cardBg = darkMode ? "#1e293b" : "#ffffff";
-  const borderCol = darkMode ? "rgba(255,255,255,0.08)" : "#e2e8f0";
-  const textMuted = darkMode ? "#94a3b8" : "#64748b";
+  const cardBg = darkMode ? "#1E140C" : "#ffffff";
+  const borderCol = darkMode ? "rgba(255,255,255,0.08)" : "#E8D9C5";
+  const textMuted = darkMode ? "#B3A18C" : "#9C8B76";
 
   return (
     <div style={{ maxWidth: "1100px", margin: "0 auto", width: "100%", animation: "fadeIn 0.3s ease" }}>
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "28px", flexWrap: "wrap", gap: "16px" }}>
         <div>
-          <h1 style={{ margin: "0 0 4px", fontSize: "clamp(22px, 5vw, 28px)", fontWeight: "800", letterSpacing: "-0.6px", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+          <h1 style={{ margin: "0 0 4px", fontSize: "clamp(22px, 5vw, 28px)", fontWeight: "800", letterSpacing: "-0.6px", color: darkMode ? "#FFF8EF" : "#2E2013" }}>
             Projects
           </h1>
           <p style={{ margin: 0, fontSize: "14px", color: textMuted }}>
@@ -207,9 +207,9 @@ export default function Projects({ darkMode }) {
             onClick={() => setShowCreateModal(true)}
             style={{
               padding: "11px 22px", borderRadius: "10px", border: "none", cursor: "pointer",
-              background: "linear-gradient(135deg, #6366f1, #8b5cf6)", color: "white",
+              background: "#cf4a11", color: "white",
               fontWeight: "700", fontSize: "14px", transition: "all 0.18s ease",
-              boxShadow: "0 4px 14px rgba(99,102,241,0.35)", display: "flex", alignItems: "center", gap: "8px"
+              boxShadow: "0 4px 14px rgba(207,74,17,0.35)", display: "flex", alignItems: "center", gap: "8px"
             }}
           >
             <span style={{ fontSize: "18px", leading: "1" }}>+</span> New Project
@@ -233,7 +233,7 @@ export default function Projects({ darkMode }) {
           className="form-select"
           style={{
             padding: "9px 36px 9px 14px", borderRadius: "8px", border: `1px solid ${borderCol}`,
-            background: darkMode ? "#0f172a" : "#f8fafc", color: darkMode ? "#f8fafc" : "#0f172a",
+            background: darkMode ? "#2E2013" : "#FFF8EF", color: darkMode ? "#FFF8EF" : "#2E2013",
             fontSize: "13px", fontWeight: "500", cursor: "pointer", outline: "none"
           }}
         >
@@ -250,7 +250,7 @@ export default function Projects({ darkMode }) {
           className="form-select"
           style={{
             padding: "9px 36px 9px 14px", borderRadius: "8px", border: `1px solid ${borderCol}`,
-            background: darkMode ? "#0f172a" : "#f8fafc", color: darkMode ? "#f8fafc" : "#0f172a",
+            background: darkMode ? "#2E2013" : "#FFF8EF", color: darkMode ? "#FFF8EF" : "#2E2013",
             fontSize: "13px", fontWeight: "500", cursor: "pointer", outline: "none"
           }}
         >
@@ -291,7 +291,7 @@ export default function Projects({ darkMode }) {
           border: `1px dashed ${borderCol}`
         }}>
           <div style={{ fontSize: "42px", marginBottom: "12px" }}>📁</div>
-          <h3 style={{ margin: "0 0 6px", fontSize: "18px", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+          <h3 style={{ margin: "0 0 6px", fontSize: "18px", color: darkMode ? "#FFF8EF" : "#2E2013" }}>
             No projects found
           </h3>
           <p style={{ margin: "0 0 16px", fontSize: "14px", color: textMuted }}>
@@ -302,7 +302,7 @@ export default function Projects({ darkMode }) {
               onClick={() => setShowCreateModal(true)}
               style={{
                 padding: "10px 20px", borderRadius: "8px", border: "none", cursor: "pointer",
-                background: "#6366f1", color: "white", fontWeight: "600", fontSize: "14px"
+                background: "#cf4a11", color: "white", fontWeight: "600", fontSize: "14px"
               }}
             >
               + Create Project
@@ -331,10 +331,10 @@ export default function Projects({ darkMode }) {
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = "translateY(-3px)";
-                  e.currentTarget.style.borderColor = "#6366f1";
+                  e.currentTarget.style.borderColor = "#f15e1c";
                   e.currentTarget.style.boxShadow = darkMode
-                    ? "0 8px 30px rgba(0,0,0,0.5), 0 0 0 1px rgba(99,102,241,0.4)"
-                    : "0 12px 32px -4px rgba(99,102,241,0.18), 0 2px 6px rgba(0,0,0,0.04)";
+                    ? "0 8px 30px rgba(0,0,0,0.5), 0 0 0 1px rgba(241,94,28,0.4)"
+                    : "0 12px 32px -4px rgba(241,94,28,0.18), 0 2px 6px rgba(0,0,0,0.04)";
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = "translateY(0)";
@@ -349,7 +349,7 @@ export default function Projects({ darkMode }) {
                   <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginBottom: "14px" }}>
                     <span style={{
                       padding: "4px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: "700",
-                      background: "rgba(99,102,241,0.12)", color: "#818cf8", textTransform: "uppercase", letterSpacing: "0.04em"
+                      background: "rgba(241,94,28,0.12)", color: "#f15e1c", textTransform: "uppercase", letterSpacing: "0.04em"
                     }}>
                       🏢 {deptName}
                     </span>
@@ -357,8 +357,8 @@ export default function Projects({ darkMode }) {
                     {teamLinks.map(pt => (
                       <span key={pt.team_id} style={{
                         padding: "4px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: "600",
-                        background: darkMode ? "rgba(255,255,255,0.07)" : "#f1f5f9",
-                        color: darkMode ? "#cbd5e1" : "#475569"
+                        background: darkMode ? "rgba(255,255,255,0.07)" : "#FFF3E2",
+                        color: darkMode ? "#D5C2A5" : "#6E5D4B"
                       }}>
                         👥 {pt.teams?.name}
                       </span>
@@ -366,7 +366,7 @@ export default function Projects({ darkMode }) {
                   </div>
 
                   {/* Title */}
-                  <h3 style={{ margin: "0 0 8px", fontSize: "18px", fontWeight: "700", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+                  <h3 style={{ margin: "0 0 8px", fontSize: "18px", fontWeight: "700", color: darkMode ? "#FFF8EF" : "#2E2013" }}>
                     {project.title}
                   </h3>
 
@@ -385,14 +385,14 @@ export default function Projects({ darkMode }) {
                     const projProgress = calculateProjectProgress(project.goals || []);
                     return (
                       <div style={{ marginTop: "12px", marginBottom: "12px" }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", fontWeight: "600", marginBottom: "4px", color: darkMode ? "#cbd5e1" : "#475569" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", fontWeight: "600", marginBottom: "4px", color: darkMode ? "#D5C2A5" : "#6E5D4B" }}>
                           <span>Weighted Progress</span>
-                          <span style={{ color: "#6366f1", fontWeight: "700" }}>{projProgress}%</span>
+                          <span style={{ color: "#f15e1c", fontWeight: "700" }}>{projProgress}%</span>
                         </div>
-                        <div style={{ height: "6px", background: darkMode ? "#0f172a" : "#e2e8f0", borderRadius: "10px", overflow: "hidden" }}>
+                        <div style={{ height: "6px", background: darkMode ? "#2E2013" : "#E8D9C5", borderRadius: "10px", overflow: "hidden" }}>
                           <div style={{
                             height: "100%", width: `${Math.min(100, Math.max(0, projProgress))}%`,
-                            background: "linear-gradient(90deg, #6366f1, #8b5cf6)", borderRadius: "10px", transition: "width 0.3s ease"
+                            background: "linear-gradient(90deg, #f15e1c, #fab60a)", borderRadius: "10px", transition: "width 0.3s ease"
                           }} />
                         </div>
                       </div>
@@ -409,7 +409,7 @@ export default function Projects({ darkMode }) {
                     🎯 {goalCount} Goal{goalCount !== 1 ? "s" : ""}
                   </span>
 
-                  <span style={{ color: "#6366f1", fontWeight: "600", display: "flex", alignItems: "center", gap: "4px" }}>
+                  <span style={{ color: "#f15e1c", fontWeight: "600", display: "flex", alignItems: "center", gap: "4px" }}>
                     View Project &rarr;
                   </span>
                 </div>
@@ -432,7 +432,7 @@ export default function Projects({ darkMode }) {
             animation: "scaleUp 0.2s ease"
           }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-              <h2 style={{ margin: 0, fontSize: "20px", fontWeight: "800", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+              <h2 style={{ margin: 0, fontSize: "20px", fontWeight: "800", color: darkMode ? "#FFF8EF" : "#2E2013" }}>
                 Create New Project
               </h2>
               <button
@@ -455,7 +455,7 @@ export default function Projects({ darkMode }) {
                   type="button"
                   onClick={() => { setDeptNameInput(''); setIsDeptModalOpen(true); }}
                   style={{
-                    background: "none", border: "none", color: "#6366f1", fontWeight: "700",
+                    background: "none", border: "none", color: "#f15e1c", fontWeight: "700",
                     cursor: "pointer", textDecoration: "underline", padding: 0
                   }}
                 >
@@ -467,7 +467,7 @@ export default function Projects({ darkMode }) {
             <form onSubmit={handleCreateProject}>
               {/* Title */}
               <div style={{ marginBottom: "16px" }}>
-                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: darkMode ? "#cbd5e1" : "#334155" }}>
+                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: darkMode ? "#D5C2A5" : "#4A3C2C" }}>
                   Project Title *
                 </label>
                 <input
@@ -477,15 +477,15 @@ export default function Projects({ darkMode }) {
                   placeholder="e.g. Q3 Mobile App Launch"
                   style={{
                     width: "100%", padding: "11px 14px", borderRadius: "10px",
-                    border: `1px solid ${borderCol}`, background: darkMode ? "#0f172a" : "#f8fafc",
-                    color: darkMode ? "#f8fafc" : "#0f172a", outline: "none", fontSize: "14px", boxSizing: "border-box"
+                    border: `1px solid ${borderCol}`, background: darkMode ? "#2E2013" : "#FFF8EF",
+                    color: darkMode ? "#FFF8EF" : "#2E2013", outline: "none", fontSize: "14px", boxSizing: "border-box"
                   }}
                 />
               </div>
 
               {/* Department (Required) */}
               <div style={{ marginBottom: "16px" }}>
-                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: darkMode ? "#cbd5e1" : "#334155" }}>
+                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: darkMode ? "#D5C2A5" : "#4A3C2C" }}>
                   Department *
                 </label>
                 <select
@@ -495,8 +495,8 @@ export default function Projects({ darkMode }) {
                   className="form-select"
                   style={{
                     width: "100%", padding: "11px 38px 11px 14px", borderRadius: "10px",
-                    border: `1px solid ${borderCol}`, background: darkMode ? "#0f172a" : "#f8fafc",
-                    color: darkMode ? "#f8fafc" : "#0f172a", outline: "none", fontSize: "14px", boxSizing: "border-box", cursor: "pointer"
+                    border: `1px solid ${borderCol}`, background: darkMode ? "#2E2013" : "#FFF8EF",
+                    color: darkMode ? "#FFF8EF" : "#2E2013", outline: "none", fontSize: "14px", boxSizing: "border-box", cursor: "pointer"
                   }}
                 >
                   <option value="">-- Select Department --</option>
@@ -508,7 +508,7 @@ export default function Projects({ darkMode }) {
 
               {/* Description */}
               <div style={{ marginBottom: "16px" }}>
-                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: darkMode ? "#cbd5e1" : "#334155" }}>
+                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: darkMode ? "#D5C2A5" : "#4A3C2C" }}>
                   Description (Optional)
                 </label>
                 <textarea
@@ -518,8 +518,8 @@ export default function Projects({ darkMode }) {
                   placeholder="Key objectives and project overview..."
                   style={{
                     width: "100%", padding: "11px 14px", borderRadius: "10px",
-                    border: `1px solid ${borderCol}`, background: darkMode ? "#0f172a" : "#f8fafc",
-                    color: darkMode ? "#f8fafc" : "#0f172a", outline: "none", fontSize: "14px", boxSizing: "border-box",
+                    border: `1px solid ${borderCol}`, background: darkMode ? "#2E2013" : "#FFF8EF",
+                    color: darkMode ? "#FFF8EF" : "#2E2013", outline: "none", fontSize: "14px", boxSizing: "border-box",
                     fontFamily: "inherit", resize: "vertical"
                   }}
                 />
@@ -527,7 +527,7 @@ export default function Projects({ darkMode }) {
 
               {/* Teams (Optional Association) */}
               <div style={{ marginBottom: "24px" }}>
-                <label style={{ display: "block", marginBottom: "8px", fontSize: "13px", fontWeight: "600", color: darkMode ? "#cbd5e1" : "#334155" }}>
+                <label style={{ display: "block", marginBottom: "8px", fontSize: "13px", fontWeight: "600", color: darkMode ? "#D5C2A5" : "#4A3C2C" }}>
                   Associate Teams (Optional)
                 </label>
                 {teams.length === 0 ? (
@@ -543,9 +543,9 @@ export default function Projects({ darkMode }) {
                           onClick={() => toggleTeamSelection(t.id)}
                           style={{
                             padding: "6px 14px", borderRadius: "20px", fontSize: "13px", fontWeight: "500",
-                            border: `1px solid ${isSelected ? "#6366f1" : borderCol}`,
-                            background: isSelected ? "rgba(99,102,241,0.2)" : (darkMode ? "#0f172a" : "#f8fafc"),
-                            color: isSelected ? "#818cf8" : (darkMode ? "#cbd5e1" : "#475569"),
+                            border: `1px solid ${isSelected ? "#f15e1c" : borderCol}`,
+                            background: isSelected ? "rgba(241,94,28,0.2)" : (darkMode ? "#2E2013" : "#FFF8EF"),
+                            color: isSelected ? "#f15e1c" : (darkMode ? "#D5C2A5" : "#6E5D4B"),
                             cursor: "pointer", transition: "all 0.15s ease"
                           }}
                         >
@@ -564,7 +564,7 @@ export default function Projects({ darkMode }) {
                   onClick={() => setShowCreateModal(false)}
                   style={{
                     padding: "10px 18px", borderRadius: "10px", border: `1px solid ${borderCol}`,
-                    background: "none", color: darkMode ? "#cbd5e1" : "#475569", fontWeight: "600", cursor: "pointer"
+                    background: "none", color: darkMode ? "#D5C2A5" : "#6E5D4B", fontWeight: "600", cursor: "pointer"
                   }}
                 >
                   Cancel
@@ -574,7 +574,7 @@ export default function Projects({ darkMode }) {
                   disabled={submitting}
                   style={{
                     padding: "10px 22px", borderRadius: "10px", border: "none",
-                    background: "linear-gradient(135deg, #6366f1, #8b5cf6)", color: "white",
+                    background: "#cf4a11", color: "white",
                     fontWeight: "700", cursor: "pointer", opacity: submitting ? 0.6 : 1
                   }}
                 >
@@ -594,25 +594,25 @@ export default function Projects({ darkMode }) {
           display: "flex", alignItems: "center", justifyContent: "center", padding: "16px"
         }}>
           <div style={{
-            background: darkMode ? "#0f172a" : "#ffffff",
-            border: darkMode ? "1px solid #1e293b" : "1px solid #cbd5e1",
+            background: darkMode ? "#2E2013" : "#ffffff",
+            border: darkMode ? "1px solid #1E140C" : "1px solid #D5C2A5",
             borderRadius: "14px", padding: "24px", width: "100%", maxWidth: "420px",
             boxShadow: "0 20px 40px rgba(0,0,0,0.3)"
           }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-              <h3 style={{ margin: 0, color: darkMode ? "#f8fafc" : "#0f172a", fontSize: "18px", fontWeight: "800" }}>
+              <h3 style={{ margin: 0, color: darkMode ? "#FFF8EF" : "#2E2013", fontSize: "18px", fontWeight: "800" }}>
                 Create New Department
               </h3>
               <button
                 onClick={() => setIsDeptModalOpen(false)}
-                style={{ background: "none", border: "none", color: "#64748b", fontSize: "20px", cursor: "pointer" }}
+                style={{ background: "none", border: "none", color: "#9C8B76", fontSize: "20px", cursor: "pointer" }}
               >
                 ✕
               </button>
             </div>
             <form onSubmit={handleSaveDepartment}>
               <div style={{ marginBottom: "16px" }}>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: darkMode ? "#cbd5e1" : "#475569", marginBottom: "6px" }}>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: darkMode ? "#D5C2A5" : "#6E5D4B", marginBottom: "6px" }}>
                   DEPARTMENT NAME *
                 </label>
                 <input
@@ -624,8 +624,8 @@ export default function Projects({ darkMode }) {
                   autoFocus
                   style={{
                     width: "100%", padding: "10px 14px", borderRadius: "8px",
-                    border: darkMode ? "1px solid #334155" : "1px solid #cbd5e1",
-                    background: darkMode ? "#1e293b" : "#f8fafc",
+                    border: darkMode ? "1px solid #4A3C2C" : "1px solid #D5C2A5",
+                    background: darkMode ? "#1E140C" : "#FFF8EF",
                     color: darkMode ? "#fff" : "#000",
                     boxSizing: "border-box"
                   }}
@@ -635,14 +635,14 @@ export default function Projects({ darkMode }) {
                 <button
                   type="button"
                   onClick={() => setIsDeptModalOpen(false)}
-                  style={{ padding: "8px 16px", borderRadius: "8px", border: "1px solid #64748b", background: "transparent", color: darkMode ? "#cbd5e1" : "#475569", cursor: "pointer" }}
+                  style={{ padding: "8px 16px", borderRadius: "8px", border: "1px solid #9C8B76", background: "transparent", color: darkMode ? "#D5C2A5" : "#6E5D4B", cursor: "pointer" }}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submittingDept}
-                  style={{ padding: "8px 16px", borderRadius: "8px", border: "none", background: "#6366f1", color: "#fff", fontWeight: "700", cursor: "pointer" }}
+                  style={{ padding: "8px 16px", borderRadius: "8px", border: "none", background: "#cf4a11", color: "#fff", fontWeight: "700", cursor: "pointer" }}
                 >
                   {submittingDept ? "Saving..." : "Save Department"}
                 </button>

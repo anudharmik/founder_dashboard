@@ -90,7 +90,7 @@ body {
 }
 
 ::selection {
-  background: rgba(99,102,241,0.25);
+  background: rgba(241, 94, 28, 0.25);
   color: inherit;
 }
 
@@ -142,7 +142,7 @@ body {
 
 @keyframes pulse-glow {
   0%, 100% { box-shadow: 0 0 0 0 rgba(99,102,241,0); }
-  50%       { box-shadow: 0 0 0 6px rgba(99,102,241,0.12); }
+  50%       { box-shadow: 0 0 0 6px rgba(241, 94, 28, 0.12); }
 }
 
 @keyframes spin {
@@ -304,7 +304,7 @@ select, .form-select {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23818cf8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23f15e1c' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 14px center;
   background-size: 16px 16px;
@@ -320,8 +320,8 @@ select, .form-select {
 }
 
 select option {
-  background-color: #1e293b;
-  color: #f8fafc;
+  background-color: #1E140C;
+  color: #FFF8EF;
   padding: 10px;
 }
 

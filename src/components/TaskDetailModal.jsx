@@ -192,9 +192,9 @@ export default function TaskDetailModal({ task, isOpen, onClose, darkMode, activ
 
   if (!isOpen || !task) return null;
 
-  const cardBg = darkMode ? "#1e293b" : "#ffffff";
-  const borderCol = darkMode ? "rgba(255,255,255,0.08)" : "#e2e8f0";
-  const textMuted = darkMode ? "#94a3b8" : "#64748b";
+  const cardBg = darkMode ? "#1E140C" : "#ffffff";
+  const borderCol = darkMode ? "rgba(255,255,255,0.08)" : "#E8D9C5";
+  const textMuted = darkMode ? "#B3A18C" : "#9C8B76";
 
   return (
     <div style={{
@@ -213,8 +213,8 @@ export default function TaskDetailModal({ task, isOpen, onClose, darkMode, activ
               <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
                 <span style={{
                   padding: "3px 8px", borderRadius: "6px", fontSize: "11px", fontWeight: "700",
-                  background: task.completed ? "rgba(34,197,94,0.15)" : "rgba(99,102,241,0.15)",
-                  color: task.completed ? "#4ade80" : "#818cf8"
+                  background: task.completed ? "rgba(34,197,94,0.15)" : "rgba(241, 94, 28, 0.15)",
+                  color: task.completed ? "#4ade80" : "#f15e1c"
                 }}>
                   {task.completed ? "✓ Completed" : "📋 Task"}
                 </span>
@@ -230,7 +230,7 @@ export default function TaskDetailModal({ task, isOpen, onClose, darkMode, activ
                 )}
               </div>
 
-              <h2 style={{ margin: 0, fontSize: "20px", fontWeight: "800", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+              <h2 style={{ margin: 0, fontSize: "20px", fontWeight: "800", color: darkMode ? "#FFF8EF" : "#2E2013" }}>
                 {task.title}
               </h2>
             </div>
@@ -250,8 +250,8 @@ export default function TaskDetailModal({ task, isOpen, onClose, darkMode, activ
               onClick={() => setActiveTab("subtasks")}
               style={{
                 padding: "8px 16px", background: "none", border: "none",
-                borderBottom: activeTab === "subtasks" ? "2px solid #6366f1" : "2px solid transparent",
-                color: activeTab === "subtasks" ? "#6366f1" : textMuted,
+                borderBottom: activeTab === "subtasks" ? "2px solid #f15e1c" : "2px solid transparent",
+                color: activeTab === "subtasks" ? "#f15e1c" : textMuted,
                 fontWeight: activeTab === "subtasks" ? "700" : "500", fontSize: "13px", cursor: "pointer"
               }}
             >
@@ -261,8 +261,8 @@ export default function TaskDetailModal({ task, isOpen, onClose, darkMode, activ
               onClick={() => setActiveTab("comments")}
               style={{
                 padding: "8px 16px", background: "none", border: "none",
-                borderBottom: activeTab === "comments" ? "2px solid #6366f1" : "2px solid transparent",
-                color: activeTab === "comments" ? "#6366f1" : textMuted,
+                borderBottom: activeTab === "comments" ? "2px solid #f15e1c" : "2px solid transparent",
+                color: activeTab === "comments" ? "#f15e1c" : textMuted,
                 fontWeight: activeTab === "comments" ? "700" : "500", fontSize: "13px", cursor: "pointer"
               }}
             >
@@ -272,8 +272,8 @@ export default function TaskDetailModal({ task, isOpen, onClose, darkMode, activ
               onClick={() => setActiveTab("activity")}
               style={{
                 padding: "8px 16px", background: "none", border: "none",
-                borderBottom: activeTab === "activity" ? "2px solid #6366f1" : "2px solid transparent",
-                color: activeTab === "activity" ? "#6366f1" : textMuted,
+                borderBottom: activeTab === "activity" ? "2px solid #f15e1c" : "2px solid transparent",
+                color: activeTab === "activity" ? "#f15e1c" : textMuted,
                 fontWeight: activeTab === "activity" ? "700" : "500", fontSize: "13px", cursor: "pointer"
               }}
             >
@@ -298,7 +298,7 @@ export default function TaskDetailModal({ task, isOpen, onClose, darkMode, activ
                       onClick={() => handleToggleSubtask(s.id, s.completed)}
                       style={{
                         padding: "12px 16px", borderRadius: "10px",
-                        background: darkMode ? "#0f172a" : "#f8fafc",
+                        background: darkMode ? "#2E2013" : "#FFF8EF",
                         border: `1px solid ${borderCol}`, display: "flex", alignItems: "center", justifyContent: "space-between",
                         cursor: "pointer", transition: "all 0.15s ease"
                       }}
@@ -312,13 +312,13 @@ export default function TaskDetailModal({ task, isOpen, onClose, darkMode, activ
                         />
                         <span style={{
                           fontSize: "14px", fontWeight: "600",
-                          color: s.completed ? textMuted : (darkMode ? "#f8fafc" : "#0f172a"),
+                          color: s.completed ? textMuted : (darkMode ? "#FFF8EF" : "#2E2013"),
                           textDecoration: s.completed ? "line-through" : "none"
                         }}>
                           {s.title}
                         </span>
                       </div>
-                      <span style={{ fontSize: "12px", color: textMuted, background: darkMode ? "rgba(255,255,255,0.05)" : "#e2e8f0", padding: "2px 8px", borderRadius: "6px" }}>
+                      <span style={{ fontSize: "12px", color: textMuted, background: darkMode ? "rgba(255,255,255,0.05)" : "#E8D9C5", padding: "2px 8px", borderRadius: "6px" }}>
                         Weight: {s.weight || 1}
                       </span>
                     </div>
@@ -336,8 +336,8 @@ export default function TaskDetailModal({ task, isOpen, onClose, darkMode, activ
                   required
                   style={{
                     flex: 1, padding: "10px 14px", borderRadius: "8px",
-                    border: `1px solid ${borderCol}`, background: darkMode ? "#0f172a" : "#f8fafc",
-                    color: darkMode ? "#f8fafc" : "#0f172a", outline: "none", fontSize: "13px"
+                    border: `1px solid ${borderCol}`, background: darkMode ? "#2E2013" : "#FFF8EF",
+                    color: darkMode ? "#FFF8EF" : "#2E2013", outline: "none", fontSize: "13px"
                   }}
                 />
                 <input
@@ -348,8 +348,8 @@ export default function TaskDetailModal({ task, isOpen, onClose, darkMode, activ
                   placeholder="Weight"
                   style={{
                     width: "70px", padding: "10px 10px", borderRadius: "8px",
-                    border: `1px solid ${borderCol}`, background: darkMode ? "#0f172a" : "#f8fafc",
-                    color: darkMode ? "#f8fafc" : "#0f172a", outline: "none", fontSize: "13px"
+                    border: `1px solid ${borderCol}`, background: darkMode ? "#2E2013" : "#FFF8EF",
+                    color: darkMode ? "#FFF8EF" : "#2E2013", outline: "none", fontSize: "13px"
                   }}
                 />
                 <button
@@ -357,7 +357,7 @@ export default function TaskDetailModal({ task, isOpen, onClose, darkMode, activ
                   disabled={submittingSubtask || !newSubtaskTitle.trim()}
                   style={{
                     padding: "10px 16px", borderRadius: "8px", border: "none",
-                    background: "linear-gradient(135deg, #6366f1, #8b5cf6)", color: "white",
+                    background: "linear-gradient(135deg, #f15e1c, #fab60a)", color: "white",
                     fontWeight: "700", cursor: "pointer", fontSize: "13px"
                   }}
                 >
@@ -383,19 +383,19 @@ export default function TaskDetailModal({ task, isOpen, onClose, darkMode, activ
                       key={c.id}
                       style={{
                         padding: "12px 16px", borderRadius: "12px",
-                        background: darkMode ? "#0f172a" : "#f8fafc",
+                        background: darkMode ? "#2E2013" : "#FFF8EF",
                         border: `1px solid ${borderCol}`
                       }}
                     >
                       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "6px", fontSize: "12px" }}>
-                        <span style={{ fontWeight: "700", color: darkMode ? "#cbd5e1" : "#334155" }}>
+                        <span style={{ fontWeight: "700", color: darkMode ? "#D5C2A5" : "#4A3C2C" }}>
                           👤 {c.author_id ? (getMemberDisplayName ? getMemberDisplayName(c.author_id) : c.author_id.slice(0, 8) + "...") : "Author"}
                         </span>
                         <span style={{ color: textMuted }}>
                           {new Date(c.created_at).toLocaleString()}
                         </span>
                       </div>
-                      <p style={{ margin: 0, fontSize: "14px", color: darkMode ? "#f8fafc" : "#0f172a", whiteSpace: "pre-wrap", lineHeight: "1.5" }}>
+                      <p style={{ margin: 0, fontSize: "14px", color: darkMode ? "#FFF8EF" : "#2E2013", whiteSpace: "pre-wrap", lineHeight: "1.5" }}>
                         {c.body}
                       </p>
                     </div>
@@ -412,8 +412,8 @@ export default function TaskDetailModal({ task, isOpen, onClose, darkMode, activ
                     placeholder="Write a comment..."
                     style={{
                       flex: 1, padding: "11px 14px", borderRadius: "10px",
-                      border: `1px solid ${borderCol}`, background: darkMode ? "#0f172a" : "#f8fafc",
-                      color: darkMode ? "#f8fafc" : "#0f172a", outline: "none", fontSize: "14px"
+                      border: `1px solid ${borderCol}`, background: darkMode ? "#2E2013" : "#FFF8EF",
+                      color: darkMode ? "#FFF8EF" : "#2E2013", outline: "none", fontSize: "14px"
                     }}
                   />
                   <button
@@ -421,7 +421,7 @@ export default function TaskDetailModal({ task, isOpen, onClose, darkMode, activ
                     disabled={submittingComment || !newComment.trim()}
                     style={{
                       padding: "11px 20px", borderRadius: "10px", border: "none",
-                      background: "linear-gradient(135deg, #6366f1, #8b5cf6)", color: "white",
+                      background: "linear-gradient(135deg, #f15e1c, #fab60a)", color: "white",
                       fontWeight: "700", cursor: "pointer", opacity: submittingComment || !newComment.trim() ? 0.6 : 1
                     }}
                   >
@@ -443,14 +443,14 @@ export default function TaskDetailModal({ task, isOpen, onClose, darkMode, activ
                     key={act.id}
                     style={{
                       padding: "10px 14px", borderRadius: "8px",
-                      background: darkMode ? "#0f172a" : "#f8fafc", border: `1px solid ${borderCol}`,
+                      background: darkMode ? "#2E2013" : "#FFF8EF", border: `1px solid ${borderCol}`,
                       display: "flex", alignItems: "center", gap: "10px", fontSize: "13px"
                     }}
                   >
                     <span style={{ fontSize: "14px" }}>
                       {act.action === 'created' ? '✨' : act.action === 'assigned' ? '👤' : act.action === 'completed' ? '✅' : act.action === 'approved' ? '✓' : act.action === 'commented' ? '💬' : '📌'}
                     </span>
-                    <span style={{ color: darkMode ? "#cbd5e1" : "#334155" }}>
+                    <span style={{ color: darkMode ? "#D5C2A5" : "#4A3C2C" }}>
                       {formatActivityText(act)}
                     </span>
                   </div>

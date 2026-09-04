@@ -25,15 +25,15 @@ export default function WeeklyChart({ tasks }) {
     <ResponsiveContainer width="100%" height={280}>
       <LineChart data={data} margin={{ top: 8, right: 16, left: -10, bottom: 0 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.15)" />
-        <XAxis dataKey="day" tick={{ fontSize: 12, fill: "#64748b" }} />
-        <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: "#64748b" }} />
+        <XAxis dataKey="day" tick={{ fontSize: 12, fill: "#9C8B76" }} />
+        <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: "#9C8B76" }} />
         <Tooltip
           contentStyle={{
-            background: "#1e293b",
+            background: "#1E140C",
             border: "1px solid rgba(255,255,255,0.08)",
             borderRadius: "8px",
             fontSize: "13px",
-            color: "#e2e8f0",
+            color: "#E8D9C5",
           }}
         />
         <Line

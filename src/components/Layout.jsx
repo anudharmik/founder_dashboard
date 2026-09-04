@@ -14,7 +14,7 @@ import "../App.css";
 export default function Layout({ children, darkMode, onOpenReminders }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const topbarBg  = darkMode ? "#0c1524"  : "#111827";
+  const topbarBg  = darkMode ? "#0c1524"  : "#2E2013";
   const contentBg = "transparent";
 
   return (

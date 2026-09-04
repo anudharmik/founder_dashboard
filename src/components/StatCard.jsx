@@ -1,4 +1,4 @@
-export default function StatCard({ title, value, darkMode, accent = '#6366f1', icon }) {
+export default function StatCard({ title, value, darkMode, accent = '#f15e1c', icon }) {
   return (
     <div
       className="stagger-item"
@@ -17,8 +17,8 @@ export default function StatCard({ title, value, darkMode, accent = '#6366f1', i
       style={{
         borderRadius: '16px',
         padding: '0',
-        background: darkMode ? '#1e293b' : '#ffffff',
-        color: darkMode ? '#f8fafc' : '#0f172a',
+        background: darkMode ? '#1E140C' : '#ffffff',
+        color: darkMode ? '#FFF8EF' : '#2E2013',
         boxShadow: darkMode
           ? '0 2px 12px rgba(0,0,0,0.35)'
           : '0 2px 12px rgba(0,0,0,0.06)',
@@ -59,7 +59,7 @@ export default function StatCard({ title, value, darkMode, accent = '#6366f1', i
           <p style={{
             fontSize: '11px', fontWeight: '700', letterSpacing: '0.07em',
             textTransform: 'uppercase',
-            color: darkMode ? '#64748b' : '#94a3b8',
+            color: darkMode ? '#9C8B76' : '#B3A18C',
             margin: 0,
           }}>
             {title}
@@ -69,7 +69,7 @@ export default function StatCard({ title, value, darkMode, accent = '#6366f1', i
         <p style={{
           fontSize: '32px', fontWeight: '800', margin: 0,
           letterSpacing: '-1px',
-          color: darkMode ? '#f1f5f9' : '#0f172a',
+          color: darkMode ? '#FFF3E2' : '#2E2013',
           animation: 'countUp 0.4s ease both',
           lineHeight: 1,
         }}>

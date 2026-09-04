@@ -30,11 +30,11 @@ export default function GoalChart({ tasks }) {
         </Pie>
         <Tooltip
           contentStyle={{
-            background: "#1e293b",
+            background: "#1E140C",
             border: "1px solid rgba(255,255,255,0.08)",
             borderRadius: "8px",
             fontSize: "13px",
-            color: "#e2e8f0",
+            color: "#E8D9C5",
           }}
         />
         <Legend wrapperStyle={{ fontSize: "13px", paddingTop: "8px" }} />

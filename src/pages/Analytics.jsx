@@ -70,9 +70,9 @@ export default function Analytics({ darkMode }) {
     }
   }
 
-  const cardBg = darkMode ? "#1e293b" : "#ffffff";
-  const borderCol = darkMode ? "rgba(255,255,255,0.08)" : "#e2e8f0";
-  const textMuted = darkMode ? "#94a3b8" : "#64748b";
+  const cardBg = darkMode ? "#1E140C" : "#ffffff";
+  const borderCol = darkMode ? "rgba(255,255,255,0.08)" : "#E8D9C5";
+  const textMuted = darkMode ? "#B3A18C" : "#9C8B76";
 
   // 1. Guest Access Denied View
   if (isGuest) {
@@ -83,7 +83,7 @@ export default function Analytics({ darkMode }) {
           padding: "48px 32px", boxShadow: "0 10px 30px rgba(0,0,0,0.05)"
         }}>
           <div style={{ fontSize: "48px", marginBottom: "16px" }}>🔒</div>
-          <h2 style={{ margin: "0 0 10px", fontSize: "22px", fontWeight: "800", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+          <h2 style={{ margin: "0 0 10px", fontSize: "22px", fontWeight: "800", color: darkMode ? "#FFF8EF" : "#2E2013" }}>
             Access Denied
           </h2>
           <p style={{ margin: 0, fontSize: "14px", color: textMuted, lineHeight: "1.6" }}>
@@ -126,12 +126,12 @@ export default function Analytics({ darkMode }) {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "28px", flexWrap: "wrap", gap: "16px" }}>
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "6px" }}>
-            <h1 style={{ margin: 0, fontSize: "clamp(22px, 5vw, 28px)", fontWeight: "800", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+            <h1 style={{ margin: 0, fontSize: "clamp(22px, 5vw, 28px)", fontWeight: "800", color: darkMode ? "#FFF8EF" : "#2E2013" }}>
               Analytics Dashboard
             </h1>
             <span style={{
               padding: "4px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: "700",
-              background: "rgba(99,102,241,0.15)", color: "#818cf8", textTransform: "uppercase"
+              background: "rgba(241, 94, 28, 0.15)", color: "#f15e1c", textTransform: "uppercase"
             }}>
               {showEmployeeView ? "Personal Employee View" : "Org-Wide Executive View"}
             </span>
@@ -149,7 +149,7 @@ export default function Analytics({ darkMode }) {
             onClick={() => setActiveVariant(showEmployeeView ? "org" : "employee")}
             style={{
               padding: "9px 16px", borderRadius: "10px", border: `1px solid ${borderCol}`,
-              background: darkMode ? "#1e293b" : "#ffffff", color: darkMode ? "#cbd5e1" : "#475569",
+              background: darkMode ? "#1E140C" : "#ffffff", color: darkMode ? "#D5C2A5" : "#6E5D4B",
               fontSize: "13px", fontWeight: "600", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px"
             }}
           >
@@ -171,7 +171,7 @@ export default function Analytics({ darkMode }) {
               <span style={{ fontSize: "11px", fontWeight: "700", textTransform: "uppercase", color: textMuted, letterSpacing: "0.05em" }}>
                 🎯 Org Goal Completion
               </span>
-              <div style={{ fontSize: "32px", fontWeight: "800", color: "#6366f1", marginTop: "8px", marginBottom: "8px" }}>
+              <div style={{ fontSize: "32px", fontWeight: "800", color: "#f15e1c", marginTop: "8px", marginBottom: "8px" }}>
                 {orgGoalCompletion}%
               </div>
               <p style={{ margin: 0, fontSize: "12px", color: textMuted }}>
@@ -211,7 +211,7 @@ export default function Analytics({ darkMode }) {
 
           {/* Department Comparison Bar Chart Card */}
           <div style={{ background: cardBg, borderRadius: "20px", border: `1px solid ${borderCol}`, padding: "28px", boxShadow: "0 4px 20px rgba(0,0,0,0.03)" }}>
-            <h3 style={{ margin: "0 0 6px", fontSize: "18px", fontWeight: "800", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+            <h3 style={{ margin: "0 0 6px", fontSize: "18px", fontWeight: "800", color: darkMode ? "#FFF8EF" : "#2E2013" }}>
               🏢 Department Completion Comparison
             </h3>
             <p style={{ margin: "0 0 24px", fontSize: "13px", color: textMuted }}>
@@ -230,7 +230,7 @@ export default function Analytics({ darkMode }) {
                   return (
                     <div key={dept.id}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px", fontSize: "14px" }}>
-                        <span style={{ fontWeight: "700", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+                        <span style={{ fontWeight: "700", color: darkMode ? "#FFF8EF" : "#2E2013" }}>
                           🏢 {dept.name}
                         </span>
                         <span style={{ fontWeight: "800", color: "#f15e1c" }}>
@@ -238,7 +238,7 @@ export default function Analytics({ darkMode }) {
                         </span>
                       </div>
 
-                      <div style={{ height: "10px", background: darkMode ? "#0f172a" : "#e2e8f0", borderRadius: "10px", overflow: "hidden" }}>
+                      <div style={{ height: "10px", background: darkMode ? "#2E2013" : "#E8D9C5", borderRadius: "10px", overflow: "hidden" }}>
                         <div style={{
                           height: "100%", width: `${Math.min(100, Math.max(0, deptCompletion))}%`,
                           background: "linear-gradient(90deg, #f15e1c, #fab60a)", borderRadius: "10px", transition: "width 0.4s ease"
@@ -306,7 +306,7 @@ export default function Analytics({ darkMode }) {
 
           {/* Today's Assigned Tasks (Urgency Sorted) */}
           <div style={{ background: cardBg, borderRadius: "20px", border: `1px solid ${borderCol}`, padding: "28px", boxShadow: "0 4px 20px rgba(0,0,0,0.03)" }}>
-            <h3 style={{ margin: "0 0 6px", fontSize: "18px", fontWeight: "800", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+            <h3 style={{ margin: "0 0 6px", fontSize: "18px", fontWeight: "800", color: darkMode ? "#FFF8EF" : "#2E2013" }}>
               ⏳ Today's Assigned Tasks (Urgency Sorted)
             </h3>
             <p style={{ margin: "0 0 20px", fontSize: "13px", color: textMuted }}>
@@ -329,7 +329,7 @@ export default function Analytics({ darkMode }) {
                       key={task.id}
                       style={{
                         padding: "14px 18px", borderRadius: "12px",
-                        background: darkMode ? "#0f172a" : "#f8fafc", border: `1px solid ${borderCol}`,
+                        background: darkMode ? "#2E2013" : "#FFF8EF", border: `1px solid ${borderCol}`,
                         display: "flex", justifyContent: "space-between", alignItems: "center", gap: "14px"
                       }}
                     >
@@ -338,7 +338,7 @@ export default function Analytics({ darkMode }) {
                         <div>
                           <h4 style={{
                             margin: 0, fontSize: "14px", fontWeight: "700",
-                            color: task.completed ? textMuted : (darkMode ? "#f8fafc" : "#0f172a"),
+                            color: task.completed ? textMuted : (darkMode ? "#FFF8EF" : "#2E2013"),
                             textDecoration: task.completed ? "line-through" : "none"
                           }}>
                             {task.title}

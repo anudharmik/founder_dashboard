@@ -50,7 +50,7 @@ export default function ResetPassword() {
           align-items: center;
           justify-content: center;
           min-height: 100vh;
-          background: #0f172a;
+          background: #2E2013;
           font-family: 'Inter', system-ui, -apple-system, sans-serif;
           padding: 20px;
           box-sizing: border-box;
@@ -62,11 +62,11 @@ export default function ResetPassword() {
           content: '';
           position: absolute;
           inset: 0;
-          background: radial-gradient(ellipse at 30% 40%, rgba(99,102,241,0.12) 0%, transparent 60%);
+          background: radial-gradient(ellipse at 30% 40%, rgba(241, 94, 28, 0.12) 0%, transparent 60%);
           pointer-events: none;
         }
         .lc {
-          background: #1e293b;
+          background: #1E140C;
           border: 1px solid rgba(255,255,255,0.08);
           padding: 40px;
           border-radius: 16px;
@@ -88,13 +88,13 @@ export default function ResetPassword() {
         .ltitle {
           font-size: 22px;
           font-weight: 700;
-          color: #f1f5f9;
+          color: #FFF3E2;
           margin: 0 0 4px;
           text-align: center;
         }
         .lsub {
           font-size: 13px;
-          color: #64748b;
+          color: #9C8B76;
           margin: 0 0 28px;
           text-align: center;
         }
@@ -111,7 +111,7 @@ export default function ResetPassword() {
         .flabel {
           font-size: 12px;
           font-weight: 600;
-          color: #94a3b8;
+          color: #B3A18C;
           letter-spacing: 0.04em;
           text-transform: uppercase;
         }
@@ -119,32 +119,32 @@ export default function ResetPassword() {
           padding: 10px 14px;
           border-radius: 8px;
           border: 1px solid rgba(255,255,255,0.1);
-          background: #0f172a;
-          color: #f1f5f9;
+          background: #2E2013;
+          color: #FFF3E2;
           font-size: 14px;
           outline: none;
           transition: border-color 0.15s ease, box-shadow 0.15s ease;
           font-family: inherit;
         }
         .finput:focus {
-          border-color: #6366f1;
-          box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+          border-color: #f15e1c;
+          box-shadow: 0 0 0 3px rgba(241,94,28,0.18);
         }
         .lbtn {
           margin-top: 6px;
           padding: 11px;
           border-radius: 8px;
           border: none;
-          background: #6366f1;
+          background: #f15e1c;
           color: white;
           font-size: 14px;
           font-weight: 600;
           cursor: pointer;
           transition: background 0.15s ease;
           font-family: inherit;
-          box-shadow: 0 2px 8px rgba(99,102,241,0.35);
+          box-shadow: 0 2px 8px rgba(241,94,28,0.35);
         }
-        .lbtn:hover:not(:disabled) { background: #4f46e5; }
+        .lbtn:hover:not(:disabled) { background: #cf4a11; }
         .lbtn:disabled { opacity: 0.5; cursor: not-allowed; }
         .lerr {
           background: rgba(239,68,68,0.1);

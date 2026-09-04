@@ -280,7 +280,7 @@ function MainAppContent({ user, darkMode, setDarkMode }) {
 
   return (
     <div style={{
-      background: darkMode ? "#0f172a" : "#f3f4f6",
+      background: darkMode ? "#2E2013" : "#f3f4f6",
       color: darkMode ? "white" : "black",
       minHeight: "100vh",
       fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
@@ -291,9 +291,9 @@ function MainAppContent({ user, darkMode, setDarkMode }) {
         toastOptions={{
           duration: 4000,
           style: {
-            background: darkMode ? "#1e293b" : "#ffffff",
-            color: darkMode ? "#e2e8f0" : "#111827",
-            border: darkMode ? "1px solid #334155" : "1px solid #e2e8f0",
+            background: darkMode ? "#1E140C" : "#ffffff",
+            color: darkMode ? "#E8D9C5" : "#2E2013",
+            border: darkMode ? "1px solid #4A3C2C" : "1px solid #E8D9C5",
             borderRadius: "10px"
           },
           error: { style: { border: "1px solid #ef4444" } },
@@ -313,7 +313,7 @@ function MainAppContent({ user, darkMode, setDarkMode }) {
           borderRadius: "30px",
           border: darkMode ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(0,0,0,0.08)",
           background: darkMode ? "rgba(30,41,59,0.85)" : "rgba(255,255,255,0.9)",
-          color: darkMode ? "#f1f5f9" : "#0f172a",
+          color: darkMode ? "#FFF3E2" : "#2E2013",
           boxShadow: darkMode ? "0 8px 24px rgba(0,0,0,0.4)" : "0 8px 24px rgba(0,0,0,0.12)",
           cursor: "pointer",
           fontWeight: "600",

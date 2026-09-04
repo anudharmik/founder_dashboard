@@ -102,8 +102,8 @@ export default function ReminderModal({ isOpen, onClose, user, darkMode }) {
       fontFamily: "'Inter', system-ui, -apple-system, sans-serif"
     }}>
       <div style={{
-        background: darkMode ? "#1e293b" : "#ffffff",
-        border: darkMode ? "1px solid rgba(255,255,255,0.08)" : "1px solid #e2e8f0",
+        background: darkMode ? "#1E140C" : "#ffffff",
+        border: darkMode ? "1px solid rgba(255,255,255,0.08)" : "1px solid #E8D9C5",
         borderRadius: "16px",
         width: "100%",
         maxWidth: "500px",
@@ -117,7 +117,7 @@ export default function ReminderModal({ isOpen, onClose, user, darkMode }) {
         {/* Header */}
         <div style={{
           padding: "20px 24px",
-          borderBottom: darkMode ? "1px solid rgba(255,255,255,0.06)" : "1px solid #e2e8f0",
+          borderBottom: darkMode ? "1px solid rgba(255,255,255,0.06)" : "1px solid #E8D9C5",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
@@ -128,19 +128,19 @@ export default function ReminderModal({ isOpen, onClose, user, darkMode }) {
               margin: 0,
               fontSize: "18px",
               fontWeight: "700",
-              color: darkMode ? "#f1f5f9" : "#0f172a",
+              color: darkMode ? "#FFF3E2" : "#2E2013",
               letterSpacing: "-0.3px"
             }}>Manage Reminders</h2>
             <p style={{
               margin: "2px 0 0",
               fontSize: "12px",
-              color: darkMode ? "#64748b" : "#94a3b8"
+              color: darkMode ? "#9C8B76" : "#B3A18C"
             }}>Schedule automatic email alerts via Resend</p>
           </div>
           <button 
             onClick={onClose}
             style={{
-              background: darkMode ? "rgba(255,255,255,0.05)" : "#f1f5f9",
+              background: darkMode ? "rgba(255,255,255,0.05)" : "#FFF3E2",
               border: "none",
               borderRadius: "50%",
               width: "32px",
@@ -149,7 +149,7 @@ export default function ReminderModal({ isOpen, onClose, user, darkMode }) {
               alignItems: "center",
               justifyContent: "center",
               cursor: "pointer",
-              color: darkMode ? "#94a3b8" : "#64748b",
+              color: darkMode ? "#B3A18C" : "#9C8B76",
               fontWeight: "bold",
               fontSize: "14px",
               transition: "all 0.15s ease"
@@ -192,7 +192,7 @@ export default function ReminderModal({ isOpen, onClose, user, darkMode }) {
           {/* Create form */}
           <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
             <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-              <label style={{ fontSize: "11px", fontWeight: "700", letterSpacing: "0.05em", textTransform: "uppercase", color: darkMode ? "#94a3b8" : "#64748b" }}>
+              <label style={{ fontSize: "11px", fontWeight: "700", letterSpacing: "0.05em", textTransform: "uppercase", color: darkMode ? "#B3A18C" : "#9C8B76" }}>
                 Reminder Title
               </label>
               <input
@@ -204,9 +204,9 @@ export default function ReminderModal({ isOpen, onClose, user, darkMode }) {
                 style={{
                   padding: "10px 14px",
                   borderRadius: "8px",
-                  border: darkMode ? "1px solid rgba(255,255,255,0.1)" : "1px solid #cbd5e1",
-                  background: darkMode ? "#0f172a" : "#f8fafc",
-                  color: darkMode ? "#f1f5f9" : "#0f172a",
+                  border: darkMode ? "1px solid rgba(255,255,255,0.1)" : "1px solid #D5C2A5",
+                  background: darkMode ? "#2E2013" : "#FFF8EF",
+                  color: darkMode ? "#FFF3E2" : "#2E2013",
                   fontSize: "14px",
                   outline: "none",
                   fontFamily: "inherit"
@@ -215,7 +215,7 @@ export default function ReminderModal({ isOpen, onClose, user, darkMode }) {
             </div>
 
             <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-              <label style={{ fontSize: "11px", fontWeight: "700", letterSpacing: "0.05em", textTransform: "uppercase", color: darkMode ? "#94a3b8" : "#64748b" }}>
+              <label style={{ fontSize: "11px", fontWeight: "700", letterSpacing: "0.05em", textTransform: "uppercase", color: darkMode ? "#B3A18C" : "#9C8B76" }}>
                 Description
               </label>
               <textarea
@@ -226,9 +226,9 @@ export default function ReminderModal({ isOpen, onClose, user, darkMode }) {
                 style={{
                   padding: "10px 14px",
                   borderRadius: "8px",
-                  border: darkMode ? "1px solid rgba(255,255,255,0.1)" : "1px solid #cbd5e1",
-                  background: darkMode ? "#0f172a" : "#f8fafc",
-                  color: darkMode ? "#f1f5f9" : "#0f172a",
+                  border: darkMode ? "1px solid rgba(255,255,255,0.1)" : "1px solid #D5C2A5",
+                  background: darkMode ? "#2E2013" : "#FFF8EF",
+                  color: darkMode ? "#FFF3E2" : "#2E2013",
                   fontSize: "14px",
                   outline: "none",
                   resize: "none",
@@ -238,7 +238,7 @@ export default function ReminderModal({ isOpen, onClose, user, darkMode }) {
             </div>
 
             <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-              <label style={{ fontSize: "11px", fontWeight: "700", letterSpacing: "0.05em", textTransform: "uppercase", color: darkMode ? "#94a3b8" : "#64748b" }}>
+              <label style={{ fontSize: "11px", fontWeight: "700", letterSpacing: "0.05em", textTransform: "uppercase", color: darkMode ? "#B3A18C" : "#9C8B76" }}>
                 Remind At
               </label>
               <input
@@ -249,9 +249,9 @@ export default function ReminderModal({ isOpen, onClose, user, darkMode }) {
                 style={{
                   padding: "10px 14px",
                   borderRadius: "8px",
-                  border: darkMode ? "1px solid rgba(255,255,255,0.1)" : "1px solid #cbd5e1",
-                  background: darkMode ? "#0f172a" : "#f8fafc",
-                  color: darkMode ? "#f1f5f9" : "#0f172a",
+                  border: darkMode ? "1px solid rgba(255,255,255,0.1)" : "1px solid #D5C2A5",
+                  background: darkMode ? "#2E2013" : "#FFF8EF",
+                  color: darkMode ? "#FFF3E2" : "#2E2013",
                   fontSize: "14px",
                   outline: "none",
                   fontFamily: "inherit"
@@ -267,12 +267,12 @@ export default function ReminderModal({ isOpen, onClose, user, darkMode }) {
                 padding: "11px",
                 borderRadius: "8px",
                 border: "none",
-                background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+                background: "linear-gradient(135deg, #f15e1c, #fab60a)",
                 color: "white",
                 fontSize: "14px",
                 fontWeight: "600",
                 cursor: "pointer",
-                boxShadow: "0 4px 12px rgba(99,102,241,0.25)",
+                boxShadow: "0 4px 12px rgba(241, 94, 28, 0.25)",
                 fontFamily: "inherit",
                 transition: "all 0.15s ease"
               }}
@@ -289,18 +289,18 @@ export default function ReminderModal({ isOpen, onClose, user, darkMode }) {
               margin: "0 0 12px",
               fontSize: "14px",
               fontWeight: "700",
-              color: darkMode ? "#f1f5f9" : "#0f172a"
+              color: darkMode ? "#FFF3E2" : "#2E2013"
             }}>Upcoming Reminders ({reminders.length})</h3>
 
             {reminders.length === 0 ? (
               <div style={{
                 padding: "24px",
                 textAlign: "center",
-                background: darkMode ? "rgba(255,255,255,0.02)" : "#f8fafc",
+                background: darkMode ? "rgba(255,255,255,0.02)" : "#FFF8EF",
                 borderRadius: "12px",
-                border: darkMode ? "1px dashed rgba(255,255,255,0.08)" : "1px dashed #cbd5e1",
+                border: darkMode ? "1px dashed rgba(255,255,255,0.08)" : "1px dashed #D5C2A5",
                 fontSize: "13px",
-                color: darkMode ? "#64748b" : "#94a3b8"
+                color: darkMode ? "#9C8B76" : "#B3A18C"
               }}>No upcoming reminders set.</div>
             ) : (
               <div style={{
@@ -325,8 +325,8 @@ export default function ReminderModal({ isOpen, onClose, user, darkMode }) {
                       style={{
                         padding: "10px 12px",
                         borderRadius: "10px",
-                        background: darkMode ? "rgba(255,255,255,0.04)" : "#f8fafc",
-                        border: darkMode ? "1px solid rgba(255,255,255,0.06)" : "1px solid #e2e8f0",
+                        background: darkMode ? "rgba(255,255,255,0.04)" : "#FFF8EF",
+                        border: darkMode ? "1px solid rgba(255,255,255,0.06)" : "1px solid #E8D9C5",
                         display: "flex",
                         justifyContent: "space-between",
                         alignItems: "center"
@@ -336,7 +336,7 @@ export default function ReminderModal({ isOpen, onClose, user, darkMode }) {
                         <div style={{
                           fontSize: "13px",
                           fontWeight: "600",
-                          color: darkMode ? "#f1f5f9" : "#0f172a",
+                          color: darkMode ? "#FFF3E2" : "#2E2013",
                           textDecoration: rem.sent ? "line-through" : "none",
                           opacity: rem.sent ? 0.5 : 1,
                           whiteSpace: "nowrap",
@@ -345,7 +345,7 @@ export default function ReminderModal({ isOpen, onClose, user, darkMode }) {
                         }}>{rem.title}</div>
                         <div style={{
                           fontSize: "11px",
-                          color: rem.sent ? "#22c55e" : darkMode ? "#64748b" : "#94a3b8",
+                          color: rem.sent ? "#22c55e" : darkMode ? "#9C8B76" : "#B3A18C",
                           marginTop: "2px"
                         }}>{rem.sent ? "✅ Sent" : `⏰ ${dateStr}`}</div>
                       </div>

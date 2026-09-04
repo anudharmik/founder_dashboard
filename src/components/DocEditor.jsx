@@ -30,17 +30,17 @@ export default function DocEditor({ content, onChange, editable = true, darkMode
 
   if (!editor) return null;
 
-  const cardBg = darkMode ? "#1e293b" : "#ffffff";
-  const borderCol = darkMode ? "rgba(255,255,255,0.08)" : "#e2e8f0";
-  const textMuted = darkMode ? "#94a3b8" : "#64748b";
-  const textColor = darkMode ? "#f8fafc" : "#0f172a";
+  const cardBg = darkMode ? "#1E140C" : "#ffffff";
+  const borderCol = darkMode ? "rgba(255,255,255,0.08)" : "#E8D9C5";
+  const textMuted = darkMode ? "#B3A18C" : "#9C8B76";
+  const textColor = darkMode ? "#FFF8EF" : "#2E2013";
 
   const btnStyle = (isActive) => ({
     padding: "6px 10px",
     borderRadius: "6px",
-    border: `1px solid ${isActive ? '#6366f1' : borderCol}`,
-    background: isActive ? (darkMode ? "rgba(99,102,241,0.25)" : "#e0e7ff") : (darkMode ? "#0f172a" : "#f8fafc"),
-    color: isActive ? "#6366f1" : textColor,
+    border: `1px solid ${isActive ? '#f15e1c' : borderCol}`,
+    background: isActive ? (darkMode ? "rgba(241, 94, 28, 0.25)" : "#FFF3E2") : (darkMode ? "#2E2013" : "#FFF8EF"),
+    color: isActive ? "#f15e1c" : textColor,
     fontWeight: isActive ? "700" : "500",
     fontSize: "12.5px",
     cursor: "pointer",
@@ -66,7 +66,7 @@ export default function DocEditor({ content, onChange, editable = true, darkMode
           gap: "6px",
           padding: "12px 16px",
           borderBottom: `1px solid ${borderCol}`,
-          background: darkMode ? "rgba(255,255,255,0.02)" : "#f8fafc"
+          background: darkMode ? "rgba(255,255,255,0.02)" : "#FFF8EF"
         }}>
           <button
             type="button"
@@ -186,27 +186,27 @@ export default function DocEditor({ content, onChange, editable = true, darkMode
           font-weight: 800;
           margin-top: 16px;
           margin-bottom: 10px;
-          color: ${darkMode ? "#f8fafc" : "#0f172a"};
+          color: ${darkMode ? "#FFF8EF" : "#2E2013"};
         }
         .ProseMirror h2 {
           font-size: 18px;
           font-weight: 700;
           margin-top: 14px;
           margin-bottom: 8px;
-          color: ${darkMode ? "#e2e8f0" : "#1e293b"};
+          color: ${darkMode ? "#E8D9C5" : "#1E140C"};
         }
         .ProseMirror p {
           margin-bottom: 12px;
         }
         .ProseMirror blockquote {
-          border-left: 3px solid #6366f1;
+          border-left: 3px solid #f15e1c;
           padding-left: 14px;
           margin-left: 0;
           color: ${textMuted};
           font-style: italic;
         }
         .ProseMirror code {
-          background: ${darkMode ? "rgba(255,255,255,0.08)" : "#f1f5f9"};
+          background: ${darkMode ? "rgba(255,255,255,0.08)" : "#FFF3E2"};
           padding: 2px 6px;
           border-radius: 4px;
           font-family: monospace;

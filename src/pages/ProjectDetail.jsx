@@ -224,9 +224,9 @@ export default function ProjectDetail({ darkMode }) {
     );
   }
 
-  const cardBg = darkMode ? "#1e293b" : "#ffffff";
-  const borderCol = darkMode ? "rgba(255,255,255,0.08)" : "#e2e8f0";
-  const textMuted = darkMode ? "#94a3b8" : "#64748b";
+  const cardBg = darkMode ? "#1E140C" : "#ffffff";
+  const borderCol = darkMode ? "rgba(255,255,255,0.08)" : "#E8D9C5";
+  const textMuted = darkMode ? "#B3A18C" : "#9C8B76";
 
   if (loading) {
     return (
@@ -242,9 +242,9 @@ export default function ProjectDetail({ darkMode }) {
     <div style={{ maxWidth: "1100px", margin: "0 auto", width: "100%", animation: "fadeIn 0.3s ease" }}>
       {/* Breadcrumb */}
       <div style={{ marginBottom: "20px", display: "flex", alignItems: "center", gap: "8px", fontSize: "13px", color: textMuted }}>
-        <Link to="/projects" style={{ color: "#6366f1", textDecoration: "none", fontWeight: "600" }}>Projects</Link>
+        <Link to="/projects" style={{ color: "#f15e1c", textDecoration: "none", fontWeight: "600" }}>Projects</Link>
         <span>/</span>
-        <span style={{ color: darkMode ? "#cbd5e1" : "#475569" }}>{project.title}</span>
+        <span style={{ color: darkMode ? "#D5C2A5" : "#6E5D4B" }}>{project.title}</span>
       </div>
 
       {/* Project Header Header Card */}
@@ -258,7 +258,7 @@ export default function ProjectDetail({ darkMode }) {
             <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "14px" }}>
               <span style={{
                 padding: "5px 12px", borderRadius: "20px", fontSize: "12px", fontWeight: "700",
-                background: "rgba(99,102,241,0.15)", color: "#818cf8", textTransform: "uppercase", letterSpacing: "0.04em"
+                background: "rgba(241, 94, 28, 0.15)", color: "#f15e1c", textTransform: "uppercase", letterSpacing: "0.04em"
               }}>
                 🏢 {project.departments?.name}
               </span>
@@ -266,15 +266,15 @@ export default function ProjectDetail({ darkMode }) {
               {project.project_teams?.map(pt => (
                 <span key={pt.team_id} style={{
                   padding: "5px 12px", borderRadius: "20px", fontSize: "12px", fontWeight: "600",
-                  background: darkMode ? "rgba(255,255,255,0.08)" : "#f1f5f9",
-                  color: darkMode ? "#cbd5e1" : "#475569"
+                  background: darkMode ? "rgba(255,255,255,0.08)" : "#FFF3E2",
+                  color: darkMode ? "#D5C2A5" : "#6E5D4B"
                 }}>
                   👥 {pt.teams?.name}
                 </span>
               ))}
             </div>
 
-            <h1 style={{ margin: "0 0 10px", fontSize: "clamp(24px, 5vw, 32px)", fontWeight: "800", letterSpacing: "-0.7px", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+            <h1 style={{ margin: "0 0 10px", fontSize: "clamp(24px, 5vw, 32px)", fontWeight: "800", letterSpacing: "-0.7px", color: darkMode ? "#FFF8EF" : "#2E2013" }}>
               {project.title}
             </h1>
 
@@ -289,14 +289,14 @@ export default function ProjectDetail({ darkMode }) {
               const projProgress = calculateProjectProgress(goals);
               return (
                 <div style={{ marginTop: "20px", maxWidth: "450px" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px", fontWeight: "700", marginBottom: "6px", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px", fontWeight: "700", marginBottom: "6px", color: darkMode ? "#FFF8EF" : "#2E2013" }}>
                     <span>Project Weighted Progress</span>
-                    <span style={{ color: "#6366f1", fontSize: "15px" }}>{projProgress}%</span>
+                    <span style={{ color: "#f15e1c", fontSize: "15px" }}>{projProgress}%</span>
                   </div>
-                  <div style={{ height: "8px", background: darkMode ? "#0f172a" : "#e2e8f0", borderRadius: "10px", overflow: "hidden" }}>
+                  <div style={{ height: "8px", background: darkMode ? "#2E2013" : "#E8D9C5", borderRadius: "10px", overflow: "hidden" }}>
                     <div style={{
                       height: "100%", width: `${Math.min(100, Math.max(0, projProgress))}%`,
-                      background: "linear-gradient(90deg, #6366f1, #8b5cf6)", borderRadius: "10px", transition: "width 0.3s ease"
+                      background: "linear-gradient(90deg, #f15e1c, #fab60a)", borderRadius: "10px", transition: "width 0.3s ease"
                     }} />
                   </div>
                 </div>
@@ -309,9 +309,9 @@ export default function ProjectDetail({ darkMode }) {
             <button
               onClick={() => navigate(`/projects/${project.id}/docs`)}
               style={{
-                padding: "9px 18px", borderRadius: "10px", border: "1px solid rgba(99,102,241,0.4)",
-                background: darkMode ? "rgba(99,102,241,0.15)" : "#e0e7ff",
-                color: "#6366f1", fontWeight: "700", fontSize: "13.5px", cursor: "pointer",
+                padding: "9px 18px", borderRadius: "10px", border: "1px solid rgba(241, 94, 28, 0.4)",
+                background: darkMode ? "rgba(241, 94, 28, 0.15)" : "#FFF3E2",
+                color: "#f15e1c", fontWeight: "700", fontSize: "13.5px", cursor: "pointer",
                 display: "flex", alignItems: "center", gap: "6px", transition: "all 0.15s ease"
               }}
             >
@@ -324,7 +324,7 @@ export default function ProjectDetail({ darkMode }) {
                   onClick={() => setShowEditProjModal(true)}
                   style={{
                     padding: "9px 16px", borderRadius: "10px", border: `1px solid ${borderCol}`,
-                    background: darkMode ? "#0f172a" : "#f8fafc", color: darkMode ? "#f8fafc" : "#0f172a",
+                    background: darkMode ? "#2E2013" : "#FFF8EF", color: darkMode ? "#FFF8EF" : "#2E2013",
                     fontWeight: "600", fontSize: "13px", cursor: "pointer"
                   }}
                 >
@@ -349,7 +349,7 @@ export default function ProjectDetail({ darkMode }) {
       {/* Goals Section */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
         <div>
-          <h2 style={{ margin: "0 0 4px", fontSize: "20px", fontWeight: "700", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+          <h2 style={{ margin: "0 0 4px", fontSize: "20px", fontWeight: "700", color: darkMode ? "#FFF8EF" : "#2E2013" }}>
             Project Goals
           </h2>
           <p style={{ margin: 0, fontSize: "13px", color: textMuted }}>
@@ -362,8 +362,8 @@ export default function ProjectDetail({ darkMode }) {
             onClick={() => setShowGoalModal(true)}
             style={{
               padding: "10px 20px", borderRadius: "10px", border: "none", cursor: "pointer",
-              background: "linear-gradient(135deg, #6366f1, #8b5cf6)", color: "white",
-              fontWeight: "700", fontSize: "14px", boxShadow: "0 4px 12px rgba(99,102,241,0.3)"
+              background: "linear-gradient(135deg, #f15e1c, #fab60a)", color: "white",
+              fontWeight: "700", fontSize: "14px", boxShadow: "0 4px 12px rgba(241, 94, 28, 0.3)"
             }}
           >
             + Add Goal
@@ -378,7 +378,7 @@ export default function ProjectDetail({ darkMode }) {
           border: `1px dashed ${borderCol}`
         }}>
           <div style={{ fontSize: "36px", marginBottom: "10px" }}>🎯</div>
-          <h3 style={{ margin: "0 0 6px", fontSize: "16px", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+          <h3 style={{ margin: "0 0 6px", fontSize: "16px", color: darkMode ? "#FFF8EF" : "#2E2013" }}>
             No goals added yet
           </h3>
           <p style={{ margin: "0 0 16px", fontSize: "13px", color: textMuted }}>
@@ -389,7 +389,7 @@ export default function ProjectDetail({ darkMode }) {
               onClick={() => setShowGoalModal(true)}
               style={{
                 padding: "9px 18px", borderRadius: "8px", border: "none", cursor: "pointer",
-                background: "#6366f1", color: "white", fontWeight: "600", fontSize: "13px"
+                background: "#f15e1c", color: "white", fontWeight: "600", fontSize: "13px"
               }}
             >
               + Add First Goal
@@ -412,7 +412,7 @@ export default function ProjectDetail({ darkMode }) {
                   display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px"
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = "#6366f1";
+                  e.currentTarget.style.borderColor = "#f15e1c";
                   e.currentTarget.style.transform = "translateX(4px)";
                 }}
                 onMouseLeave={(e) => {
@@ -422,15 +422,15 @@ export default function ProjectDetail({ darkMode }) {
               >
                 <div style={{ flex: "1 1 300px" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "6px" }}>
-                    <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "700", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+                    <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "700", color: darkMode ? "#FFF8EF" : "#2E2013" }}>
                       {goal.title}
                     </h3>
 
                     {/* Weight Badge */}
                     <span style={{
                       padding: "2px 8px", borderRadius: "6px", fontSize: "11px", fontWeight: "600",
-                      background: darkMode ? "rgba(255,255,255,0.08)" : "#e2e8f0",
-                      color: darkMode ? "#cbd5e1" : "#475569"
+                      background: darkMode ? "rgba(255,255,255,0.08)" : "#E8D9C5",
+                      color: darkMode ? "#D5C2A5" : "#6E5D4B"
                     }}>
                       Weight: {goal.weight || 1}
                     </span>
@@ -455,19 +455,19 @@ export default function ProjectDetail({ darkMode }) {
 
                 {/* Progress Bar & Value */}
                 <div style={{ display: "flex", alignItems: "center", gap: "16px", minWidth: "200px" }}>
-                  <div style={{ flex: 1, height: "8px", background: darkMode ? "#0f172a" : "#e2e8f0", borderRadius: "10px", overflow: "hidden" }}>
+                  <div style={{ flex: 1, height: "8px", background: darkMode ? "#2E2013" : "#E8D9C5", borderRadius: "10px", overflow: "hidden" }}>
                     <div style={{
                       height: "100%", width: `${Math.min(100, Math.max(0, effectiveProgress))}%`,
-                      background: hasOverride ? "linear-gradient(90deg, #f59e0b, #d97706)" : "linear-gradient(90deg, #6366f1, #8b5cf6)",
+                      background: hasOverride ? "linear-gradient(90deg, #f59e0b, #d97706)" : "linear-gradient(90deg, #f15e1c, #fab60a)",
                       borderRadius: "10px", transition: "width 0.3s ease"
                     }} />
                   </div>
 
-                  <span style={{ fontSize: "14px", fontWeight: "700", color: darkMode ? "#f8fafc" : "#0f172a", width: "45px", textAlign: "right" }}>
+                  <span style={{ fontSize: "14px", fontWeight: "700", color: darkMode ? "#FFF8EF" : "#2E2013", width: "45px", textAlign: "right" }}>
                     {Math.round(effectiveProgress)}%
                   </span>
 
-                  <span style={{ color: "#6366f1", fontWeight: "700", fontSize: "16px" }}>&rarr;</span>
+                  <span style={{ color: "#f15e1c", fontWeight: "700", fontSize: "16px" }}>&rarr;</span>
                 </div>
               </div>
             );
@@ -480,7 +480,7 @@ export default function ProjectDetail({ darkMode }) {
         background: cardBg, borderRadius: "20px", border: `1px solid ${borderCol}`,
         padding: "28px", marginTop: "32px", marginBottom: "32px"
       }}>
-        <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "800", color: darkMode ? "#f8fafc" : "#0f172a", display: "flex", alignItems: "center", gap: "8px" }}>
+        <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "800", color: darkMode ? "#FFF8EF" : "#2E2013", display: "flex", alignItems: "center", gap: "8px" }}>
           📜 Project Activity Stream
         </h3>
 
@@ -510,11 +510,11 @@ export default function ProjectDetail({ darkMode }) {
                   key={act.id}
                   style={{
                     padding: "10px 14px", borderRadius: "10px",
-                    background: darkMode ? "#0f172a" : "#f8fafc", border: `1px solid ${borderCol}`,
+                    background: darkMode ? "#2E2013" : "#FFF8EF", border: `1px solid ${borderCol}`,
                     display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "13px"
                   }}
                 >
-                  <span style={{ color: darkMode ? "#cbd5e1" : "#334155", fontWeight: "500" }}>
+                  <span style={{ color: darkMode ? "#D5C2A5" : "#4A3C2C", fontWeight: "500" }}>
                     📌 {text}
                   </span>
                   <span style={{ fontSize: "12px", color: textMuted }}>
@@ -538,7 +538,7 @@ export default function ProjectDetail({ darkMode }) {
             width: "100%", maxWidth: "500px", padding: "28px", boxShadow: "0 20px 40px rgba(0,0,0,0.3)"
           }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-              <h2 style={{ margin: 0, fontSize: "20px", fontWeight: "800", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+              <h2 style={{ margin: 0, fontSize: "20px", fontWeight: "800", color: darkMode ? "#FFF8EF" : "#2E2013" }}>
                 Add New Goal
               </h2>
               <button onClick={() => setShowGoalModal(false)} style={{ background: "none", border: "none", color: textMuted, fontSize: "20px", cursor: "pointer" }}>✕</button>
@@ -546,7 +546,7 @@ export default function ProjectDetail({ darkMode }) {
 
             <form onSubmit={handleCreateGoal}>
               <div style={{ marginBottom: "16px" }}>
-                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: darkMode ? "#cbd5e1" : "#334155" }}>
+                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: darkMode ? "#D5C2A5" : "#4A3C2C" }}>
                   Goal Title *
                 </label>
                 <input
@@ -556,14 +556,14 @@ export default function ProjectDetail({ darkMode }) {
                   placeholder="e.g. Increase Monthly Recurring Revenue by 25%"
                   style={{
                     width: "100%", padding: "11px 14px", borderRadius: "10px",
-                    border: `1px solid ${borderCol}`, background: darkMode ? "#0f172a" : "#f8fafc",
-                    color: darkMode ? "#f8fafc" : "#0f172a", outline: "none", fontSize: "14px", boxSizing: "border-box"
+                    border: `1px solid ${borderCol}`, background: darkMode ? "#2E2013" : "#FFF8EF",
+                    color: darkMode ? "#FFF8EF" : "#2E2013", outline: "none", fontSize: "14px", boxSizing: "border-box"
                   }}
                 />
               </div>
 
               <div style={{ marginBottom: "16px" }}>
-                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: darkMode ? "#cbd5e1" : "#334155" }}>
+                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: darkMode ? "#D5C2A5" : "#4A3C2C" }}>
                   Weight (Relative importance, default 1)
                 </label>
                 <input
@@ -574,14 +574,14 @@ export default function ProjectDetail({ darkMode }) {
                   onChange={(e) => setGoalWeight(e.target.value)}
                   style={{
                     width: "100%", padding: "11px 14px", borderRadius: "10px",
-                    border: `1px solid ${borderCol}`, background: darkMode ? "#0f172a" : "#f8fafc",
-                    color: darkMode ? "#f8fafc" : "#0f172a", outline: "none", fontSize: "14px", boxSizing: "border-box"
+                    border: `1px solid ${borderCol}`, background: darkMode ? "#2E2013" : "#FFF8EF",
+                    color: darkMode ? "#FFF8EF" : "#2E2013", outline: "none", fontSize: "14px", boxSizing: "border-box"
                   }}
                 />
               </div>
 
               <div style={{ marginBottom: "24px" }}>
-                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: darkMode ? "#cbd5e1" : "#334155" }}>
+                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: darkMode ? "#D5C2A5" : "#4A3C2C" }}>
                   Description (Optional)
                 </label>
                 <textarea
@@ -591,8 +591,8 @@ export default function ProjectDetail({ darkMode }) {
                   placeholder="Goal scope and success criteria..."
                   style={{
                     width: "100%", padding: "11px 14px", borderRadius: "10px",
-                    border: `1px solid ${borderCol}`, background: darkMode ? "#0f172a" : "#f8fafc",
-                    color: darkMode ? "#f8fafc" : "#0f172a", outline: "none", fontSize: "14px", boxSizing: "border-box",
+                    border: `1px solid ${borderCol}`, background: darkMode ? "#2E2013" : "#FFF8EF",
+                    color: darkMode ? "#FFF8EF" : "#2E2013", outline: "none", fontSize: "14px", boxSizing: "border-box",
                     fontFamily: "inherit", resize: "vertical"
                   }}
                 />
@@ -604,7 +604,7 @@ export default function ProjectDetail({ darkMode }) {
                   onClick={() => setShowGoalModal(false)}
                   style={{
                     padding: "10px 18px", borderRadius: "10px", border: `1px solid ${borderCol}`,
-                    background: "none", color: darkMode ? "#cbd5e1" : "#475569", fontWeight: "600", cursor: "pointer"
+                    background: "none", color: darkMode ? "#D5C2A5" : "#6E5D4B", fontWeight: "600", cursor: "pointer"
                   }}
                 >
                   Cancel
@@ -614,7 +614,7 @@ export default function ProjectDetail({ darkMode }) {
                   disabled={submittingGoal}
                   style={{
                     padding: "10px 22px", borderRadius: "10px", border: "none",
-                    background: "linear-gradient(135deg, #6366f1, #8b5cf6)", color: "white",
+                    background: "linear-gradient(135deg, #f15e1c, #fab60a)", color: "white",
                     fontWeight: "700", cursor: "pointer", opacity: submittingGoal ? 0.6 : 1
                   }}
                 >
@@ -638,7 +638,7 @@ export default function ProjectDetail({ darkMode }) {
             width: "100%", maxWidth: "520px", maxHeight: "90vh", overflowY: "auto", padding: "28px", boxShadow: "0 20px 40px rgba(0,0,0,0.3)"
           }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-              <h2 style={{ margin: 0, fontSize: "20px", fontWeight: "800", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+              <h2 style={{ margin: 0, fontSize: "20px", fontWeight: "800", color: darkMode ? "#FFF8EF" : "#2E2013" }}>
                 Edit Project
               </h2>
               <button onClick={() => setShowEditProjModal(false)} style={{ background: "none", border: "none", color: textMuted, fontSize: "20px", cursor: "pointer" }}>✕</button>
@@ -646,7 +646,7 @@ export default function ProjectDetail({ darkMode }) {
 
             <form onSubmit={handleEditProject}>
               <div style={{ marginBottom: "16px" }}>
-                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: darkMode ? "#cbd5e1" : "#334155" }}>
+                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: darkMode ? "#D5C2A5" : "#4A3C2C" }}>
                   Project Title *
                 </label>
                 <input
@@ -655,14 +655,14 @@ export default function ProjectDetail({ darkMode }) {
                   onChange={(e) => setEditTitle(e.target.value)}
                   style={{
                     width: "100%", padding: "11px 14px", borderRadius: "10px",
-                    border: `1px solid ${borderCol}`, background: darkMode ? "#0f172a" : "#f8fafc",
-                    color: darkMode ? "#f8fafc" : "#0f172a", outline: "none", fontSize: "14px", boxSizing: "border-box"
+                    border: `1px solid ${borderCol}`, background: darkMode ? "#2E2013" : "#FFF8EF",
+                    color: darkMode ? "#FFF8EF" : "#2E2013", outline: "none", fontSize: "14px", boxSizing: "border-box"
                   }}
                 />
               </div>
 
               <div style={{ marginBottom: "16px" }}>
-                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: darkMode ? "#cbd5e1" : "#334155" }}>
+                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: darkMode ? "#D5C2A5" : "#4A3C2C" }}>
                   Department *
                 </label>
                 <select
@@ -672,8 +672,8 @@ export default function ProjectDetail({ darkMode }) {
                   className="form-select"
                   style={{
                     width: "100%", padding: "11px 38px 11px 14px", borderRadius: "10px",
-                    border: `1px solid ${borderCol}`, background: darkMode ? "#0f172a" : "#f8fafc",
-                    color: darkMode ? "#f8fafc" : "#0f172a", outline: "none", fontSize: "14px", boxSizing: "border-box", cursor: "pointer"
+                    border: `1px solid ${borderCol}`, background: darkMode ? "#2E2013" : "#FFF8EF",
+                    color: darkMode ? "#FFF8EF" : "#2E2013", outline: "none", fontSize: "14px", boxSizing: "border-box", cursor: "pointer"
                   }}
                 >
                   {departments.map(d => (
@@ -683,7 +683,7 @@ export default function ProjectDetail({ darkMode }) {
               </div>
 
               <div style={{ marginBottom: "16px" }}>
-                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: darkMode ? "#cbd5e1" : "#334155" }}>
+                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: darkMode ? "#D5C2A5" : "#4A3C2C" }}>
                   Description
                 </label>
                 <textarea
@@ -692,15 +692,15 @@ export default function ProjectDetail({ darkMode }) {
                   onChange={(e) => setEditDesc(e.target.value)}
                   style={{
                     width: "100%", padding: "11px 14px", borderRadius: "10px",
-                    border: `1px solid ${borderCol}`, background: darkMode ? "#0f172a" : "#f8fafc",
-                    color: darkMode ? "#f8fafc" : "#0f172a", outline: "none", fontSize: "14px", boxSizing: "border-box",
+                    border: `1px solid ${borderCol}`, background: darkMode ? "#2E2013" : "#FFF8EF",
+                    color: darkMode ? "#FFF8EF" : "#2E2013", outline: "none", fontSize: "14px", boxSizing: "border-box",
                     fontFamily: "inherit", resize: "vertical"
                   }}
                 />
               </div>
 
               <div style={{ marginBottom: "24px" }}>
-                <label style={{ display: "block", marginBottom: "8px", fontSize: "13px", fontWeight: "600", color: darkMode ? "#cbd5e1" : "#334155" }}>
+                <label style={{ display: "block", marginBottom: "8px", fontSize: "13px", fontWeight: "600", color: darkMode ? "#D5C2A5" : "#4A3C2C" }}>
                   Associated Teams
                 </label>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
@@ -713,9 +713,9 @@ export default function ProjectDetail({ darkMode }) {
                         onClick={() => toggleTeamSelection(t.id)}
                         style={{
                           padding: "6px 14px", borderRadius: "20px", fontSize: "13px", fontWeight: "500",
-                          border: `1px solid ${isSelected ? "#6366f1" : borderCol}`,
-                          background: isSelected ? "rgba(99,102,241,0.2)" : (darkMode ? "#0f172a" : "#f8fafc"),
-                          color: isSelected ? "#818cf8" : (darkMode ? "#cbd5e1" : "#475569"),
+                          border: `1px solid ${isSelected ? "#f15e1c" : borderCol}`,
+                          background: isSelected ? "rgba(241, 94, 28, 0.2)" : (darkMode ? "#2E2013" : "#FFF8EF"),
+                          color: isSelected ? "#f15e1c" : (darkMode ? "#D5C2A5" : "#6E5D4B"),
                           cursor: "pointer"
                         }}
                       >
@@ -732,7 +732,7 @@ export default function ProjectDetail({ darkMode }) {
                   onClick={() => setShowEditProjModal(false)}
                   style={{
                     padding: "10px 18px", borderRadius: "10px", border: `1px solid ${borderCol}`,
-                    background: "none", color: darkMode ? "#cbd5e1" : "#475569", fontWeight: "600", cursor: "pointer"
+                    background: "none", color: darkMode ? "#D5C2A5" : "#6E5D4B", fontWeight: "600", cursor: "pointer"
                   }}
                 >
                   Cancel
@@ -742,7 +742,7 @@ export default function ProjectDetail({ darkMode }) {
                   disabled={submittingProj}
                   style={{
                     padding: "10px 22px", borderRadius: "10px", border: "none",
-                    background: "linear-gradient(135deg, #6366f1, #8b5cf6)", color: "white",
+                    background: "linear-gradient(135deg, #f15e1c, #fab60a)", color: "white",
                     fontWeight: "700", cursor: "pointer", opacity: submittingProj ? 0.6 : 1
                   }}
                 >

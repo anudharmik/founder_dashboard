@@ -3,7 +3,7 @@ import "../App.css";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-const ACCENTS = ["#6366f1", "#ec4899", "#f59e0b", "#22c55e", "#06b6d4", "#8b5cf6"];
+const ACCENTS = ["#f15e1c", "#ec4899", "#f59e0b", "#22c55e", "#06b6d4", "#fab60a"];
 
 export default function GoalCard({ goal, tasks, taskInputs, setTaskInputs, addTask, toggleTask, deleteTask, deleteGoal, deadlineInputs, setDeadlineInputs, updateTask, updateGoal, darkMode, aiInsights = { focusToday: [] }, accentIndex = 0 }) {
     const [isEditingGoal, setIsEditingGoal] = useState(false);
@@ -27,9 +27,9 @@ export default function GoalCard({ goal, tasks, taskInputs, setTaskInputs, addTa
     const inputBase = {
         padding: "10px 14px",
         borderRadius: "10px",
-        border: darkMode ? "1px solid rgba(255,255,255,0.12)" : "1px solid #e2e8f0",
+        border: darkMode ? "1px solid rgba(255,255,255,0.12)" : "1px solid #E8D9C5",
         background: darkMode ? "rgba(15,23,42,0.8)" : "#ffffff",
-        color: darkMode ? "#f8fafc" : "#0f172a",
+        color: darkMode ? "#FFF8EF" : "#2E2013",
         outline: "none",
         fontSize: "14px",
         width: "100%",
@@ -50,20 +50,20 @@ export default function GoalCard({ goal, tasks, taskInputs, setTaskInputs, addTa
             style={{
                 marginBottom: "20px", padding: "0",
                 borderRadius: "16px",
-                background: darkMode ? "#1e293b" : "#ffffff",
-                color: darkMode ? "#e2e8f0" : "#111827",
+                background: darkMode ? "#1E140C" : "#ffffff",
+                color: darkMode ? "#E8D9C5" : "#2E2013",
                 boxShadow: darkMode
                     ? "0 4px 20px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.05)"
                     : "0 1px 3px rgba(0,0,0,0.05), 0 10px 24px -4px rgba(15,23,42,0.06), 0 0 0 1px rgba(226,232,240,0.8)",
-                border: darkMode ? "1px solid rgba(255,255,255,0.08)" : "1px solid #e2e8f0",
+                border: darkMode ? "1px solid rgba(255,255,255,0.08)" : "1px solid #E8D9C5",
                 transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
                 overflow: "hidden",
             }}
             onMouseEnter={(e) => {
                 e.currentTarget.style.transform = "translateY(-2px)";
                 e.currentTarget.style.boxShadow = darkMode
-                    ? "0 8px 28px rgba(0,0,0,0.5), 0 0 0 1px rgba(99,102,241,0.4)"
-                    : "0 12px 32px -4px rgba(99,102,241,0.18), 0 2px 6px rgba(0,0,0,0.04)";
+                    ? "0 8px 28px rgba(0,0,0,0.5), 0 0 0 1px rgba(241, 94, 28, 0.4)"
+                    : "0 12px 32px -4px rgba(241, 94, 28, 0.18), 0 2px 6px rgba(0,0,0,0.04)";
             }}
             onMouseLeave={(e) => {
                 e.currentTarget.style.transform = "translateY(0)";
@@ -87,7 +87,7 @@ export default function GoalCard({ goal, tasks, taskInputs, setTaskInputs, addTa
                                 onChange={(e) => setEditedGoalTitle(e.target.value)}
                                 placeholder="Goal title"
                                 onFocus={(e) => { e.target.style.borderColor = accent; e.target.style.boxShadow = `0 0 0 3px ${accent}25`; }}
-                                onBlur={(e) => { e.target.style.borderColor = darkMode ? "rgba(255,255,255,0.12)" : "#e2e8f0"; e.target.style.boxShadow = "none"; }}
+                                onBlur={(e) => { e.target.style.borderColor = darkMode ? "rgba(255,255,255,0.12)" : "#E8D9C5"; e.target.style.boxShadow = "none"; }}
                             />
                             <textarea
                                 style={{ ...inputBase, minHeight: "72px", resize: "vertical" }}
@@ -95,17 +95,17 @@ export default function GoalCard({ goal, tasks, taskInputs, setTaskInputs, addTa
                                 onChange={(e) => setEditedGoalDescription(e.target.value)}
                                 placeholder="Description"
                                 onFocus={(e) => { e.target.style.borderColor = accent; e.target.style.boxShadow = `0 0 0 3px ${accent}25`; }}
-                                onBlur={(e) => { e.target.style.borderColor = darkMode ? "rgba(255,255,255,0.12)" : "#e2e8f0"; e.target.style.boxShadow = "none"; }}
+                                onBlur={(e) => { e.target.style.borderColor = darkMode ? "rgba(255,255,255,0.12)" : "#E8D9C5"; e.target.style.boxShadow = "none"; }}
                             />
                             <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
                                 <button
-                                    style={{ ...btnBase, background: "linear-gradient(135deg, #10b981, #059669)", color: "white", boxShadow: "0 2px 8px rgba(16,185,129,0.35)" }}
+                                    style={{ ...btnBase, background: "linear-gradient(135deg, #2e936f, #24785a)", color: "white", boxShadow: "0 2px 8px rgba(46, 147, 111, 0.35)" }}
                                     onClick={handleSaveGoal}
                                     onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-1px)"; }}
                                     onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; }}
                                 >Save Changes</button>
                                 <button
-                                    style={{ ...btnBase, background: darkMode ? "#334155" : "#f1f5f9", color: darkMode ? "#f8fafc" : "#0f172a" }}
+                                    style={{ ...btnBase, background: darkMode ? "#4A3C2C" : "#FFF3E2", color: darkMode ? "#FFF8EF" : "#2E2013" }}
                                     onClick={() => setIsEditingGoal(false)}
                                 >Cancel</button>
                             </div>
@@ -114,13 +114,13 @@ export default function GoalCard({ goal, tasks, taskInputs, setTaskInputs, addTa
                         <div style={{ marginBottom: "12px" }}>
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "12px", flexWrap: "wrap" }}>
                                 <div style={{ flex: 1, minWidth: 0 }}>
-                                    <h2 style={{ margin: "0 0 4px", fontSize: "17px", fontWeight: "700", color: darkMode ? "#f1f5f9" : "#0f172a" }}>
+                                    <h2 style={{ margin: "0 0 4px", fontSize: "17px", fontWeight: "700", color: darkMode ? "#FFF3E2" : "#2E2013" }}>
                                         <Link to={`/goals/${goal.id}`} style={{ color: "inherit", textDecoration: "none" }}>
                                             {goal.title}
                                         </Link>
                                     </h2>
                                     {goal.description && (
-                                        <p style={{ margin: 0, fontSize: "13px", color: darkMode ? "#64748b" : "#94a3b8", lineHeight: "1.5" }}>
+                                        <p style={{ margin: 0, fontSize: "13px", color: darkMode ? "#9C8B76" : "#B3A18C", lineHeight: "1.5" }}>
                                             {goal.description}
                                         </p>
                                     )}
@@ -132,8 +132,8 @@ export default function GoalCard({ goal, tasks, taskInputs, setTaskInputs, addTa
                                             to={`/projects/${goal.project_id}/docs`}
                                             style={{
                                                 ...btnBase,
-                                                background: darkMode ? "rgba(99,102,241,0.18)" : "#e0e7ff",
-                                                color: "#6366f1",
+                                                background: darkMode ? "rgba(241, 94, 28, 0.18)" : "#FFF3E2",
+                                                color: "#f15e1c",
                                                 textDecoration: "none",
                                                 fontSize: "12px",
                                                 fontWeight: "700",
@@ -149,8 +149,8 @@ export default function GoalCard({ goal, tasks, taskInputs, setTaskInputs, addTa
                                         to={`/goals/${goal.id}`}
                                         style={{
                                             ...btnBase,
-                                            background: darkMode ? "rgba(255,255,255,0.06)" : "#f1f5f9",
-                                            color: darkMode ? "#cbd5e1" : "#475569",
+                                            background: darkMode ? "rgba(255,255,255,0.06)" : "#FFF3E2",
+                                            color: darkMode ? "#D5C2A5" : "#6E5D4B",
                                             textDecoration: "none",
                                             fontSize: "12px",
                                             display: "inline-flex",
@@ -162,12 +162,12 @@ export default function GoalCard({ goal, tasks, taskInputs, setTaskInputs, addTa
                                     </Link>
                                     <button
                                         style={{
-                                            ...btnBase, background: darkMode ? "#334155" : "#f1f5f9",
-                                            color: darkMode ? "#94a3b8" : "#64748b", flexShrink: 0, fontSize: "12px",
+                                            ...btnBase, background: darkMode ? "#4A3C2C" : "#FFF3E2",
+                                            color: darkMode ? "#B3A18C" : "#9C8B76", flexShrink: 0, fontSize: "12px",
                                         }}
                                         onClick={() => setIsEditingGoal(true)}
-                                        onMouseEnter={(e) => { e.currentTarget.style.background = darkMode ? "#475569" : "#e2e8f0"; }}
-                                        onMouseLeave={(e) => { e.currentTarget.style.background = darkMode ? "#334155" : "#f1f5f9"; }}
+                                        onMouseEnter={(e) => { e.currentTarget.style.background = darkMode ? "#6E5D4B" : "#E8D9C5"; }}
+                                        onMouseLeave={(e) => { e.currentTarget.style.background = darkMode ? "#4A3C2C" : "#FFF3E2"; }}
                                     >
                                         ✏️ Edit
                                     </button>
@@ -178,14 +178,14 @@ export default function GoalCard({ goal, tasks, taskInputs, setTaskInputs, addTa
 
                     {/* Progress bar */}
                     <div style={{ marginBottom: "6px" }}>
-                        <div style={{ height: "6px", background: darkMode ? "#0f172a" : "#f1f5f9", borderRadius: "6px", overflow: "hidden" }}>
+                        <div style={{ height: "6px", background: darkMode ? "#2E2013" : "#FFF3E2", borderRadius: "6px", overflow: "hidden" }}>
                             <div style={{
                                 width: `${progress}%`, height: "100%",
                                 background: `linear-gradient(90deg, ${accent}, ${accent}bb)`,
                                 borderRadius: "6px", transition: "width 0.6s ease-out",
                             }} />
                         </div>
-                        <p style={{ fontSize: "12px", fontWeight: "600", color: darkMode ? "#64748b" : "#94a3b8", margin: "6px 0 20px", display: "flex", justifyContent: "space-between" }}>
+                        <p style={{ fontSize: "12px", fontWeight: "600", color: darkMode ? "#9C8B76" : "#B3A18C", margin: "6px 0 20px", display: "flex", justifyContent: "space-between" }}>
                             <span style={{ color: accent }}>{progress}% complete</span>
                             <span>{completedTasks.length}/{goalTasks.length} tasks</span>
                         </p>
@@ -195,9 +195,9 @@ export default function GoalCard({ goal, tasks, taskInputs, setTaskInputs, addTa
                     <div style={{
                         marginBottom: "20px", display: "flex", flexWrap: "wrap", gap: "8px",
                         alignItems: "flex-end",
-                        background: darkMode ? "rgba(15,23,42,0.5)" : "#f8fafc",
+                        background: darkMode ? "rgba(15,23,42,0.5)" : "#FFF8EF",
                         padding: "14px 16px", borderRadius: "12px",
-                        border: darkMode ? "1px solid rgba(255,255,255,0.05)" : "1px solid #f1f5f9",
+                        border: darkMode ? "1px solid rgba(255,255,255,0.05)" : "1px solid #FFF3E2",
                     }}>
                         <input
                             style={{ ...inputBase, flex: "1 1 160px", minWidth: 0, width: "auto" }}
@@ -206,35 +206,35 @@ export default function GoalCard({ goal, tasks, taskInputs, setTaskInputs, addTa
                             onChange={(e) => setTaskInputs({ ...taskInputs, [goal.id]: e.target.value })}
                             onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addTask(goal.id); } }}
                             onFocus={(e) => { e.target.style.borderColor = accent; e.target.style.boxShadow = `0 0 0 3px ${accent}25`; }}
-                            onBlur={(e) => { e.target.style.borderColor = darkMode ? "rgba(255,255,255,0.12)" : "#e2e8f0"; e.target.style.boxShadow = "none"; }}
+                            onBlur={(e) => { e.target.style.borderColor = darkMode ? "rgba(255,255,255,0.12)" : "#E8D9C5"; e.target.style.boxShadow = "none"; }}
                         />
                         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                            <span style={{ fontSize: "12px", fontWeight: "500", color: darkMode ? "#94a3b8" : "#64748b", whiteSpace: "nowrap" }}>Deadline</span>
+                            <span style={{ fontSize: "12px", fontWeight: "500", color: darkMode ? "#B3A18C" : "#9C8B76", whiteSpace: "nowrap" }}>Deadline</span>
                             <input
                                 style={{ ...inputBase, width: "auto", cursor: "pointer" }}
                                 type="date"
                                 value={deadlineInputs[goal.id] || ""}
                                 onChange={(e) => setDeadlineInputs({ ...deadlineInputs, [goal.id]: e.target.value })}
                                 onFocus={(e) => { e.target.style.borderColor = accent; e.target.style.boxShadow = `0 0 0 3px ${accent}25`; }}
-                                onBlur={(e) => { e.target.style.borderColor = darkMode ? "rgba(255,255,255,0.12)" : "#e2e8f0"; e.target.style.boxShadow = "none"; }}
+                                onBlur={(e) => { e.target.style.borderColor = darkMode ? "rgba(255,255,255,0.12)" : "#E8D9C5"; e.target.style.boxShadow = "none"; }}
                             />
                         </div>
                         <button
                             style={{
-                                ...btnBase, background: "linear-gradient(135deg, #10b981, #059669)",
-                                color: "white", boxShadow: "0 2px 8px rgba(16,185,129,0.3)",
+                                ...btnBase, background: "linear-gradient(135deg, #2e936f, #24785a)",
+                                color: "white", boxShadow: "0 2px 8px rgba(46, 147, 111, 0.3)",
                                 transition: "all 0.18s ease",
                             }}
                             onClick={() => addTask(goal.id)}
-                            onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = "0 4px 14px rgba(16,185,129,0.4)"; }}
-                            onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 2px 8px rgba(16,185,129,0.3)"; }}
+                            onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = "0 4px 14px rgba(46, 147, 111, 0.4)"; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 2px 8px rgba(46, 147, 111, 0.3)"; }}
                         >
                             + Add Task
                         </button>
                     </div>
 
                     {/* Task list */}
-                    <h3 style={{ fontSize: "13px", fontWeight: "700", marginBottom: "10px", display: "flex", alignItems: "center", gap: "6px", color: darkMode ? "#94a3b8" : "#64748b", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                    <h3 style={{ fontSize: "13px", fontWeight: "700", marginBottom: "10px", display: "flex", alignItems: "center", gap: "6px", color: darkMode ? "#B3A18C" : "#9C8B76", textTransform: "uppercase", letterSpacing: "0.06em" }}>
                         📝 Tasks
                     </h3>
                     <TaskList
@@ -247,13 +247,13 @@ export default function GoalCard({ goal, tasks, taskInputs, setTaskInputs, addTa
                     <div style={{ marginTop: "20px", display: "flex", justifyContent: "flex-end", gap: "8px", alignItems: "center" }}>
                         {confirmDelete ? (
                             <>
-                                <span style={{ fontSize: "13px", color: darkMode ? "#94a3b8" : "#64748b" }}>Sure?</span>
+                                <span style={{ fontSize: "13px", color: darkMode ? "#B3A18C" : "#9C8B76" }}>Sure?</span>
                                 <button
                                     style={{ ...btnBase, background: "#ef4444", color: "white", padding: "6px 14px", fontSize: "12px" }}
                                     onClick={() => deleteGoal(goal.id)}
                                 >Yes, delete</button>
                                 <button
-                                    style={{ ...btnBase, background: darkMode ? "#334155" : "#f1f5f9", color: darkMode ? "#94a3b8" : "#64748b", padding: "6px 14px", fontSize: "12px" }}
+                                    style={{ ...btnBase, background: darkMode ? "#4A3C2C" : "#FFF3E2", color: darkMode ? "#B3A18C" : "#9C8B76", padding: "6px 14px", fontSize: "12px" }}
                                     onClick={() => setConfirmDelete(false)}
                                 >Cancel</button>
                             </>

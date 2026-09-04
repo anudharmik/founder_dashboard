@@ -8,7 +8,7 @@ export default function TaskItem({ task, toggleTask, deleteTask, updateTask, dar
     const [editedDeadline, setEditedDeadline] = useState(task.deadline ? task.deadline.split("T")[0] : "");
 
     // Semantic color for overdue / due-soon tasks
-    let deadlineColor = darkMode ? "#e2e8f0" : "#0f172a";
+    let deadlineColor = darkMode ? "#E8D9C5" : "#2E2013";
     if (deadlineDate) {
         const diff = (deadlineDate - today) / (1000 * 60 * 60 * 24);
         if (diff < 0)   deadlineColor = "#ef4444";
@@ -23,9 +23,9 @@ export default function TaskItem({ task, toggleTask, deleteTask, updateTask, dar
     const inputBase = {
         padding: "8px 12px",
         borderRadius: "6px",
-        border: darkMode ? "1px solid #475569" : "1px solid #cbd5e1",
-        background: darkMode ? "#0f172a" : "#ffffff",
-        color: darkMode ? "#f8fafc" : "#0f172a",
+        border: darkMode ? "1px solid #6E5D4B" : "1px solid #D5C2A5",
+        background: darkMode ? "#2E2013" : "#ffffff",
+        color: darkMode ? "#FFF8EF" : "#2E2013",
         fontSize: "14px",
         outline: "none",
         width: "100%",
@@ -50,11 +50,11 @@ export default function TaskItem({ task, toggleTask, deleteTask, updateTask, dar
             borderRadius: "12px",
             border: isFocusTask
                 ? "2px solid #f59e0b"
-                : (darkMode ? "1px solid #334155" : "1px solid #e2e8f0"),
+                : (darkMode ? "1px solid #4A3C2C" : "1px solid #E8D9C5"),
             boxShadow: darkMode ? "0 2px 8px rgba(0,0,0,0.2)" : "0 2px 8px rgba(0,0,0,0.04)",
             background: isFocusTask
                 ? (darkMode ? "#452d08" : "#fef3c7")
-                : (darkMode ? "#1e293b" : "#ffffff"),
+                : (darkMode ? "#1E140C" : "#ffffff"),
             transition: "all 0.2s ease",
         }}>
             {isEditing ? (
@@ -73,8 +73,8 @@ export default function TaskItem({ task, toggleTask, deleteTask, updateTask, dar
                         style={{ ...inputBase, width: "auto", cursor: "pointer" }}
                     />
                     <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                        <button style={{ ...btnBase, background: "#10b981", color: "white" }} onClick={handleSave}>Save</button>
-                        <button style={{ ...btnBase, background: darkMode ? "#475569" : "#e2e8f0", color: darkMode ? "#f8fafc" : "#0f172a" }} onClick={() => setIsEditing(false)}>Cancel</button>
+                        <button style={{ ...btnBase, background: "#2e936f", color: "white" }} onClick={handleSave}>Save</button>
+                        <button style={{ ...btnBase, background: darkMode ? "#6E5D4B" : "#E8D9C5", color: darkMode ? "#FFF8EF" : "#2E2013" }} onClick={() => setIsEditing(false)}>Cancel</button>
                     </div>
                 </div>
             ) : (
@@ -93,7 +93,7 @@ export default function TaskItem({ task, toggleTask, deleteTask, updateTask, dar
                                 fontWeight: task.completed ? "400" : "500",
                                 fontSize: "14px",
                                 textDecoration: task.completed ? "line-through" : "none",
-                                color: task.completed ? (darkMode ? "#64748b" : "#94a3b8") : deadlineColor,
+                                color: task.completed ? (darkMode ? "#9C8B76" : "#B3A18C") : deadlineColor,
                                 wordBreak: "break-word",
                             }}>
                                 {task.title}
@@ -113,7 +113,7 @@ export default function TaskItem({ task, toggleTask, deleteTask, updateTask, dar
                                 )}
                             </span>
                             {task.deadline && (
-                                <div style={{ marginTop: "3px", fontSize: "12px", fontWeight: "500", color: deadlineColor === "#ef4444" || deadlineColor === "#f59e0b" ? deadlineColor : (darkMode ? "#94a3b8" : "#64748b") }}>
+                                <div style={{ marginTop: "3px", fontSize: "12px", fontWeight: "500", color: deadlineColor === "#ef4444" || deadlineColor === "#f59e0b" ? deadlineColor : (darkMode ? "#B3A18C" : "#9C8B76") }}>
                                     Due: {task.deadline.split("T")[0]}
                                 </div>
                             )}
@@ -123,7 +123,7 @@ export default function TaskItem({ task, toggleTask, deleteTask, updateTask, dar
                     {/* Action buttons */}
                     <div style={{ display: "flex", gap: "6px", flexShrink: 0 }}>
                         <button
-                            style={{ ...btnBase, background: darkMode ? "#475569" : "#e2e8f0", color: darkMode ? "#f8fafc" : "#0f172a" }}
+                            style={{ ...btnBase, background: darkMode ? "#6E5D4B" : "#E8D9C5", color: darkMode ? "#FFF8EF" : "#2E2013" }}
                             onClick={() => setIsEditing(true)}
                         >
                             Edit

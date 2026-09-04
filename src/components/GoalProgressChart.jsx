@@ -20,19 +20,19 @@ export default function GoalProgressChart({ goals, tasks }) {
     <ResponsiveContainer width="100%" height={280}>
       <BarChart data={data} margin={{ top: 8, right: 16, left: -10, bottom: 0 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.15)" />
-        <XAxis dataKey="name" tick={{ fontSize: 12, fill: "#64748b" }} />
-        <YAxis domain={[0, 100]} tick={{ fontSize: 12, fill: "#64748b" }} unit="%" />
+        <XAxis dataKey="name" tick={{ fontSize: 12, fill: "#9C8B76" }} />
+        <YAxis domain={[0, 100]} tick={{ fontSize: 12, fill: "#9C8B76" }} unit="%" />
         <Tooltip
           contentStyle={{
-            background: "#1e293b",
+            background: "#1E140C",
             border: "1px solid rgba(255,255,255,0.08)",
             borderRadius: "8px",
             fontSize: "13px",
-            color: "#e2e8f0",
+            color: "#E8D9C5",
           }}
           formatter={(v) => [`${v}%`, "Progress"]}
         />
-        <Bar dataKey="progress" fill="#6366f1" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="progress" fill="#f15e1c" radius={[4, 4, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );

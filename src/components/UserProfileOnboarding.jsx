@@ -42,9 +42,9 @@ export default function UserProfileOnboarding({ user, onComplete, darkMode }) {
     }
   }
 
-  const cardBg = darkMode ? "#1e293b" : "#ffffff";
-  const borderCol = darkMode ? "rgba(255,255,255,0.08)" : "#e2e8f0";
-  const textMuted = darkMode ? "#94a3b8" : "#64748b";
+  const cardBg = darkMode ? "#1E140C" : "#ffffff";
+  const borderCol = darkMode ? "rgba(255,255,255,0.08)" : "#E8D9C5";
+  const textMuted = darkMode ? "#B3A18C" : "#9C8B76";
 
   return (
     <div style={{
@@ -58,7 +58,7 @@ export default function UserProfileOnboarding({ user, onComplete, darkMode }) {
       }}>
         <div style={{ textAlign: "center", marginBottom: "28px" }}>
           <div style={{ fontSize: "40px", marginBottom: "12px" }}>👋</div>
-          <h2 style={{ margin: "0 0 8px", fontSize: "24px", fontWeight: "800", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+          <h2 style={{ margin: "0 0 8px", fontSize: "24px", fontWeight: "800", color: darkMode ? "#FFF8EF" : "#2E2013" }}>
             Welcome to ASTRAV!
           </h2>
           <p style={{ margin: 0, fontSize: "14px", color: textMuted }}>
@@ -68,7 +68,7 @@ export default function UserProfileOnboarding({ user, onComplete, darkMode }) {
 
         <form onSubmit={handleSubmitProfile}>
           <div style={{ marginBottom: "18px" }}>
-            <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "700", color: darkMode ? "#cbd5e1" : "#334155" }}>
+            <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "700", color: darkMode ? "#D5C2A5" : "#4A3C2C" }}>
               Full Name *
             </label>
             <input
@@ -79,8 +79,8 @@ export default function UserProfileOnboarding({ user, onComplete, darkMode }) {
               placeholder="e.g. Alex Mercer"
               style={{
                 width: "100%", padding: "12px 14px", borderRadius: "10px",
-                border: `1px solid ${borderCol}`, background: darkMode ? "#0f172a" : "#f8fafc",
-                color: darkMode ? "#f8fafc" : "#0f172a", outline: "none", fontSize: "14px", boxSizing: "border-box"
+                border: `1px solid ${borderCol}`, background: darkMode ? "#2E2013" : "#FFF8EF",
+                color: darkMode ? "#FFF8EF" : "#2E2013", outline: "none", fontSize: "14px", boxSizing: "border-box"
               }}
             />
           </div>
@@ -95,8 +95,8 @@ export default function UserProfileOnboarding({ user, onComplete, darkMode }) {
               placeholder="+1 (555) 019-2834"
               style={{
                 width: "100%", padding: "11px 14px", borderRadius: "10px",
-                border: `1px solid ${borderCol}`, background: darkMode ? "#0f172a" : "#f8fafc",
-                color: darkMode ? "#f8fafc" : "#0f172a", outline: "none", fontSize: "14px", boxSizing: "border-box"
+                border: `1px solid ${borderCol}`, background: darkMode ? "#2E2013" : "#FFF8EF",
+                color: darkMode ? "#FFF8EF" : "#2E2013", outline: "none", fontSize: "14px", boxSizing: "border-box"
               }}
             />
           </div>
@@ -115,8 +115,8 @@ export default function UserProfileOnboarding({ user, onComplete, darkMode }) {
                 placeholder="28"
                 style={{
                   width: "100%", padding: "11px 14px", borderRadius: "10px",
-                  border: `1px solid ${borderCol}`, background: darkMode ? "#0f172a" : "#f8fafc",
-                  color: darkMode ? "#f8fafc" : "#0f172a", outline: "none", fontSize: "14px", boxSizing: "border-box"
+                  border: `1px solid ${borderCol}`, background: darkMode ? "#2E2013" : "#FFF8EF",
+                  color: darkMode ? "#FFF8EF" : "#2E2013", outline: "none", fontSize: "14px", boxSizing: "border-box"
                 }}
               />
             </div>
@@ -131,8 +131,8 @@ export default function UserProfileOnboarding({ user, onComplete, darkMode }) {
                 className="form-select"
                 style={{
                   width: "100%", padding: "11px 38px 11px 14px", borderRadius: "10px",
-                  border: `1px solid ${borderCol}`, background: darkMode ? "#0f172a" : "#f8fafc",
-                  color: darkMode ? "#f8fafc" : "#0f172a", outline: "none", fontSize: "14px", boxSizing: "border-box", cursor: "pointer"
+                  border: `1px solid ${borderCol}`, background: darkMode ? "#2E2013" : "#FFF8EF",
+                  color: darkMode ? "#FFF8EF" : "#2E2013", outline: "none", fontSize: "14px", boxSizing: "border-box", cursor: "pointer"
                 }}
               >
                 <option value="">-- Prefer not to say --</option>
@@ -149,9 +149,9 @@ export default function UserProfileOnboarding({ user, onComplete, darkMode }) {
             disabled={submitting}
             style={{
               width: "100%", padding: "12px", borderRadius: "12px", border: "none",
-              background: "linear-gradient(135deg, #6366f1, #8b5cf6)", color: "white",
+              background: "linear-gradient(135deg, #f15e1c, #fab60a)", color: "white",
               fontWeight: "700", fontSize: "15px", cursor: "pointer", opacity: submitting ? 0.6 : 1,
-              boxShadow: "0 4px 14px rgba(99,102,241,0.35)"
+              boxShadow: "0 4px 14px rgba(241, 94, 28, 0.35)"
             }}
           >
             {submitting ? "Saving Profile..." : "Complete Profile →"}

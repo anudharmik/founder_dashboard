@@ -135,9 +135,9 @@ export default function OrgPermissions({ user, darkMode }) {
     }
   }
 
-  const cardBg = darkMode ? "#1e293b" : "#ffffff";
-  const borderCol = darkMode ? "rgba(255,255,255,0.08)" : "#e2e8f0";
-  const textMuted = darkMode ? "#94a3b8" : "#64748b";
+  const cardBg = darkMode ? "#1E140C" : "#ffffff";
+  const borderCol = darkMode ? "rgba(255,255,255,0.08)" : "#E8D9C5";
+  const textMuted = darkMode ? "#B3A18C" : "#9C8B76";
 
   function getScopeName(type, id) {
     if (type === 'department') {
@@ -154,7 +154,7 @@ export default function OrgPermissions({ user, darkMode }) {
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
         <div>
-          <h1 style={{ margin: "0 0 6px", fontSize: "24px", fontWeight: "800", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+          <h1 style={{ margin: "0 0 6px", fontSize: "24px", fontWeight: "800", color: darkMode ? "#FFF8EF" : "#2E2013" }}>
             🔒 Composable Scoped Permissions
           </h1>
           <p style={{ margin: 0, fontSize: "14px", color: textMuted }}>
@@ -167,8 +167,8 @@ export default function OrgPermissions({ user, darkMode }) {
             onClick={() => setShowGrantModal(true)}
             style={{
               padding: "10px 18px", borderRadius: "10px", border: "none",
-              background: "linear-gradient(135deg, #6366f1, #8b5cf6)", color: "white",
-              fontWeight: "700", fontSize: "14px", cursor: "pointer", boxShadow: "0 4px 12px rgba(99,102,241,0.3)"
+              background: "linear-gradient(135deg, #f15e1c, #fab60a)", color: "white",
+              fontWeight: "700", fontSize: "14px", cursor: "pointer", boxShadow: "0 4px 12px rgba(241, 94, 28, 0.3)"
             }}
           >
             + Grant Scoped Role
@@ -187,7 +187,7 @@ export default function OrgPermissions({ user, darkMode }) {
         ) : (
           <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "13px" }}>
             <thead>
-              <tr style={{ background: darkMode ? "rgba(255,255,255,0.02)" : "#f8fafc", borderBottom: `1px solid ${borderCol}` }}>
+              <tr style={{ background: darkMode ? "rgba(255,255,255,0.02)" : "#FFF8EF", borderBottom: `1px solid ${borderCol}` }}>
                 <th style={{ padding: "14px 18px", color: textMuted }}>MEMBER NAME / EMAIL</th>
                 <th style={{ padding: "14px 18px", color: textMuted }}>SCOPE TYPE</th>
                 <th style={{ padding: "14px 18px", color: textMuted }}>TARGET ENTITY</th>
@@ -199,25 +199,25 @@ export default function OrgPermissions({ user, darkMode }) {
             <tbody>
               {grants.map((g) => (
                 <tr key={g.id} style={{ borderBottom: `1px solid ${borderCol}` }}>
-                  <td style={{ padding: "14px 18px", fontWeight: "600", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+                  <td style={{ padding: "14px 18px", fontWeight: "600", color: darkMode ? "#FFF8EF" : "#2E2013" }}>
                     👤 {getMemberDisplayName(g.user_id)}
                   </td>
                   <td style={{ padding: "14px 18px" }}>
                     <span style={{
                       padding: "3px 8px", borderRadius: "6px", fontSize: "11px", fontWeight: "700",
-                      background: g.scope_type === 'project' ? "rgba(99,102,241,0.15)" : "rgba(16,185,129,0.15)",
-                      color: g.scope_type === 'project' ? "#818cf8" : "#10b981", textTransform: "uppercase"
+                      background: g.scope_type === 'project' ? "rgba(241, 94, 28, 0.15)" : "rgba(46, 147, 111, 0.15)",
+                      color: g.scope_type === 'project' ? "#f15e1c" : "#2e936f", textTransform: "uppercase"
                     }}>
                       {g.scope_type}
                     </span>
                   </td>
-                  <td style={{ padding: "14px 18px", fontWeight: "600", color: darkMode ? "#cbd5e1" : "#334155" }}>
+                  <td style={{ padding: "14px 18px", fontWeight: "600", color: darkMode ? "#D5C2A5" : "#4A3C2C" }}>
                     {getScopeName(g.scope_type, g.scope_id)}
                   </td>
                   <td style={{ padding: "14px 18px" }}>
                     <span style={{
                       padding: "4px 10px", borderRadius: "12px", fontSize: "11px", fontWeight: "700",
-                      background: "rgba(168,85,247,0.15)", color: "#c084fc", textTransform: "uppercase"
+                      background: "rgba(250, 182, 10, 0.15)", color: "#fab60a", textTransform: "uppercase"
                     }}>
                       {g.role}
                     </span>
@@ -257,7 +257,7 @@ export default function OrgPermissions({ user, darkMode }) {
             width: "100%", maxWidth: "480px", maxHeight: "90vh", overflowY: "auto", padding: "28px", boxShadow: "0 20px 40px rgba(0,0,0,0.3)"
           }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-              <h2 style={{ margin: 0, fontSize: "18px", fontWeight: "800", color: darkMode ? "#f8fafc" : "#0f172a" }}>
+              <h2 style={{ margin: 0, fontSize: "18px", fontWeight: "800", color: darkMode ? "#FFF8EF" : "#2E2013" }}>
                 Grant Scoped Role
               </h2>
               <button onClick={() => setShowGrantModal(false)} style={{ background: "none", border: "none", color: textMuted, fontSize: "20px", cursor: "pointer" }}>✕</button>
@@ -275,8 +275,8 @@ export default function OrgPermissions({ user, darkMode }) {
                   className="form-select"
                   style={{
                     width: "100%", padding: "10px 36px 10px 14px", borderRadius: "8px",
-                    border: `1px solid ${borderCol}`, background: darkMode ? "#0f172a" : "#f8fafc",
-                    color: darkMode ? "#f8fafc" : "#0f172a", fontSize: "13px", cursor: "pointer"
+                    border: `1px solid ${borderCol}`, background: darkMode ? "#2E2013" : "#FFF8EF",
+                    color: darkMode ? "#FFF8EF" : "#2E2013", fontSize: "13px", cursor: "pointer"
                   }}
                 >
                   <option value="">-- Choose Member --</option>
@@ -301,8 +301,8 @@ export default function OrgPermissions({ user, darkMode }) {
                   className="form-select"
                   style={{
                     width: "100%", padding: "10px 36px 10px 14px", borderRadius: "8px",
-                    border: `1px solid ${borderCol}`, background: darkMode ? "#0f172a" : "#f8fafc",
-                    color: darkMode ? "#f8fafc" : "#0f172a", fontSize: "13px", cursor: "pointer"
+                    border: `1px solid ${borderCol}`, background: darkMode ? "#2E2013" : "#FFF8EF",
+                    color: darkMode ? "#FFF8EF" : "#2E2013", fontSize: "13px", cursor: "pointer"
                   }}
                 >
                   <option value="project">Project Scope</option>
@@ -327,7 +327,7 @@ export default function OrgPermissions({ user, darkMode }) {
                       type="button"
                       onClick={() => navigate('/departments')}
                       style={{
-                        background: "none", border: "none", color: "#6366f1", fontWeight: "700",
+                        background: "none", border: "none", color: "#f15e1c", fontWeight: "700",
                         cursor: "pointer", textDecoration: "underline", padding: 0
                       }}
                     >
@@ -348,7 +348,7 @@ export default function OrgPermissions({ user, darkMode }) {
                       type="button"
                       onClick={() => navigate('/projects')}
                       style={{
-                        background: "none", border: "none", color: "#6366f1", fontWeight: "700",
+                        background: "none", border: "none", color: "#f15e1c", fontWeight: "700",
                         cursor: "pointer", textDecoration: "underline", padding: 0
                       }}
                     >
@@ -364,8 +364,8 @@ export default function OrgPermissions({ user, darkMode }) {
                   className="form-select"
                   style={{
                     width: "100%", padding: "10px 36px 10px 14px", borderRadius: "8px",
-                    border: `1px solid ${borderCol}`, background: darkMode ? "#0f172a" : "#f8fafc",
-                    color: darkMode ? "#f8fafc" : "#0f172a", fontSize: "13px", cursor: "pointer"
+                    border: `1px solid ${borderCol}`, background: darkMode ? "#2E2013" : "#FFF8EF",
+                    color: darkMode ? "#FFF8EF" : "#2E2013", fontSize: "13px", cursor: "pointer"
                   }}
                 >
                   <option value="">-- Choose {scopeType} --</option>
@@ -386,8 +386,8 @@ export default function OrgPermissions({ user, darkMode }) {
                   className="form-select"
                   style={{
                     width: "100%", padding: "10px 36px 10px 14px", borderRadius: "8px",
-                    border: `1px solid ${borderCol}`, background: darkMode ? "#0f172a" : "#f8fafc",
-                    color: darkMode ? "#f8fafc" : "#0f172a", fontSize: "13px", cursor: "pointer"
+                    border: `1px solid ${borderCol}`, background: darkMode ? "#2E2013" : "#FFF8EF",
+                    color: darkMode ? "#FFF8EF" : "#2E2013", fontSize: "13px", cursor: "pointer"
                   }}
                 >
                   <option value="manager">Manager — Full management within scope</option>
@@ -412,7 +412,7 @@ export default function OrgPermissions({ user, darkMode }) {
                   disabled={submitting}
                   style={{
                     padding: "10px 22px", borderRadius: "8px", border: "none",
-                    background: "linear-gradient(135deg, #6366f1, #8b5cf6)", color: "white",
+                    background: "linear-gradient(135deg, #f15e1c, #fab60a)", color: "white",
                     fontWeight: "700", cursor: "pointer", opacity: submitting ? 0.6 : 1
                   }}
                 >

@@ -13,7 +13,7 @@ function SkeletonBlock({ height = 16, width = '100%', style = {} }) {
 function DashboardSkeleton({ darkMode }) {
   const cardBase = {
     padding: '24px', borderRadius: '16px',
-    background: darkMode ? '#1e293b' : '#ffffff',
+    background: darkMode ? '#1E140C' : '#ffffff',
     boxShadow: darkMode ? '0 2px 16px rgba(0,0,0,0.4)' : '0 2px 16px rgba(0,0,0,0.06)',
     border: darkMode ? '1px solid rgba(255,255,255,0.07)' : '1px solid rgba(0,0,0,0.04)',
   };
@@ -118,7 +118,7 @@ export default function Dashboard({ goals, tasks, darkMode, loading, aiInsights,
     boxShadow: darkMode
       ? '0 4px 20px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.06)'
       : '0 1px 3px rgba(0,0,0,0.05), 0 10px 24px -4px rgba(15,23,42,0.06), 0 0 0 1px rgba(226,232,240,0.8)',
-    border: darkMode ? '1px solid rgba(255,255,255,0.08)' : '1px solid #e2e8f0',
+    border: darkMode ? '1px solid rgba(255,255,255,0.08)' : '1px solid #E8D9C5',
     backdropFilter: 'blur(12px)',
     transition: 'transform 0.2s ease, box-shadow 0.2s ease',
   };
@@ -142,11 +142,11 @@ export default function Dashboard({ goals, tasks, darkMode, loading, aiInsights,
       <div style={{ marginBottom: '28px' }}>
         <h1 style={{
           fontSize: 'clamp(22px, 5vw, 28px)', fontWeight: '800', margin: '0 0 4px',
-          letterSpacing: '-0.6px', color: darkMode ? '#f1f5f9' : '#0f172a',
+          letterSpacing: '-0.6px', color: darkMode ? '#FFF3E2' : '#2E2013',
         }}>
           Dashboard
         </h1>
-        <p style={{ fontSize: '13px', color: darkMode ? '#64748b' : '#94a3b8', margin: 0 }}>
+        <p style={{ fontSize: '13px', color: darkMode ? '#9C8B76' : '#B3A18C', margin: 0 }}>
           {todayStr}
         </p>
       </div>
@@ -200,10 +200,10 @@ export default function Dashboard({ goals, tasks, darkMode, loading, aiInsights,
         {isGuest ? (
           <div style={{ ...cardBase, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', padding: '40px 24px' }}>
             <div style={{ fontSize: '36px', marginBottom: '12px' }}>🔒</div>
-            <h3 style={{ fontSize: '16px', fontWeight: '700', margin: '0 0 6px', color: darkMode ? '#f1f5f9' : '#0f172a' }}>
+            <h3 style={{ fontSize: '16px', fontWeight: '700', margin: '0 0 6px', color: darkMode ? '#FFF3E2' : '#2E2013' }}>
               AI Insights Disabled
             </h3>
-            <p style={{ fontSize: '13px', color: darkMode ? '#64748b' : '#94a3b8', margin: 0, maxWidth: '300px', lineHeight: '1.5' }}>
+            <p style={{ fontSize: '13px', color: darkMode ? '#9C8B76' : '#B3A18C', margin: 0, maxWidth: '300px', lineHeight: '1.5' }}>
               Guests do not have access to organization AI productivity insights per security policy.
             </p>
           </div>
@@ -212,24 +212,24 @@ export default function Dashboard({ goals, tasks, darkMode, loading, aiInsights,
             {/* Background accent */}
             <div style={{
               position: 'absolute', top: 0, left: 0, right: 0, height: '3px',
-              background: 'linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899)',
+              background: 'linear-gradient(90deg, #f15e1c, #fab60a, #ec4899)',
             }} />
 
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', marginTop: '4px' }}>
-              <h3 style={{ fontSize: '15px', fontWeight: '700', margin: 0, display: 'flex', alignItems: 'center', gap: '8px', color: darkMode ? '#f1f5f9' : '#0f172a' }}>
+              <h3 style={{ fontSize: '15px', fontWeight: '700', margin: 0, display: 'flex', alignItems: 'center', gap: '8px', color: darkMode ? '#FFF3E2' : '#2E2013' }}>
                 <span style={{ fontSize: '18px' }}>🔥</span> Focus Today
               </h3>
               <button
                 onClick={refreshAIInsights}
                 disabled={aiLoading}
                 style={{
-                  padding: '5px 12px', borderRadius: '20px', border: '1px solid rgba(99,102,241,0.3)',
-                  background: 'transparent', color: '#818cf8', fontSize: '11px', fontWeight: '600',
+                  padding: '5px 12px', borderRadius: '20px', border: '1px solid rgba(241, 94, 28, 0.3)',
+                  background: 'transparent', color: '#f15e1c', fontSize: '11px', fontWeight: '600',
                   cursor: aiLoading ? 'not-allowed' : 'pointer', opacity: aiLoading ? 0.6 : 1,
                   transition: 'all 0.15s ease', letterSpacing: '0.02em',
                   display: 'flex', alignItems: 'center', gap: '6px',
                 }}
-                onMouseEnter={(e) => { if (!aiLoading) { e.currentTarget.style.background = 'rgba(99,102,241,0.1)'; } }}
+                onMouseEnter={(e) => { if (!aiLoading) { e.currentTarget.style.background = 'rgba(241, 94, 28, 0.1)'; } }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
               >
                 {aiLoading ? <span className="spinner" /> : '↻'} Refresh
@@ -246,16 +246,16 @@ export default function Dashboard({ goals, tasks, darkMode, loading, aiInsights,
                 {aiInsights.focusToday.map((task, index) => (
                   <div key={index} style={{
                     fontSize: '13.5px', padding: '10px 14px',
-                    background: darkMode ? 'rgba(99,102,241,0.08)' : 'rgba(99,102,241,0.05)',
-                    borderRadius: '10px', color: darkMode ? '#c7d2fe' : '#3730a3',
-                    borderLeft: '3px solid #6366f1',
+                    background: darkMode ? 'rgba(241, 94, 28, 0.08)' : 'rgba(241, 94, 28, 0.05)',
+                    borderRadius: '10px', color: darkMode ? '#F0DFC9' : '#cf4a11',
+                    borderLeft: '3px solid #f15e1c',
                     display: 'flex', alignItems: 'flex-start', gap: '10px',
                     animation: `slideUp 0.3s ${index * 0.08}s ease both`,
                     lineHeight: '1.5',
                   }}>
                     <span style={{
                       width: '20px', height: '20px', borderRadius: '50%',
-                      background: 'rgba(99,102,241,0.2)', color: '#818cf8',
+                      background: 'rgba(241, 94, 28, 0.2)', color: '#f15e1c',
                       fontSize: '11px', fontWeight: '700', display: 'flex', alignItems: 'center',
                       justifyContent: 'center', flexShrink: 0, marginTop: '1px',
                     }}>{index + 1}</span>
@@ -264,7 +264,7 @@ export default function Dashboard({ goals, tasks, darkMode, loading, aiInsights,
                 ))}
               </div>
             ) : (
-              <p style={{ fontSize: '13px', color: darkMode ? '#475569' : '#94a3b8', marginBottom: '20px', lineHeight: '1.6' }}>
+              <p style={{ fontSize: '13px', color: darkMode ? '#6E5D4B' : '#B3A18C', marginBottom: '20px', lineHeight: '1.6' }}>
                 No tasks yet — add some to get AI-powered focus recommendations.
               </p>
             )}
@@ -279,7 +279,7 @@ export default function Dashboard({ goals, tasks, darkMode, loading, aiInsights,
                 ⚠️ Risk
               </p>
               {aiLoading ? <SkeletonBlock height={14} /> : (
-                <p style={{ fontSize: '13.5px', color: darkMode ? '#cbd5e1' : '#475569', lineHeight: '1.6', margin: 0 }}>
+                <p style={{ fontSize: '13.5px', color: darkMode ? '#D5C2A5' : '#6E5D4B', lineHeight: '1.6', margin: 0 }}>
                   {aiInsights.risk || 'No risk signals detected.'}
                 </p>
               )}
@@ -295,7 +295,7 @@ export default function Dashboard({ goals, tasks, darkMode, loading, aiInsights,
                 📊 Insight
               </p>
               {aiLoading ? <SkeletonBlock height={14} /> : (
-                <p style={{ fontSize: '13.5px', color: darkMode ? '#cbd5e1' : '#475569', lineHeight: '1.6', margin: 0 }}>
+                <p style={{ fontSize: '13.5px', color: darkMode ? '#D5C2A5' : '#6E5D4B', lineHeight: '1.6', margin: 0 }}>
                   {aiInsights.insight || 'Complete more tasks to generate insights.'}
                 </p>
               )}
@@ -314,7 +314,7 @@ export default function Dashboard({ goals, tasks, darkMode, loading, aiInsights,
               background: `radial-gradient(circle, ${scoreColor}15 0%, transparent 70%)`,
               pointerEvents: 'none',
             }} />
-            <p style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.07em', textTransform: 'uppercase', color: darkMode ? '#64748b' : '#94a3b8', margin: '0 0 12px' }}>
+            <p style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.07em', textTransform: 'uppercase', color: darkMode ? '#9C8B76' : '#B3A18C', margin: '0 0 12px' }}>
               Productivity Score
             </p>
             <div style={{ display: 'flex', alignItems: 'flex-end', gap: '4px', marginBottom: '8px' }}>
@@ -324,12 +324,12 @@ export default function Dashboard({ goals, tasks, darkMode, loading, aiInsights,
                 textShadow: `0 0 24px ${scoreColor}50`,
                 animation: 'countUp 0.5s ease',
               }}>{productivityScore}</span>
-              <span style={{ fontSize: '20px', fontWeight: '500', color: darkMode ? '#334155' : '#cbd5e1', marginBottom: '6px' }}>/100</span>
+              <span style={{ fontSize: '20px', fontWeight: '500', color: darkMode ? '#4A3C2C' : '#D5C2A5', marginBottom: '6px' }}>/100</span>
             </div>
-            <div style={{ height: '4px', background: darkMode ? '#0f172a' : '#f1f5f9', borderRadius: '4px', overflow: 'hidden', marginBottom: '8px' }}>
+            <div style={{ height: '4px', background: darkMode ? '#2E2013' : '#FFF3E2', borderRadius: '4px', overflow: 'hidden', marginBottom: '8px' }}>
               <div style={{ width: `${productivityScore}%`, height: '100%', background: scoreColor, borderRadius: '4px', transition: 'width 1s ease-out' }} />
             </div>
-            <p style={{ fontSize: '12px', color: darkMode ? '#475569' : '#94a3b8', margin: 0 }}>
+            <p style={{ fontSize: '12px', color: darkMode ? '#6E5D4B' : '#B3A18C', margin: 0 }}>
               Based on completed &amp; overdue tasks
             </p>
           </div>
@@ -342,20 +342,20 @@ export default function Dashboard({ goals, tasks, darkMode, loading, aiInsights,
               background: streak > 0 ? 'radial-gradient(circle, rgba(245,158,11,0.12) 0%, transparent 70%)' : 'none',
               pointerEvents: 'none',
             }} />
-            <p style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.07em', textTransform: 'uppercase', color: darkMode ? '#64748b' : '#94a3b8', margin: '0 0 12px' }}>
+            <p style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.07em', textTransform: 'uppercase', color: darkMode ? '#9C8B76' : '#B3A18C', margin: '0 0 12px' }}>
               Current Streak
             </p>
             <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', marginBottom: '4px' }}>
               <span style={{
                 fontSize: '52px', fontWeight: '900', lineHeight: 1, letterSpacing: '-2px',
-                color: streak > 0 ? '#f59e0b' : darkMode ? '#334155' : '#e2e8f0',
+                color: streak > 0 ? '#f59e0b' : darkMode ? '#4A3C2C' : '#E8D9C5',
                 textShadow: streak > 0 ? '0 0 24px rgba(245,158,11,0.4)' : 'none',
                 animation: 'countUp 0.5s ease',
               }}>{streak}</span>
-              <span style={{ fontSize: '16px', fontWeight: '600', color: darkMode ? '#475569' : '#94a3b8', marginBottom: '8px' }}>days</span>
+              <span style={{ fontSize: '16px', fontWeight: '600', color: darkMode ? '#6E5D4B' : '#B3A18C', marginBottom: '8px' }}>days</span>
               {streak > 0 && <span style={{ fontSize: '24px', marginBottom: '4px' }}>🔥</span>}
             </div>
-            <p style={{ fontSize: '12px', color: darkMode ? '#475569' : '#94a3b8', margin: 0 }}>
+            <p style={{ fontSize: '12px', color: darkMode ? '#6E5D4B' : '#B3A18C', margin: 0 }}>
               Consecutive productive days
             </p>
           </div>
@@ -367,8 +367,8 @@ export default function Dashboard({ goals, tasks, darkMode, loading, aiInsights,
         display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
         gap: '16px', width: '100%',
       }}>
-        <StatCard title="Goals" value={totalGoals} darkMode={darkMode} accent="#6366f1" icon="🎯" />
-        <StatCard title="Total Tasks" value={totalTasks} darkMode={darkMode} accent="#8b5cf6" icon="📋" />
+        <StatCard title="Goals" value={totalGoals} darkMode={darkMode} accent="#f15e1c" icon="🎯" />
+        <StatCard title="Total Tasks" value={totalTasks} darkMode={darkMode} accent="#fab60a" icon="📋" />
         <StatCard title="Completed" value={completedTasks} darkMode={darkMode} accent="#22c55e" icon="✅" />
         <StatCard title="Rate" value={`${completionRate}%`} darkMode={darkMode} accent="#f59e0b" icon="📈" />
         <TaskChart completed={completedTasks} remaining={remainingTasks} />
