@@ -54,20 +54,20 @@ serve(async (req: Request) => {
 
         // Send alert email
         await resend.emails.send({
-          from: "FounderOS <onboarding@resend.dev>",
+          from: "ASTRAV <onboarding@resend.dev>",
           to: userEmail,
           subject: `Action Needed: Overdue Task Alert ⚠️`,
           html: `
-            <div style="font-family:sans-serif;padding:24px;max-width:550px;background:#0f172a;color:#f1f5f9;border-radius:12px;border:1px solid rgba(255,255,255,0.08);">
-              <h2 style="color:#ef4444;margin-top:0;font-size:22px;letter-spacing:-0.5px;">Task Overdue by 15+ Days</h2>
-              <p style="color:#94a3b8;font-size:14px;line-height:1.5;">This is an automated alert from your Founder OS Command Center. The following task has been overdue for more than 15 days:</p>
+            <div style="font-family:sans-serif;padding:24px;max-width:550px;background:#1a140d;color:#FFF3E2;border-radius:12px;border:1px solid rgba(241,94,28,0.12);">
+              <h2 style="color:#C13E1A;margin-top:0;font-size:22px;letter-spacing:-0.5px;">Task Overdue by 15+ Days</h2>
+              <p style="color:#C9A98A;font-size:14px;line-height:1.5;">This is an automated alert from your ASTRAV Command Center. The following task has been overdue for more than 15 days:</p>
               
-              <div style="background:#1e293b;padding:16px;border-radius:8px;border-left:4px solid #ef4444;margin:20px 0;">
+              <div style="background:#2b2015;padding:16px;border-radius:8px;border-left:4px solid #C13E1A;margin:20px 0;">
                 <strong style="font-size:16px;color:#ffffff;display:block;margin-bottom:4px;">${task.title}</strong>
-                <span style="color:#64748b;font-size:12px;">Deadline: ${new Date(task.deadline).toLocaleDateString()}</span>
+                <span style="color:#8A7461;font-size:12px;">Deadline: ${new Date(task.deadline).toLocaleDateString()}</span>
               </div>
               
-              <p style="color:#94a3b8;font-size:14px;line-height:1.5;margin-bottom:0;">Please log back into <a href="https://founder-dashboard.vercel.app" style="color:#6366f1;text-decoration:none;font-weight:600;">Founder OS</a> to mark it as complete or reschedule. Keep pushing forward! 🚀</p>
+              <p style="color:#C9A98A;font-size:14px;line-height:1.5;margin-bottom:0;">Please log back into <a href="https://founder-dashboard.vercel.app" style="color:#f15e1c;text-decoration:none;font-weight:600;">ASTRAV</a> to mark it as complete or reschedule. Keep pushing forward! 🚀</p>
             </div>
           `,
         });
@@ -108,7 +108,7 @@ serve(async (req: Request) => {
 
       // Send email
       await resend.emails.send({
-        from: "FounderOS <onboarding@resend.dev>",
+        from: "ASTRAV <onboarding@resend.dev>",
         to: userEmail,
         subject: `Reminder: ${reminder.title}`,
         html: `

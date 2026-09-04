@@ -38,7 +38,7 @@ export default function CreateOrgOnboarding({ user, darkMode }) {
 
       if (memErr && memErr.code !== "23505") throw memErr;
 
-      toast.success("Organization created! Welcome to FounderOS.");
+      toast.success("Organization created! Welcome to ASTRAV.");
 
       // 3. Refresh Org Context to activate the new workspace
       if (refreshOrgData) {
@@ -81,7 +81,7 @@ export default function CreateOrgOnboarding({ user, darkMode }) {
           width: "48px",
           height: "48px",
           borderRadius: "14px",
-          background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+          background: "var(--gradient-brand, linear-gradient(135deg, #f15e1c, #fab60a))",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -89,9 +89,9 @@ export default function CreateOrgOnboarding({ user, darkMode }) {
           fontWeight: "800",
           color: "#ffffff",
           marginBottom: "20px",
-          boxShadow: "0 6px 18px rgba(99,102,241,0.35)",
+          boxShadow: "0 6px 18px rgba(241,94,28,0.35)",
         }}>
-          F
+          A
         </div>
 
         <h1 style={{
@@ -110,7 +110,7 @@ export default function CreateOrgOnboarding({ user, darkMode }) {
           lineHeight: "1.5",
           margin: "0 0 28px",
         }}>
-          Welcome to FounderOS! Set up your organization to unlock your command center, goal tracking, department rollups, and AI productivity insights.
+          Welcome to ASTRAV! Set up your organization to unlock your command center, goal tracking, department rollups, and AI productivity insights.
         </p>
 
         <form onSubmit={handleCreateOrg} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>

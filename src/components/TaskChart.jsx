@@ -6,7 +6,7 @@ export default function TaskChart({ completed, remaining }) {
     { name: "Remaining", value: remaining },
   ];
 
-  const COLORS = ["#22c55e", "#ef4444"];
+  const COLORS = ["#2e936f", "#C13E1A"];
 
   return (
     <ResponsiveContainer width="100%" height={280}>

@@ -169,7 +169,7 @@ export default function ResetPassword() {
       `}</style>
 
       <div className="lc">
-        <span className="lbrand-name">Founder OS</span>
+        <span className="lbrand-name">ASTRAV</span>
         <h1 className="ltitle">Reset Password</h1>
         <p className="lsub">Enter your new password below.</p>
 

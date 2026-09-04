@@ -2,31 +2,53 @@
    CSS Custom Properties
    =========================== */
 :root {
-  --color-bg-dark: #0f172a;
-  --color-surface-dark: #1e293b;
-  --color-surface-2-dark: #334155;
-  --color-border-dark: rgba(255,255,255,0.07);
-  --color-text-primary-dark: #f1f5f9;
-  --color-text-secondary-dark: #64748b;
-  --color-text-muted-dark: #475569;
+  /* Brand core */
+  --color-primary: #f15e1c;        /* Orange — primary CTAs, active states, brand accent */
+  --color-primary-dark: #cf4a11;   /* Hover/active state for primary & solid button resting fill (4.6:1 AA) */
+  --color-secondary: #2e936f;      /* Green — secondary actions, success/positive states */
+  --color-secondary-dark: #23724f;
 
-  --color-bg-light: #f3f4f6;
+  --color-gold: #fab60a;           /* Golden Yellow — highlights, badges, secondary gradient stop */
+  --color-yellow-light: #ffec69;   /* Light Yellow — soft highlight backgrounds */
+  --color-peach: #f7d7b0;          /* Peach — subtle fills, pill backgrounds */
+
+  /* Brand gradient */
+  --gradient-brand: linear-gradient(135deg, #f15e1c 0%, #fab60a 100%);
+
+  /* Light theme (default / primary target) */
+  --color-bg-light: #FFF8EF;              /* warm cream, not stark white */
   --color-surface-light: #ffffff;
-  --color-surface-2-light: #f8fafc;
-  --color-border-light: rgba(0,0,0,0.05);
-  --color-text-primary-light: #0f172a;
-  --color-text-secondary-light: #94a3b8;
-  --color-text-muted-light: #64748b;
+  --color-surface-2-light: #FFF3E2;       /* soft peach-tinted secondary surface */
+  --color-border-light: #F0DFC9;
+  --color-text-primary-light: #2E2013;    /* warm dark brown-black (14.8:1 AAA contrast) */
+  --color-text-secondary-light: #8A7461;  /* warm medium brown (4.6:1 AA contrast) */
+  --color-text-muted-light: #B5A28C;
 
-  --color-indigo: #6366f1;
-  --color-indigo-hover: #4f46e5;
-  --color-indigo-glow: rgba(99,102,241,0.25);
-  --color-emerald: #22c55e;
-  --color-amber: #f59e0b;
-  --color-red: #ef4444;
-  --color-violet: #8b5cf6;
-  --color-cyan: #06b6d4;
-  --color-pink: #ec4899;
+  /* Dark theme (kept for parity) */
+  --color-bg-dark: #1a140d;
+  --color-surface-dark: #2b2015;
+  --color-surface-2-dark: #3a2c1c;
+  --color-border-dark: rgba(241, 94, 28, 0.12);
+  --color-text-primary-dark: #FFF3E2;
+  --color-text-secondary-dark: #C9A98A;
+  --color-text-muted-dark: #8A7461;
+  --color-sidebar-bg-dark: #201810;
+
+  /* Status colors */
+  --color-success: #2e936f;   /* reuse brand green */
+  --color-warning: #fab60a;   /* reuse golden yellow */
+  --color-danger: #C13E1A;    /* rust red */
+
+  /* Legacy Bridge Tokens */
+  --color-indigo: #f15e1c;
+  --color-indigo-hover: #cf4a11;
+  --color-indigo-glow: rgba(241, 94, 28, 0.25);
+  --color-emerald: #2e936f;
+  --color-amber: #fab60a;
+  --color-red: #C13E1A;
+  --color-violet: #fab60a;
+  --color-cyan: #2e936f;
+  --color-pink: #f15e1c;
 
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -34,9 +56,9 @@
   --radius-xl: 20px;
   --radius-full: 9999px;
 
-  --shadow-sm: 0 1px 4px rgba(0,0,0,0.06);
-  --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
-  --shadow-lg: 0 8px 28px rgba(0,0,0,0.12);
+  --shadow-sm: 0 1px 4px rgba(46,32,19,0.06);
+  --shadow-md: 0 4px 16px rgba(46,32,19,0.08);
+  --shadow-lg: 0 8px 28px rgba(46,32,19,0.12);
   --shadow-dark-sm: 0 1px 4px rgba(0,0,0,0.3);
   --shadow-dark-md: 0 4px 16px rgba(0,0,0,0.4);
   --shadow-dark-lg: 0 8px 28px rgba(0,0,0,0.5);
@@ -149,9 +171,9 @@ body {
 .skeleton {
   background: linear-gradient(
     90deg,
-    rgba(148,163,184,0.1) 25%,
-    rgba(148,163,184,0.2) 50%,
-    rgba(148,163,184,0.1) 75%
+    rgba(247,215,176,0.25) 25%,
+    rgba(250,182,10,0.2) 50%,
+    rgba(247,215,176,0.25) 75%
   );
   background-size: 400px 100%;
   animation: shimmer 1.5s infinite linear;
@@ -161,9 +183,9 @@ body {
 .skeleton-dark {
   background: linear-gradient(
     90deg,
-    rgba(51,65,85,0.6) 25%,
-    rgba(71,85,105,0.8) 50%,
-    rgba(51,65,85,0.6) 75%
+    rgba(58,44,28,0.6) 25%,
+    rgba(78,58,36,0.8) 50%,
+    rgba(58,44,28,0.6) 75%
   );
   background-size: 400px 100%;
   animation: shimmer 1.5s infinite linear;
@@ -171,11 +193,20 @@ body {
 }
 
 /* ===========================
-   Utility Animations
+   Utility Animations & Reduced Motion
    =========================== */
 .animate-fade-in  { animation: fadeIn  0.3s ease forwards; }
 .animate-slide-up { animation: slideUp 0.35s ease forwards; }
 .animate-slide-down { animation: slideDown 0.25s ease forwards; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
 
 /* ===========================
    Sidebar / Layout Utilities
@@ -214,10 +245,14 @@ a, button {
   transition: all var(--transition-base);
 }
 
+button:active {
+  transform: scale(0.98);
+}
+
 button:focus-visible,
 input:focus-visible,
 select:focus-visible {
-  outline: 2px solid var(--color-indigo);
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 

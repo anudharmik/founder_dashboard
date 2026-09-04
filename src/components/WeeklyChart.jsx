@@ -39,9 +39,9 @@ export default function WeeklyChart({ tasks }) {
         <Line
           type="monotone"
           dataKey="completed"
-          stroke="#818cf8"
+          stroke="#f15e1c"
           strokeWidth={2}
-          dot={{ r: 4, fill: "#818cf8" }}
+          dot={{ r: 4, fill: "#f15e1c" }}
           activeDot={{ r: 6 }}
         />
       </LineChart>

@@ -95,7 +95,7 @@ export default function Sidebar({ darkMode, isOpen, onClose, onOpenReminders }) 
       width: '240px',
       minWidth: '240px',
       height: '100%',
-      background: darkMode ? '#0a1628' : '#0f172a',
+      background: darkMode ? '#201810' : '#2A1F16',
       color: 'white',
       padding: '24px 12px',
       display: 'flex',
@@ -112,7 +112,7 @@ export default function Sidebar({ darkMode, isOpen, onClose, onOpenReminders }) 
         left: '-40px',
         width: '200px',
         height: '200px',
-        background: 'radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%)',
+        background: 'radial-gradient(circle, rgba(241,94,28,0.15) 0%, transparent 70%)',
         pointerEvents: 'none',
       }} />
 
@@ -122,21 +122,21 @@ export default function Sidebar({ darkMode, isOpen, onClose, onOpenReminders }) 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
             <div style={{
               width: '28px', height: '28px', borderRadius: '8px',
-              background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+              background: 'linear-gradient(135deg, #f15e1c, #fab60a)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: '14px', fontWeight: '800', color: 'white', flexShrink: 0,
-              boxShadow: '0 2px 8px rgba(99,102,241,0.4)',
-            }}>F</div>
+              boxShadow: '0 2px 8px rgba(241,94,28,0.4)',
+            }}>A</div>
             <h2 style={{
               fontSize: '17px', fontWeight: '800', letterSpacing: '-0.4px',
-              background: 'linear-gradient(135deg, #818cf8, #c084fc)',
+              background: 'linear-gradient(135deg, #f15e1c, #fab60a)',
               WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
               margin: 0, lineHeight: 1,
             }}>
-              Founder OS
+              ASTRAV
             </h2>
           </div>
-          <p style={{ margin: '0 0 0 36px', fontSize: '10px', color: 'rgba(255,255,255,0.25)', letterSpacing: '0.8px', textTransform: 'uppercase' }}>
+          <p style={{ margin: '0 0 0 36px', fontSize: '10px', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.8px', textTransform: 'uppercase' }}>
             Command Center
           </p>
         </div>
@@ -230,9 +230,9 @@ export default function Sidebar({ darkMode, isOpen, onClose, onOpenReminders }) 
                 alignItems: 'center',
                 gap: '10px',
                 background: active
-                  ? 'linear-gradient(135deg, rgba(99,102,241,0.25), rgba(139,92,246,0.15))'
+                  ? 'linear-gradient(135deg, rgba(241,94,28,0.25), rgba(250,182,10,0.15))'
                   : 'transparent',
-                borderLeft: active ? '2px solid #818cf8' : '2px solid transparent',
+                borderLeft: active ? '2px solid #f15e1c' : '2px solid transparent',
                 transition: 'all 0.18s ease',
                 position: 'relative',
                 letterSpacing: '-0.1px',
@@ -259,8 +259,8 @@ export default function Sidebar({ darkMode, isOpen, onClose, onOpenReminders }) 
                 <span style={{
                   marginLeft: 'auto',
                   width: '6px', height: '6px', borderRadius: '50%',
-                  background: '#818cf8',
-                  boxShadow: '0 0 6px rgba(129,140,248,0.8)',
+                  background: '#f15e1c',
+                  boxShadow: '0 0 6px rgba(241,94,28,0.8)',
                   flexShrink: 0,
                 }} />
               )}

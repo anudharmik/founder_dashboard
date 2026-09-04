@@ -59,7 +59,7 @@ export default function UserProfileOnboarding({ user, onComplete, darkMode }) {
         <div style={{ textAlign: "center", marginBottom: "28px" }}>
           <div style={{ fontSize: "40px", marginBottom: "12px" }}>👋</div>
           <h2 style={{ margin: "0 0 8px", fontSize: "24px", fontWeight: "800", color: darkMode ? "#f8fafc" : "#0f172a" }}>
-            Welcome to FounderOS!
+            Welcome to ASTRAV!
           </h2>
           <p style={{ margin: 0, fontSize: "14px", color: textMuted }}>
             Let's complete your member profile before continuing to your workspace.

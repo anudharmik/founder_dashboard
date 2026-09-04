@@ -108,9 +108,9 @@ export default function Dashboard({ goals, tasks, darkMode, loading, aiInsights,
   const streak = calculateStreak();
 
   const scoreColor =
-    productivityScore >= 75 ? "#22c55e"
-    : productivityScore >= 45 ? "#f59e0b"
-    : "#ef4444";
+    productivityScore >= 75 ? "#2e936f"
+    : productivityScore >= 45 ? "#fab60a"
+    : "#C13E1A";
 
   const cardBase = {
     padding: '24px', borderRadius: '16px',

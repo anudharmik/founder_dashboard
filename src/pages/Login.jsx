@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "../supabaseClient";
 
 const FEATURES = [
@@ -18,6 +18,38 @@ export default function Login() {
   const [successMsg, setSuccessMsg] = useState("");
   const [orgName, setOrgName] = useState("");
 
+  // Parallax positions
+  const [parallax, setParallax] = useState({ x: 0, y: 0 });
+  const animFrameRef = useRef(null);
+
+  useEffect(() => {
+    // Check prefers-reduced-motion
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const isMobile = window.innerWidth < 768;
+
+    if (prefersReducedMotion || isMobile) {
+      return; // Skip parallax on reduced motion or mobile screens
+    }
+
+    function handleMouseMove(e) {
+      if (animFrameRef.current) return;
+      animFrameRef.current = requestAnimationFrame(() => {
+        const cx = window.innerWidth / 2;
+        const cy = window.innerHeight / 2;
+        const dx = (e.clientX - cx) / cx; // -1 to 1
+        const dy = (e.clientY - cy) / cy; // -1 to 1
+        setParallax({ x: dx, y: dy });
+        animFrameRef.current = null;
+      });
+    }
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    };
+  }, []);
+
   async function handleSubmit(e) {
     try {
       e.preventDefault();
@@ -33,7 +65,6 @@ export default function Login() {
         if (error) {
           setErrorMsg(error.message);
         } else {
-          // If session or user is created immediately (or when email confirmation is disabled/auto-confirmed)
           const newUserId = data.user?.id;
           if (newUserId) {
             try {
@@ -75,98 +106,90 @@ export default function Login() {
     setSuccessMsg("");
   }
 
-  const modeTitle = mode === "signin" ? "Welcome back" : mode === "signup" ? "Create account" : "Reset password";
+  const modeTitle = mode === "signin" ? "Welcome back" : mode === "signup" ? "Create your account" : "Reset password";
   const modeSub = mode === "signin"
-    ? "Sign in to your command center"
+    ? "Sign in to your ASTRAV command center"
     : mode === "signup"
-    ? "Start building smarter today"
-    : "We'll send you a reset link";
+    ? "Start executing smarter with ASTRAV"
+    : "Enter your email for a recovery link";
   const btnLabel = mode === "signin" ? "Sign In" : mode === "signup" ? "Create Account" : "Send Reset Link";
 
   return (
     <div style={{
       display: "flex", minHeight: "100vh",
       fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
-      background: "#080f1e",
+      background: "#FFF8EF",
+      color: "#2E2013",
       position: "fixed", inset: 0, zIndex: 9999,
       overflow: "hidden",
     }}>
       <style>{`
-        /* Animated background blobs */
-        .login-blob {
-          position: absolute;
-          border-radius: 50%;
-          filter: blur(80px);
-          opacity: 0.5;
-          animation: float 8s ease-in-out infinite;
-          pointer-events: none;
-        }
-
-        /* Left panel — feature list */
-        .login-left {
+        /* Responsive layout */
+        .astrav-left {
           display: none;
           flex: 1;
-          padding: 60px 56px;
+          padding: 60px 64px;
           flex-direction: column;
-          justify-content: center;
+          justify-content: space-between;
           position: relative;
           overflow: hidden;
+          background: #FFF8EF;
         }
         @media (min-width: 900px) {
-          .login-left { display: flex; }
+          .astrav-left { display: flex; }
         }
 
-        /* Right panel — form */
-        .login-right {
+        .astrav-right {
           display: flex;
           flex-direction: column;
           justify-content: center;
           align-items: center;
           padding: 40px 24px;
           position: relative;
-          z-index: 2;
+          z-index: 10;
           flex: 1;
           min-width: 0;
           overflow-y: auto;
+          background: #FFF8EF;
         }
         @media (min-width: 900px) {
-          .login-right {
-            flex: 0 0 460px;
-            border-left: 1px solid rgba(255,255,255,0.06);
-            background: rgba(255,255,255,0.02);
-            backdrop-filter: blur(20px);
+          .astrav-right {
+            flex: 0 0 480px;
+            border-left: 1px solid #F0DFC9;
+            background: #ffffff;
+            box-shadow: -10px 0 40px rgba(46,32,19,0.03);
           }
         }
 
         /* Inputs */
-        .login-input {
+        .astrav-input {
           width: 100%;
           padding: 12px 16px;
           border-radius: 10px;
-          border: 1px solid rgba(255,255,255,0.1);
-          background: rgba(255,255,255,0.05);
-          color: #f1f5f9;
+          border: 1px solid #F0DFC9;
+          background: #FFF8EF;
+          color: #2E2013;
           font-size: 14px;
           outline: none;
-          transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+          transition: all 0.18s ease;
           font-family: inherit;
           box-sizing: border-box;
         }
-        .login-input:focus {
-          border-color: #6366f1;
-          box-shadow: 0 0 0 3px rgba(99,102,241,0.18);
-          background: rgba(99,102,241,0.06);
+        .astrav-input:focus {
+          border-color: #f15e1c;
+          box-shadow: 0 0 0 3px rgba(241,94,28,0.18);
+          background: #ffffff;
         }
-        .login-input::placeholder { color: rgba(148,163,184,0.4); }
+        .astrav-input::placeholder { color: #B5A28C; }
 
-        /* Submit button */
-        .login-btn {
+        /* Solid Primary Button — AA Compliant Resting State (#cf4a11 = 4.6:1 contrast for white text) */
+        .astrav-btn-primary {
           width: 100%;
           padding: 13px;
           border-radius: 10px;
           border: none;
-          background: linear-gradient(135deg, #6366f1, #8b5cf6);
-          color: white;
+          background: #cf4a11;
+          color: #ffffff;
           font-size: 14px;
           font-weight: 700;
           cursor: pointer;
@@ -177,149 +200,211 @@ export default function Login() {
           justify-content: center;
           gap: 8px;
           letter-spacing: 0.01em;
-          box-shadow: 0 4px 16px rgba(99,102,241,0.4);
+          box-shadow: 0 4px 14px rgba(207,74,17,0.3);
         }
-        .login-btn:hover:not(:disabled) {
+        .astrav-btn-primary:hover:not(:disabled) {
+          background: #b83e0c;
           transform: translateY(-1px);
-          box-shadow: 0 6px 24px rgba(99,102,241,0.5);
-          background: linear-gradient(135deg, #4f46e5, #7c3aed);
+          box-shadow: 0 6px 20px rgba(207,74,17,0.4);
         }
-        .login-btn:active:not(:disabled) { transform: translateY(0); }
-        .login-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .astrav-btn-primary:active:not(:disabled) { transform: scale(0.98); }
+        .astrav-btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
 
-        /* Toggle buttons */
-        .toggle-btn {
+        /* Links & Toggles */
+        .astrav-link {
           background: none; border: none;
-          color: #818cf8; font-size: 13px;
+          color: #f15e1c; font-size: 13px;
           cursor: pointer; padding: 0;
           font-family: inherit; font-weight: 600;
           transition: color 0.15s ease;
         }
-        .toggle-btn:hover { color: #a5b4fc; text-decoration: underline; }
+        .astrav-link:hover { color: #cf4a11; text-decoration: underline; }
 
-        /* Feature card */
-        .feature-item {
+        /* Feature Cards */
+        .astrav-feature {
           display: flex;
-          gap: 16px;
-          padding: 16px;
+          gap: 14px;
+          padding: 14px 16px;
           border-radius: 12px;
-          background: rgba(255,255,255,0.04);
-          border: 1px solid rgba(255,255,255,0.06);
-          transition: all 0.18s ease;
-          animation: slideUp 0.4s ease both;
+          background: #ffffff;
+          border: 1px solid #F0DFC9;
+          box-shadow: 0 2px 8px rgba(46,32,19,0.04);
+          transition: transform 0.18s ease, box-shadow 0.18s ease;
         }
-        .feature-item:hover {
-          background: rgba(255,255,255,0.07);
+        .astrav-feature:hover {
           transform: translateX(4px);
+          box-shadow: 0 4px 14px rgba(46,32,19,0.08);
         }
-        .feature-item:nth-child(1) { animation-delay: 0.1s; }
-        .feature-item:nth-child(2) { animation-delay: 0.18s; }
-        .feature-item:nth-child(3) { animation-delay: 0.26s; }
-        .feature-item:nth-child(4) { animation-delay: 0.34s; }
 
-        /* Password toggle */
         .pw-wrap { position: relative; }
         .pw-toggle {
           position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
           background: none; border: none; cursor: pointer; padding: 0;
-          color: rgba(148,163,184,0.5); font-size: 14px; line-height: 1;
-          transition: color 0.15s ease;
+          color: #8A7461; font-size: 14px; line-height: 1;
         }
-        .pw-toggle:hover { color: rgba(148,163,184,0.9); }
       `}</style>
 
-      {/* Background blobs */}
-      <div className="login-blob" style={{ width: 500, height: 500, background: 'radial-gradient(circle, rgba(99,102,241,0.4), transparent)', top: '-100px', left: '-100px', animationDelay: '0s' }} />
-      <div className="login-blob" style={{ width: 400, height: 400, background: 'radial-gradient(circle, rgba(139,92,246,0.3), transparent)', bottom: '-80px', left: '30%', animationDelay: '3s' }} />
-      <div className="login-blob" style={{ width: 300, height: 300, background: 'radial-gradient(circle, rgba(236,72,153,0.2), transparent)', top: '30%', right: '-60px', animationDelay: '6s' }} />
+      {/* ── LEFT PANEL: BRAND & PARALLAX ILLUSTRATION ── */}
+      <div className="astrav-left">
 
-      {/* ── LEFT PANEL ── */}
-      <div className="login-left">
-        {/* Brand */}
-        <div style={{ marginBottom: '48px', animation: 'slideUp 0.4s ease' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+        {/* SVG Parallax Landscape Illustration */}
+        <div style={{
+          position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1,
+          overflow: "hidden",
+        }}>
+          {/* Layer 1 — Sky & Sun (Slow drift) */}
+          <div style={{
+            position: "absolute", inset: "-20px",
+            transform: `translate(${parallax.x * 6}px, ${parallax.y * 6}px)`,
+            transition: "transform 0.1s linear",
+          }}>
+            <svg width="100%" height="100%" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid slice" fill="none">
+              <circle cx="200" cy="180" r="120" fill="#ffec69" opacity="0.4" />
+              <circle cx="200" cy="180" r="80" fill="#fab60a" opacity="0.3" />
+              <circle cx="850" cy="120" r="180" fill="#f7d7b0" opacity="0.3" />
+            </svg>
+          </div>
+
+          {/* Layer 2 — Distant Peach Horizons (Medium drift) */}
+          <div style={{
+            position: "absolute", inset: "-30px",
+            transform: `translate(${parallax.x * 12}px, ${parallax.y * 12}px)`,
+            transition: "transform 0.1s linear",
+          }}>
+            <svg width="100%" height="100%" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid slice" fill="none">
+              <path d="M-100 650 Q 200 500 500 620 T 1100 580 V 900 H -100 Z" fill="#f7d7b0" opacity="0.5" />
+            </svg>
+          </div>
+
+          {/* Layer 3 — Midground Green Growth Hills (Stronger drift) */}
+          <div style={{
+            position: "absolute", inset: "-40px",
+            transform: `translate(${parallax.x * 20}px, ${parallax.y * 20}px)`,
+            transition: "transform 0.1s linear",
+          }}>
+            <svg width="100%" height="100%" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid slice" fill="none">
+              <path d="M-100 700 Q 300 560 650 680 T 1200 640 V 900 H -100 Z" fill="#2e936f" opacity="0.18" />
+              {/* Geometric Momentum Vectors */}
+              <polygon points="450,480 480,540 420,540" fill="#2e936f" opacity="0.3" />
+              <polygon points="720,440 760,520 680,520" fill="#fab60a" opacity="0.3" />
+            </svg>
+          </div>
+
+          {/* Layer 4 — Foreground Brand Orange Momentum Accents */}
+          <div style={{
+            position: "absolute", inset: "-50px",
+            transform: `translate(${parallax.x * 30}px, ${parallax.y * 30}px)`,
+            transition: "transform 0.1s linear",
+          }}>
+            <svg width="100%" height="100%" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid slice" fill="none">
+              <path d="M-50 750 Q 400 620 800 730 T 1150 700 V 900 H -50 Z" fill="#f7d7b0" opacity="0.4" />
+              <circle cx="780" cy="580" r="8" fill="#f15e1c" opacity="0.6" />
+              <circle cx="820" cy="530" r="14" fill="#fab60a" opacity="0.7" />
+              <circle cx="870" cy="470" r="20" fill="#2e936f" opacity="0.8" />
+            </svg>
+          </div>
+        </div>
+
+        {/* Top Header & Brand */}
+        <div style={{ position: "relative", zIndex: 5 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '32px' }}>
             <div style={{
               width: '36px', height: '36px', borderRadius: '10px',
-              background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+              background: 'linear-gradient(135deg, #f15e1c, #fab60a)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: '18px', fontWeight: '900', color: 'white',
-              boxShadow: '0 4px 16px rgba(99,102,241,0.5)',
-            }}>F</div>
+              boxShadow: '0 4px 14px rgba(241,94,28,0.35)',
+            }}>A</div>
             <span style={{
-              fontSize: '22px', fontWeight: '900',
-              background: 'linear-gradient(135deg, #818cf8, #c084fc)',
+              fontSize: '22px', fontWeight: '900', letterSpacing: '-0.5px',
+              background: 'linear-gradient(135deg, #f15e1c, #fab60a)',
               WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-            }}>Founder OS</span>
+            }}>ASTRAV</span>
           </div>
-          <h1 style={{ fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: '900', color: '#f1f5f9', margin: '0 0 12px', letterSpacing: '-1px', lineHeight: 1.15 }}>
-            The OS for{" "}
+
+          <h1 style={{
+            fontSize: 'clamp(32px, 4vw, 46px)', fontWeight: '900',
+            color: '#2E2013', margin: '0 0 16px', letterSpacing: '-1.2px', lineHeight: 1.1,
+            maxWidth: '520px'
+          }}>
+            Supercharge your execution with{" "}
             <span style={{
-              background: 'linear-gradient(135deg, #818cf8, #c084fc)',
+              background: 'linear-gradient(135deg, #f15e1c, #fab60a)',
               WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-            }}>ambitious</span>{" "}founders
+            }}>ASTRAV</span>
           </h1>
-          <p style={{ fontSize: '15px', color: 'rgba(148,163,184,0.7)', lineHeight: '1.6', margin: 0, maxWidth: '420px' }}>
-            Manage goals, track tasks, and get AI-driven focus recommendations — all in one place.
+
+          <p style={{ fontSize: '16px', color: '#8A7461', lineHeight: '1.6', margin: 0, maxWidth: '460px' }}>
+            The all-in-one command center for ambitious founders to manage goals, track tasks, and drive daily momentum.
           </p>
         </div>
 
-        {/* Feature list */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        {/* Middle Feature Highlights */}
+        <div style={{ position: "relative", zIndex: 5, maxWidth: "480px", margin: "36px 0", display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {FEATURES.map((f, i) => (
-            <div key={i} className="feature-item">
+            <div key={i} className="astrav-feature">
               <div style={{
-                width: '40px', height: '40px', borderRadius: '10px', flexShrink: 0,
-                background: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.2)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px',
+                width: '38px', height: '38px', borderRadius: '10px', flexShrink: 0,
+                background: 'rgba(241,94,28,0.08)', border: '1px solid rgba(241,94,28,0.15)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px',
               }}>{f.icon}</div>
               <div>
-                <p style={{ margin: '0 0 3px', fontSize: '14px', fontWeight: '700', color: '#e2e8f0' }}>{f.title}</p>
-                <p style={{ margin: 0, fontSize: '12.5px', color: 'rgba(148,163,184,0.65)', lineHeight: '1.5' }}>{f.desc}</p>
+                <p style={{ margin: '0 0 2px', fontSize: '13.5px', fontWeight: '700', color: '#2E2013' }}>{f.title}</p>
+                <p style={{ margin: 0, fontSize: '12px', color: '#8A7461', lineHeight: '1.45' }}>{f.desc}</p>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Footer */}
-        <p style={{ marginTop: '48px', fontSize: '12px', color: 'rgba(100,116,139,0.6)', animation: 'fadeIn 0.6s 0.5s ease both', opacity: 0 }}>
-          Built for founders who ship fast ⚡
-        </p>
+        {/* Left Footer Nav */}
+        <div style={{ position: "relative", zIndex: 5, display: "flex", gap: "20px", fontSize: "12px", color: "#8A7461" }}>
+          <span>© {new Date().getFullYear()} ASTRAV by Arav Innovations</span>
+          <span>•</span>
+          <a href="#privacy" onClick={(e) => e.preventDefault()} style={{ color: "#8A7461", textDecoration: "none" }}>Privacy</a>
+          <a href="#terms" onClick={(e) => e.preventDefault()} style={{ color: "#8A7461", textDecoration: "none" }}>Terms</a>
+        </div>
       </div>
 
-      {/* ── RIGHT PANEL — FORM ── */}
-      <div className="login-right">
-        <div style={{ width: '100%', maxWidth: '380px', animation: 'slideUp 0.4s ease' }}>
-          {/* Mobile brand */}
-          <div style={{ textAlign: 'center', marginBottom: '32px', display: 'block' }}>
-            <p style={{
-              fontSize: '18px', fontWeight: '900',
-              background: 'linear-gradient(135deg, #818cf8, #c084fc)',
-              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-              margin: '0 0 6px',
-            }}>Founder OS</p>
-            <h2 style={{ fontSize: '22px', fontWeight: '800', color: '#f1f5f9', margin: '0 0 4px', letterSpacing: '-0.4px' }}>
+      {/* ── RIGHT PANEL: AUTH FORM ── */}
+      <div className="astrav-right">
+        <div style={{ width: '100%', maxWidth: '380px' }}>
+
+          {/* Header */}
+          <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+              <div style={{
+                width: '28px', height: '28px', borderRadius: '8px',
+                background: 'linear-gradient(135deg, #f15e1c, #fab60a)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '14px', fontWeight: '800', color: 'white',
+              }}>A</div>
+              <span style={{
+                fontSize: '18px', fontWeight: '900',
+                background: 'linear-gradient(135deg, #f15e1c, #fab60a)',
+                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+              }}>ASTRAV</span>
+            </div>
+            <h2 style={{ fontSize: '22px', fontWeight: '800', color: '#2E2013', margin: '0 0 6px', letterSpacing: '-0.4px' }}>
               {modeTitle}
             </h2>
-            <p style={{ fontSize: '13px', color: 'rgba(100,116,139,0.8)', margin: 0 }}>{modeSub}</p>
+            <p style={{ fontSize: '13px', color: '#8A7461', margin: 0 }}>{modeSub}</p>
           </div>
 
-          {/* Messages */}
+          {/* Feedback Banners */}
           {errorMsg && (
             <div style={{
-              background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)',
-              color: '#f87171', padding: '11px 14px', borderRadius: '10px',
-              fontSize: '13px', marginBottom: '16px', animation: 'slideDown 0.2s ease',
-              display: 'flex', alignItems: 'center', gap: '8px',
+              background: '#fdf2f2', border: '1px solid #fecaca',
+              color: '#C13E1A', padding: '11px 14px', borderRadius: '10px',
+              fontSize: '13px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px',
             }}>
               <span>⚠️</span> {errorMsg}
             </div>
           )}
           {successMsg && (
             <div style={{
-              background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.25)',
-              color: '#4ade80', padding: '11px 14px', borderRadius: '10px',
-              fontSize: '13px', marginBottom: '16px', animation: 'slideDown 0.2s ease',
-              display: 'flex', alignItems: 'center', gap: '8px',
+              background: '#f0fdf4', border: '1px solid #bbf7d0',
+              color: '#2e936f', padding: '11px 14px', borderRadius: '10px',
+              fontSize: '13px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px',
             }}>
               <span>✅</span> {successMsg}
             </div>
@@ -329,11 +414,11 @@ export default function Login() {
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {mode === "signup" && (
               <div>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', letterSpacing: '0.07em', textTransform: 'uppercase', color: 'rgba(148,163,184,0.7)', marginBottom: '7px' }}>
+                <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', letterSpacing: '0.07em', textTransform: 'uppercase', color: '#8A7461', marginBottom: '7px' }}>
                   Organization Name
                 </label>
                 <input
-                  className="login-input"
+                  className="astrav-input"
                   type="text"
                   placeholder="Acme Corp"
                   value={orgName}
@@ -344,11 +429,11 @@ export default function Login() {
             )}
 
             <div>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', letterSpacing: '0.07em', textTransform: 'uppercase', color: 'rgba(148,163,184,0.7)', marginBottom: '7px' }}>
-                Email
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', letterSpacing: '0.07em', textTransform: 'uppercase', color: '#8A7461', marginBottom: '7px' }}>
+                Email Address
               </label>
               <input
-                className="login-input"
+                className="astrav-input"
                 type="email"
                 placeholder="you@example.com"
                 value={email}
@@ -360,12 +445,12 @@ export default function Login() {
 
             {mode !== "forgot" && (
               <div>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', letterSpacing: '0.07em', textTransform: 'uppercase', color: 'rgba(148,163,184,0.7)', marginBottom: '7px' }}>
+                <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', letterSpacing: '0.07em', textTransform: 'uppercase', color: '#8A7461', marginBottom: '7px' }}>
                   Password
                 </label>
                 <div className="pw-wrap">
                   <input
-                    className="login-input"
+                    className="astrav-input"
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
                     value={password}
@@ -381,36 +466,37 @@ export default function Login() {
               </div>
             )}
 
-            <button className="login-btn" type="submit" disabled={loading}>
+            <button className="astrav-btn-primary" type="submit" disabled={loading}>
               {loading ? <><span className="spinner" /> Processing...</> : btnLabel}
             </button>
           </form>
 
-          {/* Mode toggles */}
+          {/* Mode Switching */}
           <div style={{ textAlign: 'center', marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {mode === "signin" && (
               <>
-                <p style={{ margin: 0, fontSize: '13px', color: 'rgba(100,116,139,0.7)' }}>
+                <p style={{ margin: 0, fontSize: '13px', color: '#8A7461' }}>
                   Don't have an account?{" "}
-                  <button type="button" className="toggle-btn" onClick={() => toggleMode("signup")}>Sign up free</button>
+                  <button type="button" className="astrav-link" onClick={() => toggleMode("signup")}>Sign up free</button>
                 </p>
-                <button type="button" className="toggle-btn" style={{ fontSize: '12px', color: 'rgba(100,116,139,0.6)' }} onClick={() => toggleMode("forgot")}>
+                <button type="button" className="astrav-link" style={{ fontSize: '12px', color: '#8A7461' }} onClick={() => toggleMode("forgot")}>
                   Forgot password?
                 </button>
               </>
             )}
             {mode === "signup" && (
-              <p style={{ margin: 0, fontSize: '13px', color: 'rgba(100,116,139,0.7)' }}>
+              <p style={{ margin: 0, fontSize: '13px', color: '#8A7461' }}>
                 Already have an account?{" "}
-                <button type="button" className="toggle-btn" onClick={() => toggleMode("signin")}>Sign in</button>
+                <button type="button" className="astrav-link" onClick={() => toggleMode("signin")}>Sign in</button>
               </p>
             )}
             {mode === "forgot" && (
-              <button type="button" className="toggle-btn" style={{ color: 'rgba(100,116,139,0.7)', fontSize: '13px' }} onClick={() => toggleMode("signin")}>
+              <button type="button" className="astrav-link" style={{ fontSize: '13px' }} onClick={() => toggleMode("signin")}>
                 ← Back to sign in
               </button>
             )}
           </div>
+
         </div>
       </div>
     </div>

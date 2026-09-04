@@ -74,7 +74,7 @@ export default function Billing({ darkMode }) {
               Current Plan
             </div>
             <div style={{ fontSize: "22px", fontWeight: "800", color: darkMode ? "#f8fafc" : "#0f172a" }}>
-              Founder OS Enterprise / Scale
+              ASTRAV Enterprise / Scale
             </div>
             <div style={{ fontSize: "13px", color: darkMode ? "#94a3b8" : "#64748b", marginTop: "4px" }}>
               Organization: <strong style={{ color: darkMode ? "#e2e8f0" : "#1e293b" }}>{activeOrg?.name || "Command Center"}</strong>

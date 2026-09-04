@@ -199,7 +199,7 @@ export default function Analytics({ darkMode }) {
               </span>
               <div style={{
                 fontSize: "32px", fontWeight: "800", marginTop: "8px", marginBottom: "8px",
-                color: orgProductivityScore >= 75 ? "#22c55e" : orgProductivityScore >= 45 ? "#f59e0b" : "#ef4444"
+                color: orgProductivityScore >= 75 ? "#2e936f" : orgProductivityScore >= 45 ? "#fab60a" : "#C13E1A"
               }}>
                 {orgProductivityScore}/100
               </div>
@@ -233,7 +233,7 @@ export default function Analytics({ darkMode }) {
                         <span style={{ fontWeight: "700", color: darkMode ? "#f8fafc" : "#0f172a" }}>
                           🏢 {dept.name}
                         </span>
-                        <span style={{ fontWeight: "800", color: "#6366f1" }}>
+                        <span style={{ fontWeight: "800", color: "#f15e1c" }}>
                           {deptCompletion}%
                         </span>
                       </div>
@@ -241,7 +241,7 @@ export default function Analytics({ darkMode }) {
                       <div style={{ height: "10px", background: darkMode ? "#0f172a" : "#e2e8f0", borderRadius: "10px", overflow: "hidden" }}>
                         <div style={{
                           height: "100%", width: `${Math.min(100, Math.max(0, deptCompletion))}%`,
-                          background: "linear-gradient(90deg, #6366f1, #8b5cf6)", borderRadius: "10px", transition: "width 0.4s ease"
+                          background: "linear-gradient(90deg, #f15e1c, #fab60a)", borderRadius: "10px", transition: "width 0.4s ease"
                         }} />
                       </div>
                     </div>
@@ -266,7 +266,7 @@ export default function Analytics({ darkMode }) {
               <span style={{ fontSize: "11px", fontWeight: "700", textTransform: "uppercase", color: textMuted, letterSpacing: "0.05em" }}>
                 🔥 Personal Streak
               </span>
-              <div style={{ fontSize: "32px", fontWeight: "800", color: "#f59e0b", marginTop: "8px", marginBottom: "8px" }}>
+              <div style={{ fontSize: "32px", fontWeight: "800", color: "#fab60a", marginTop: "8px", marginBottom: "8px" }}>
                 {personalStreak} Day{personalStreak !== 1 ? "s" : ""}
               </div>
               <p style={{ margin: 0, fontSize: "12px", color: textMuted }}>
@@ -281,7 +281,7 @@ export default function Analytics({ darkMode }) {
               </span>
               <div style={{
                 fontSize: "32px", fontWeight: "800", marginTop: "8px", marginBottom: "8px",
-                color: personalProductivityScore >= 75 ? "#22c55e" : personalProductivityScore >= 45 ? "#f59e0b" : "#ef4444"
+                color: personalProductivityScore >= 75 ? "#2e936f" : personalProductivityScore >= 45 ? "#fab60a" : "#C13E1A"
               }}>
                 {personalProductivityScore}/100
               </div>
@@ -295,7 +295,7 @@ export default function Analytics({ darkMode }) {
               <span style={{ fontSize: "11px", fontWeight: "700", textTransform: "uppercase", color: textMuted, letterSpacing: "0.05em" }}>
                 📋 My Assigned Tasks
               </span>
-              <div style={{ fontSize: "32px", fontWeight: "800", color: "#6366f1", marginTop: "8px", marginBottom: "8px" }}>
+              <div style={{ fontSize: "32px", fontWeight: "800", color: "#f15e1c", marginTop: "8px", marginBottom: "8px" }}>
                 {userTasks.filter(t => t.completed).length}/{userTasks.length}
               </div>
               <p style={{ margin: 0, fontSize: "12px", color: textMuted }}>
@@ -322,7 +322,7 @@ export default function Analytics({ darkMode }) {
                 {sortedUserTasks.map(task => {
                   const prio = getTaskPriority(task);
                   const statusLabel = prio === 1 ? "❗ Overdue" : prio === 2 ? "⏰ Due Soon" : task.completed ? "✓ Completed" : "📅 Normal";
-                  const statusColor = prio === 1 ? "#ef4444" : prio === 2 ? "#f59e0b" : task.completed ? "#22c55e" : "#6366f1";
+                  const statusColor = prio === 1 ? "#C13E1A" : prio === 2 ? "#fab60a" : task.completed ? "#2e936f" : "#f15e1c";
 
                   return (
                     <div

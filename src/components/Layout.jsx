@@ -72,12 +72,12 @@ export default function Layout({ children, darkMode, onOpenReminders }) {
             style={{
               fontSize: "16px",
               fontWeight: "800",
-              background: "linear-gradient(135deg, #60a5fa, #a78bfa)",
+              background: "linear-gradient(135deg, #f15e1c, #fab60a)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
             }}
           >
-            Founder OS
+            ASTRAV
           </span>
         </div>
 
