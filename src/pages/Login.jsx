@@ -23,15 +23,14 @@ export default function Login() {
   const animFrameRef = useRef(null);
 
   useEffect(() => {
-    // Check prefers-reduced-motion & mobile screen
+    // Check prefers-reduced-motion
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const isMobile = window.innerWidth < 768;
-
-    if (prefersReducedMotion || isMobile) {
-      return; // Skip mousemove parallax on reduced motion or mobile screens
-    }
+    if (prefersReducedMotion) return;
 
     function handleMouseMove(e) {
+      // Skip parallax only on very small touch viewports (< 500px)
+      if (window.innerWidth < 500) return;
+
       if (animFrameRef.current) return;
       animFrameRef.current = requestAnimationFrame(() => {
         const cx = window.innerWidth / 2;
