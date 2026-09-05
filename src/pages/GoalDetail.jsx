@@ -94,7 +94,8 @@ export default function GoalDetail({ darkMode }) {
       const existingTitles = tasks.map(t => t.title);
       const membersContext = membersList.map(m => ({ user_id: m.user_id, role: m.role }));
 
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ai-task-proposals`, {
+      const apiUrl = import.meta.env.VITE_API_URL || "";
+      const res = await fetch(`${apiUrl}/api/ai-task-proposals`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

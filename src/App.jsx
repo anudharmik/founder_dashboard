@@ -86,7 +86,8 @@ function MainAppContent({ user, darkMode, setDarkMode }) {
     if (!taskSet || !taskSet.length || isGuest || !activeOrg?.id) return;
     setAiLoading(true);
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/ai-insights`, {
+      const apiUrl = import.meta.env.VITE_API_URL || "";
+      const res = await fetch(`${apiUrl}/api/ai-insights`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ tasks: taskSet }),
